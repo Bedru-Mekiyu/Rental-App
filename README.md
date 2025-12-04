@@ -146,6 +146,7 @@ rms-backend/
 git clone https://github.com/Bedru-Mekiy/Rental-App.git
 cd Rental-App
 npm install
+```
 
 
 Structuring the README markdown...
@@ -155,8 +156,10 @@ MONGODB_URI
 JWT_SECRET
 PORT
 Run (Development)
+```bash
 
 npm run dev
+```
 
 The API will start on the configured port (e.g., http://localhost:5000).
 
