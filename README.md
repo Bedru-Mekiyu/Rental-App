@@ -175,15 +175,232 @@ Run (Development)
 npm run dev
 ```
 
--The API will start on the configured port (e.g., http://localhost:5000).
+The API will start on the configured port (e.g., http://localhost:5000).
 
--Roadmap (High-Level Phases)
--Phase 1: Core Access & Structure — MERN setup, MongoDB collections, user model, auth, RBAC
--Phase 2: Operations & Finance — Unit CRUD, lease basics, manual payments, financial dashboard
--Phase 3: Analytics & Integrations — Occupancy analytics, cloud storage, payment/SMS integrations, hardening
--Why This Platform
--Designed for high-volume rental operations (10,000+ units)
--Built on modern technologies (MERN + Tailwind)
--Structured around roles and responsibilities, extensible for future integrations
+Roadmap (High-Level Phases)
+Phase 1: Core Access & Structure — MERN setup, MongoDB collections, user model, auth, RBAC
+Phase 2: Operations & Finance — Unit CRUD, lease basics, manual payments, financial dashboard
+Phase 3: Analytics & Integrations — Occupancy analytics, cloud storage, payment/SMS integrations, hardening
+Why This Platform
+Designed for high-volume rental operations (10,000+ units)
+Built on modern technologies (MERN + Tailwind)
+Structured around roles and responsibilities, extensible for future integrations
 License
--This project can be provided under a commercial or custom license as agreed with the client.
+This project can be provided under a commercial or custom license as agreed with the client.
+
+
+# Rental Management System (RMS)
+
+A secure, scalable rental management platform for commercial & residential properties, built using the MERN stack.
+
+---
+
+# 📛 Badges
+
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![React](https://img.shields.io/badge/React-61dafb?style=for-the-badge&logo=react&logoColor=black)
+![Node.js](https://img.shields.io/badge/Node.js-5FA04E?style=for-the-badge&logo=node.js&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Under_Development-yellow?style=for-the-badge)
+![License](https://img.shields.io/badge/License-Custom-blue?style=for-the-badge)
+
+---
+
+# 📸 Architecture Diagram
+
+> Replace the image below with your own architecture image  
+> Example: `/docs/architecture.png`
+
+![Architecture Diagram](https://via.placeholder.com/1200x500?text=Architecture+Diagram)
+
+---
+
+# 🎥 Installation Demo (GIF)
+
+> Replace with your own GIF  
+> Example: `/docs/install-demo.gif`
+
+![Installation GIF](https://via.placeholder.com/800x400?text=Installation+GIF)
+
+---
+
+# 📑 Table of Contents
+
+- [Overview](#overview)
+- [Key Goals](#key-goals)
+- [Core Features](#core-features)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Roadmap](#roadmap)
+- [License](#license)
+
+---
+
+# 📌 Overview
+
+RMS is a cloud-ready system designed to modernize rental operations for large-scale organizations handling thousands of units.
+
+---
+
+# 🎯 Key Goals
+
+- Centralize data as a **single source of truth**
+- Provide **secure RBAC** for users
+- Support **10,000+ units** at enterprise scale
+- Digitize leases, payments, and tenant workflows
+
+---
+
+# 🧩 Core Features
+
+## 🔐 User & Role Management
+- JWT authentication  
+- RBAC with Admin, Manager, Finance, Tenant  
+- Activity-based permissions  
+
+## 🏢 Unit & Property Management
+- Unit CRUD  
+- Status tracking (vacant, occupied, maintenance)  
+- Details: floor, type, area, view, amenities  
+
+## 📄 Lease & Tenant Management
+- Lease creation  
+- Pricing rules & VAT  
+- Future: digital signature + PDF generation  
+
+## 💳 Payment Management
+- Manual & digital payments  
+- Upload receipts / bank slips  
+- Telebirr, CBE Birr integration planned  
+
+## 🧾 Audit Logging
+- Tracks logins, payments, lease changes  
+- Useful for compliance & transparency  
+
+---
+
+# 🧰 Technology Stack
+
+### Backend
+- Node.js  
+- Express.js  
+- MongoDB  
+- Mongoose  
+- JWT Authentication  
+
+### Frontend
+- React / Next.js  
+- TailwindCSS  
+
+### Infrastructure
+- Cloud storage  
+- Payment gateway integrations  
+- SMS notifications  
+
+---
+
+# 🗂 Project Structure
+
+```
+rms-backend/
+├─ src/
+│  ├─ config/
+│  ├─ models/
+│  ├─ controllers/
+│  ├─ routes/
+│  ├─ middleware/
+│  └─ utils/
+├─ .env.example
+├─ package.json
+└─ README.md
+```
+
+---
+
+# 🚀 Getting Started
+
+## Prerequisites
+
+- Node.js LTS  
+- MongoDB  
+- npm or yarn  
+
+---
+
+## Clone & Install
+
+```bash
+git clone https://github.com/Bedru-Mekiy/Rental-App.git
+cd Rental-App
+npm install
+```
+
+---
+
+## Configure Environment
+
+Create a `.env` file based on `.env.example`:
+
+```
+MONGODB_URI=
+JWT_SECRET=
+PORT=5000
+```
+
+---
+
+## Run App (Development)
+
+```bash
+npm run dev
+```
+
+The server will run at:
+
+```
+http://localhost:5000
+```
+
+---
+
+# 🛣 Roadmap
+
+### Phase 1 – Core Structure
+- MERN setup  
+- Authentication & RBAC  
+- CRUD foundation  
+
+### Phase 2 – Operations
+- Units  
+- Tenants  
+- Leases  
+
+### Phase 3 – Finance
+- Manual/Digital payments  
+- Financial dashboard  
+
+### Phase 4 – Enterprise
+- Cloud file storage  
+- Payment gateway integrations  
+- Analytics dashboard  
+
+---
+
+# 👥 Team
+
+| Role | Member |
+|------|--------|
+| Advisor | Erzik |
+| Developer | Suad |
+| Developer | Sumeya |
+| Developer | Yasin |
+| Developer | Bedru Mekiyu |
+
+---
+
+# 📜 License
+
+This project uses a **custom/commercial license** based on client agreement.
+
