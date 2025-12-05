@@ -175,15 +175,15 @@ Run (Development)
 npm run dev
 ```
 
-The API will start on the configured port (e.g., http://localhost:5000).
+-The API will start on the configured port (e.g., http://localhost:5000).
 
-Roadmap (High-Level Phases)
-Phase 1: Core Access & Structure — MERN setup, MongoDB collections, user model, auth, RBAC
-Phase 2: Operations & Finance — Unit CRUD, lease basics, manual payments, financial dashboard
-Phase 3: Analytics & Integrations — Occupancy analytics, cloud storage, payment/SMS integrations, hardening
-Why This Platform
-Designed for high-volume rental operations (10,000+ units)
-Built on modern technologies (MERN + Tailwind)
-Structured around roles and responsibilities, extensible for future integrations
+-Roadmap (High-Level Phases)
+-Phase 1: Core Access & Structure — MERN setup, MongoDB collections, user model, auth, RBAC
+-Phase 2: Operations & Finance — Unit CRUD, lease basics, manual payments, financial dashboard
+-Phase 3: Analytics & Integrations — Occupancy analytics, cloud storage, payment/SMS integrations, hardening
+-Why This Platform
+-Designed for high-volume rental operations (10,000+ units)
+-Built on modern technologies (MERN + Tailwind)
+-Structured around roles and responsibilities, extensible for future integrations
 License
-This project can be provided under a commercial or custom license as agreed with the client.
+-This project can be provided under a commercial or custom license as agreed with the client.
