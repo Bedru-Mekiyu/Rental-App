@@ -6,6 +6,28 @@ A secure, large-scale Rental Management System designed for commercial and resid
 
 # 📛 Badges
 
+![GitHub repo size](https://img.shields.io/github/repo-size/Bedru-Mekiy/Rental-App?style=for-the-badge)
+![GitHub contributors](https://img.shields.io/github/contributors/Bedru-Mekiy/Rental-App?style=for-the-badge)
+![GitHub stars](https://img.shields.io/github/stars/Bedru-Mekiy/Rental-App?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/Bedru-Mekiy/Rental-App?style=for-the-badge)
+![GitHub issues](https://img.shields.io/github/issues/Bedru-Mekiy/Rental-App?style=for-the-badge)
+![GitHub license](https://img.shields.io/github/license/Bedru-Mekiy/Rental-App?style=for-the-badge)
+
+---
+
+# 👥 Team
+
+| Role | Member |
+|------|--------|
+| Advisor | Erzik |
+| Developer | Suad |
+| Developer | Sumeya |
+| Developer | Yasin |
+| Developer | Bedru Mekiyu |
+
+---
+
+
 
 # 📸 Architecture Diagram
 
@@ -250,19 +272,7 @@ http://localhost:5000
 - Payment gateway integrations  
 - Analytics dashboard  
 
----
 
-# 👥 Team
-
-| Role | Member |
-|------|--------|
-| Advisor | Erzik |
-| Developer | Suad |
-| Developer | Sumeya |
-| Developer | Yasin |
-| Developer | Bedru Mekiyu |
-
----
 
 # 📜 License
 
