@@ -6,14 +6,42 @@ A secure, large-scale Rental Management System designed for commercial and resid
 
 # 📛 Badges
 
-![GitHub repo size](https://img.shields.io/github/repo-size/Bedru-Mekiy/Rental-App?style=for-the-badge)
-![GitHub contributors](https://img.shields.io/github/contributors/Bedru-Mekiy/Rental-App?style=for-the-badge)
-![GitHub stars](https://img.shields.io/github/stars/Bedru-Mekiy/Rental-App?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/Bedru-Mekiy/Rental-App?style=for-the-badge)
-![GitHub issues](https://img.shields.io/github/issues/Bedru-Mekiy/Rental-App?style=for-the-badge)
-![GitHub license](https://img.shields.io/github/license/Bedru-Mekiy/Rental-App?style=for-the-badge)
+### 🖥️ Core Stack
+![Stack](https://img.shields.io/badge/Stack-MERN-3C873A?style=for-the-badge)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge)
+![Express.js](https://img.shields.io/badge/Backend-Express.js-000000?style=for-the-badge)
+![Next.js](https://img.shields.io/badge/Frontend-Next.js-000000?style=for-the-badge)
+![Node.js](https://img.shields.io/badge/Runtime-Node.js-339933?style=for-the-badge)
 
----
+### 🎨 UI / UX
+![TailwindCSS](https://img.shields.io/badge/UI-TailwindCSS-38BDF8?style=for-the-badge)
+![ShadCN](https://img.shields.io/badge/Components-ShadCN-444?style=for-the-badge)
+![Responsive](https://img.shields.io/badge/Responsive-Design-FF6F61?style=for-the-badge)
+
+### 🔐 Security & Auth
+![JWT](https://img.shields.io/badge/Auth-JWT-FFB400?style=for-the-badge)
+![RBAC](https://img.shields.io/badge/Security-RBAC-8A2BE2?style=for-the-badge)
+![BCrypt](https://img.shields.io/badge/Password-BCrypt-0A66C2?style=for-the-badge)
+
+### 📦 DevOps & Deployment
+![Docker](https://img.shields.io/badge/Container-Docker-2496ED?style=for-the-badge)
+![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-181717?style=for-the-badge)
+![Cloud](https://img.shields.io/badge/Cloud-Ready-00A8E8?style=for-the-badge)
+
+### 🧰 Developer Tools
+![Postman](https://img.shields.io/badge/API-Postman-F76935?style=for-the-badge)
+![VSCode](https://img.shields.io/badge/Editor-VSCode-007ACC?style=for-the-badge)
+![npm](https://img.shields.io/badge/PackageManager-npm-CB0000?style=for-the-badge)
+
+### 💳 Payments & Integrations
+![Telebirr](https://img.shields.io/badge/Payments-Telebirr-F7B500?style=for-the-badge)
+![CBE-Birr](https://img.shields.io/badge/Payments-CBE%20Birr-1E90FF?style=for-the-badge)
+![Chapa](https://img.shields.io/badge/Payments-Chapa-5A67D8?style=for-the-badge)
+
+### 📦 Extras
+![Linting](https://img.shields.io/badge/Code%20Quality-ESLint-4B32C3?style=for-the-badge)
+![Formatting](https://img.shields.io/badge/Formatting-Prettier-F7B93E?style=for-the-badge)
+
 
 # 👥 Team
 
