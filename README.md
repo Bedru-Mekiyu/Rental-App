@@ -10,7 +10,7 @@ A secure, large-scale Rental Management System designed for commercial and resid
 ![Stack](https://img.shields.io/badge/Stack-MERN-3C873A?style=for-the-badge)
 ![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge)
 ![Express.js](https://img.shields.io/badge/Backend-Express.js-000000?style=for-the-badge)
-![Next.js](https://img.shields.io/badge/Frontend-Next.js-000000?style=for-the-badge)
+![React.js](https://img.shields.io/badge/Frontend-React.js-000000?style=for-the-badge)
 ![Node.js](https://img.shields.io/badge/Runtime-Node.js-339933?style=for-the-badge)
 
 ### 🎨 UI / UX
@@ -134,7 +134,7 @@ RMS is a web-based platform that digitalizes and automates end-to-end rental ope
 - JWT Authentication  
 
 ### Frontend
-- React / Next.js  
+- React 
 - TailwindCSS  
 
 ### Infrastructure
