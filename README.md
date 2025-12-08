@@ -55,28 +55,6 @@ A secure, large-scale Rental Management System designed for commercial and resid
 
 ---
 
-
-
-# 📸 Architecture Diagram
-
-> we have replace with our own GIF own architecture image  
-> Example: `/docs/architecture.png`
-
-![Architecture Diagram](https://via.placeholder.com/1200x500?text=Architecture+Diagram)
-
----
-
-# 🎥 Installation Demo (GIF)
-
-> we have replace with our own GIF  
-> Example: `/docs/install-demo.gif`
-
-![Installation GIF](https://via.placeholder.com/800x400?text=Installation+GIF)
-
-
-
----
-
 ## Table of Contents
 
 - [Overview](#overview)  
