@@ -1,4 +1,3 @@
-
 # Rental Management System (RMS)
 
 A secure, large-scale Rental Management System designed for commercial and residential properties. Built with the MERN stack (MongoDB, Express.js, React/Next.js, Node.js) and Tailwind CSS for a modern, responsive UI.
