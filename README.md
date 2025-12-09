@@ -6,24 +6,52 @@ A secure, large-scale Rental Management System designed for commercial and resid
 
 # 📛 Badges
 
+### 🖥️ Core Stack
+![Stack](https://img.shields.io/badge/Stack-MERN-3C873A?style=for-the-badge)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge)
+![Express.js](https://img.shields.io/badge/Backend-Express.js-000000?style=for-the-badge)
+![React.js](https://img.shields.io/badge/Frontend-React.js-000000?style=for-the-badge)
+![Node.js](https://img.shields.io/badge/Runtime-Node.js-339933?style=for-the-badge)
 
-# 📸 Architecture Diagram
+### 🎨 UI / UX
+![TailwindCSS](https://img.shields.io/badge/UI-TailwindCSS-38BDF8?style=for-the-badge)
+![ShadCN](https://img.shields.io/badge/Components-ShadCN-444?style=for-the-badge)
+![Responsive](https://img.shields.io/badge/Responsive-Design-FF6F61?style=for-the-badge)
 
-> we have replace with our own GIF own architecture image  
-> Example: `/docs/architecture.png`
+### 🔐 Security & Auth
+![JWT](https://img.shields.io/badge/Auth-JWT-FFB400?style=for-the-badge)
+![RBAC](https://img.shields.io/badge/Security-RBAC-8A2BE2?style=for-the-badge)
+![BCrypt](https://img.shields.io/badge/Password-BCrypt-0A66C2?style=for-the-badge)
 
-![Architecture Diagram](https://via.placeholder.com/1200x500?text=Architecture+Diagram)
+### 📦 DevOps & Deployment
+![Docker](https://img.shields.io/badge/Container-Docker-2496ED?style=for-the-badge)
+![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-181717?style=for-the-badge)
+![Cloud](https://img.shields.io/badge/Cloud-Ready-00A8E8?style=for-the-badge)
 
----
+### 🧰 Developer Tools
+![Postman](https://img.shields.io/badge/API-Postman-F76935?style=for-the-badge)
+![VSCode](https://img.shields.io/badge/Editor-VSCode-007ACC?style=for-the-badge)
+![npm](https://img.shields.io/badge/PackageManager-npm-CB0000?style=for-the-badge)
 
-# 🎥 Installation Demo (GIF)
+### 💳 Payments & Integrations
+![Telebirr](https://img.shields.io/badge/Payments-Telebirr-F7B500?style=for-the-badge)
+![CBE-Birr](https://img.shields.io/badge/Payments-CBE%20Birr-1E90FF?style=for-the-badge)
+![Chapa](https://img.shields.io/badge/Payments-Chapa-5A67D8?style=for-the-badge)
 
-> we have replace with our own GIF  
-> Example: `/docs/install-demo.gif`
+### 📦 Extras
+![Linting](https://img.shields.io/badge/Code%20Quality-ESLint-4B32C3?style=for-the-badge)
+![Formatting](https://img.shields.io/badge/Formatting-Prettier-F7B93E?style=for-the-badge)
 
-![Installation GIF](https://via.placeholder.com/800x400?text=Installation+GIF)
 
+# 👥 Team
 
+| Role | Member |
+|------|--------|
+| Advisor | Erzik |
+| Developer | Suad |
+| Developer | Sumeya |
+| Developer | Yasin |
+| Developer | Bedru Mekiyu |
 
 ---
 
@@ -106,7 +134,7 @@ RMS is a web-based platform that digitalizes and automates end-to-end rental ope
 - JWT Authentication  
 
 ### Frontend
-- React / Next.js  
+- React 
 - TailwindCSS  
 
 ### Infrastructure
@@ -250,19 +278,7 @@ http://localhost:5000
 - Payment gateway integrations  
 - Analytics dashboard  
 
----
 
-# 👥 Team
-
-| Role | Member |
-|------|--------|
-| Advisor | Erzik |
-| Developer | Suad |
-| Developer | Sumeya |
-| Developer | Yasin |
-| Developer | Bedru Mekiyu |
-
----
 
 # 📜 License
 
