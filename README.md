@@ -172,8 +172,8 @@ rms-backend/
 │  │  ├─ unit.routes.js  
 │  │  ├─ lease.routes.js  
 │  │  └─ payment.routes.js  
-│  ├─ controllers/  
-   ├─ services/  
+│  ├─ controllers/
+│  ├─ services/  
 │  └─ utils/  
 ├─ .env.example  
 ├─ package.json  
