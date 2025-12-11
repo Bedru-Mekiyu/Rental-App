@@ -1,4 +1,3 @@
-// src/models/User.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -10,6 +9,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      minlength: 2
     },
     email: {
       type: String,
@@ -17,10 +17,12 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      match: [/^\S+@\S+\.\S+$/, 'invalid email format']
     },
     phone: {
       type: String,
       trim: true,
+      match: [/^\+?[0-9]{7,15}$/, 'invalid phone number']
     },
     passwordHash: {
       type: String,
