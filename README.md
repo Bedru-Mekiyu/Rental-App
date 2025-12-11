@@ -1,6 +1,6 @@
 # Rental Management System (RMS)
 
-A secure, large-scale Rental Management System designed for commercial and residential properties. Built with the MERN stack (MongoDB, Express.js, React/Next.js, Node.js) and Tailwind CSS for a modern, responsive UI. [file:1]
+A secure, large-scale Rental Management System designed for commercial and residential properties. Built with the MERN stack (MongoDB, Express.js, React/Next.js, Node.js) and Tailwind CSS for a modern, responsive UI.
 
 ---
 
@@ -46,13 +46,13 @@ A secure, large-scale Rental Management System designed for commercial and resid
 
 ## 👥 Team
 
-| Role     | Member       |
-|----------|-------------|
-| Advisor  | Erzik       |
-| Developer | Suad       |
-| Developer | Sumeya     |
-| Developer | Yasin      |
-| Developer | Bedru Mekiyu |
+| Role      | Member        |
+|-----------|---------------|
+| Advisor   | Erzik         |
+| Developer | Suad          |
+| Developer | Sumeya        |
+| Developer | Yasin         |
+| Developer | Bedru Mekiyu  |
 
 ---
 
@@ -84,15 +84,15 @@ A secure, large-scale Rental Management System designed for commercial and resid
 
 ## 📌 Overview
 
-RMS is a web-based platform that digitalizes and automates end-to-end rental operations for property management companies handling large portfolios of commercial and residential units. It centralizes data for units, tenants, leases, payments, and financial performance to enable accurate, real-time decision making. [file:1]
+RMS is a web-based platform that digitalizes and automates end-to-end rental operations for property management companies handling large portfolios of commercial and residential units. It centralizes data for units, tenants, leases, payments, and financial performance to enable accurate, real-time decision making.
 
 ---
 
 ## 🎯 Key Goals
 
-- Replace manual/spreadsheet workflows with a single source of truth. [file:1]  
-- Support secure, role-based access for all stakeholders. [file:1]  
-- Scale to thousands of units and users with high performance and reliability. [file:1]
+- Replace manual/spreadsheet workflows with a single source of truth.  
+- Support secure, role-based access for all stakeholders.  
+- Scale to thousands of units and users with high performance and reliability.
 
 ---
 
@@ -100,63 +100,60 @@ RMS is a web-based platform that digitalizes and automates end-to-end rental ope
 
 ### 🔐 User & Role Management
 
-- Secure authentication for all user types. [file:1]  
-- Role-Based Access Control (RBAC) with clearly separated permissions. [file:1]  
-- Core roles:
+- Secure authentication for all user types.  
+- Role-Based Access Control (RBAC) with clearly separated permissions.  
+- Core roles:  
   - Administrator  
   - General Manager  
   - Property Manager  
   - Financial Staff  
-  - Tenant [file:1]
+  - Tenant
 
 ### 🏢 Unit & Property Management
 
-- Create, update, and manage rental units and their attributes. [file:1]  
-- Track unit status: vacant, occupied, under maintenance. [file:1]  
-- Attributes: floor, type, area, base price, view, amenities (parking, balcony, elevator). [file:1]
+- Create, update, and manage rental units and their attributes.  
+- Track unit status: vacant, occupied, under maintenance.  
+- Attributes: floor, type, area, base price, view, amenities.
 
 ### 📄 Lease & Tenant Management
 
-- Link tenants to units with structured lease documents. [file:1]  
-- Define lease periods, rent amounts, and tax/VAT parameters. [file:1]  
-- Future enhancements: digital signatures, immutable lease PDFs, automated lease expiry notifications. [file:1]
+- Link tenants to units with structured lease documents.  
+- Define lease periods, rent amounts, and tax/VAT parameters.  
+- Future features: digital signatures, immutable PDFs, automated lease expiry notifications.
 
 ### 💳 Payment Management
 
-- Support for manual and digital payments (Telebirr, CBE Birr, Chapa planned). [file:1]  
-- Upload and store payment receipts / bank slips. [file:1]  
-- Manual payment verification workflow and financial status tracking foundation. [file:1][file:4]
+- Supports manual and digital payments (Telebirr, CBE Birr, Chapa planned).  
+- Upload and store payment receipts / bank slips.  
+- Manual payment verification workflow and financial status tracking.
 
 ### 🧾 Audit Logging & Compliance
 
-- Centralized audit logs for logins, payments, lease changes, and other critical actions. [file:3]  
-- Designed to support regulatory and internal compliance requirements. [file:1]
+- Centralized audit logs for logins, payments, lease changes, and more.  
+- Designed to support regulatory and internal compliance requirements.
 
 ---
 
 ## 🧰 Technology Stack
 
 ### Backend
-
 - Node.js  
 - Express.js  
 - MongoDB  
 - Mongoose  
 - JWT Authentication  
-- Bcrypt for password hashing [file:1]
+- Bcrypt for password hashing
 
 ### Frontend
-
 - React / Next.js (App Router)  
-- TailwindCSS for styling  
-- ShadCN or similar component library (planned)
+- TailwindCSS  
+- ShadCN (planned)
 
 ### Infrastructure & Integrations (Planned)
-
-- MongoDB Replica Set for high availability. [file:1]  
-- Cloud storage for lease PDFs and receipt images. [file:1]  
-- SMS/Email gateways for notifications and MFA. [file:1]  
-- Payment gateway integrations: Telebirr, CBE Birr, Chapa. [file:1]
+- MongoDB Replica Set  
+- Cloud storage for documents  
+- SMS/Email gateways  
+- Payment integrations: Telebirr, CBE Birr, Chapa
 
 ---
 
@@ -164,50 +161,48 @@ RMS is a web-based platform that digitalizes and automates end-to-end rental ope
 
 ### Backend Layout
 
+```
 rms-backend/
 ├─ server.js
 ├─ src/
-│ ├─ config/
-│ │ └─ db.js
-│ ├─ models/
-│ │ ├─ User.js
-│ │ ├─ Unit.js
-│ │ ├─ Lease.js
-│ │ ├─ Payment.js
-│ │ └─ AuditLog.js
-│ ├─ controllers/
-│ │ ├─ authController.js
-│ │ ├─ userController.js
-│ │ ├─ unitController.js
-│ │ ├─ leaseController.js
-│ │ ├─ paymentController.js
-│ │ └─ financeController.js
-│ ├─ routes/
-│ │ ├─ auth.routes.js
-│ │ ├─ user.routes.js
-│ │ ├─ unit.routes.js
-│ │ ├─ lease.routes.js
-│ │ ├─ payment.routes.js
-│ │ └─ finance.routes.js
-│ ├─ middleware/
-│ │ ├─ auth.js
-│ │ ├─ errorHandler.js
-│ │ └─ security.js (planned)
-│ ├─ services/
-│ │ └─ financialSummaryService.js
-│ └─ utils/
-│ └─ auditLogger.js
+│  ├─ config/
+│  │  └─ db.js
+│  ├─ models/
+│  │  ├─ User.js
+│  │  ├─ Unit.js
+│  │  ├─ Lease.js
+│  │  ├─ Payment.js
+│  │  └─ AuditLog.js
+│  ├─ controllers/
+│  │  ├─ authController.js
+│  │  ├─ userController.js
+│  │  ├─ unitController.js
+│  │  ├─ leaseController.js
+│  │  ├─ paymentController.js
+│  │  └─ financeController.js
+│  ├─ routes/
+│  │  ├─ auth.routes.js
+│  │  ├─ user.routes.js
+│  │  ├─ unit.routes.js
+│  │  ├─ lease.routes.js
+│  │  ├─ payment.routes.js
+│  │  └─ finance.routes.js
+│  ├─ middleware/
+│  │  ├─ auth.js
+│  │  ├─ errorHandler.js
+│  │  └─ security.js
+│  ├─ services/
+│  │  └─ financialSummaryService.js
+│  └─ utils/
+│     └─ auditLogger.js
 ├─ .env.example
 ├─ package.json
 └─ README.md
-
-
-This layout separates configuration, models, controllers, routes, middleware, and services to keep the codebase modular and maintainable. [file:1]
+```
 
 ### Planned Frontend Layout
 
-### Frontend Layout (React + Tailwind)
-
+```
 rms-frontend/
 ├─ public/
 │  └─ index.html
@@ -239,137 +234,112 @@ rms-frontend/
 │  ├─ styles/
 │  │  └─ index.css
 │  ├─ App.tsx
-│  └─ main.tsx (or index.tsx)
+│  └─ main.tsx
 ├─ tailwind.config.js
 ├─ postcss.config.js
 └─ package.json
-
-
-The frontend will consume the backend REST APIs for auth, units, leases, payments, and financial summaries, using Tailwind CSS and reusable components for consistent UI.
+```
 
 ---
 
 ## 🔑 Key Backend Concepts
 
 ### Authentication & Sessions
-
-- JWT-based authentication with tokens containing user `id` and `role`. [file:2]  
-- Passwords stored only as hashed values (bcrypt). [file:1]  
-- Token expiry configured (e.g., 30 minutes) to align with session timeout requirements. [file:1][file:2]
+- JWT-based authentication containing user `id` and `role`.  
+- Passwords hashed with bcrypt.  
+- Token expiry settings aligned with session timeout requirements.
 
 ### RBAC (Role-Based Access Control)
-
-- Role embedded in JWT payload. [file:2]  
-- Route-level authorization middleware enforces allowed roles per endpoint (e.g., only PM/ADMIN can create leases or verify payments). [file:10][file:leaseController]  
-- FS is restricted to view-only financial data, while PM/ADMIN handle payment verification. [file:4][file:2]
+- Role embedded in JWT payload.  
+- Middleware for endpoint-level permissions.  
+- Financial Staff view-only; Managers/Admins handle approvals.
 
 ### Data Modeling
-
-- Document-oriented models optimized for high read/write throughput and aggregations. [file:1]  
-- Support for KPIs, rent roll, and overdue buckets via aggregation and financial summary services. [file:6]  
-- Nested structures for pricing rules, amenities, and digital signature metadata. [file:1]
+- Document schemas optimized for throughput and aggregations.  
+- Supports KPIs, rent roll, overdue buckets, financial summaries.  
+- Nested structures for pricing, amenities, metadata.
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-
 - Node.js (LTS)  
 - npm or yarn  
-- MongoDB (local or remote)  
+- MongoDB
 
 ### Clone & Install
-
-
----
-
+```bash
 git clone https://github.com/Bedru-Mekiy/Rental-App.git
 cd Rental-App
 npm install
----
-
+```
 
 ### Configure Environment
 
-Create a `.env` file based on `.env.example` and set:
+Create `.env`:
 
----
+```env
 MONGODB_URI=mongodb://127.0.0.1:27017/rms
 JWT_SECRET=your_jwt_secret_here
 PORT=5000
-
-text
----
-
+```
 
 ### Run (Development)
 
 Backend:
 
----
+```bash
 npm start
+```
 
----
+Server runs at:
 
-
-The server will run at:
-
----
+```
 http://localhost:5000
+```
 
----
+Frontend:
 
-
-Frontend (once initialized in `rms-frontend/`):
-
----
+```bash
 npm run dev
----
-
+```
 
 ---
 
 ## 🛣 Roadmap
 
-### Phase 1 – Core Structure
+### Phase 1 — Core Structure
+- MERN setup  
+- Auth & RBAC  
+- CRUD foundations
 
-- MERN stack setup (backend + frontend skeleton). [file:1]  
-- Authentication & RBAC. [file:1]  
-- Core CRUD foundations (users, units, leases). [file:1]
+### Phase 2 — Operations
+- Unit management  
+- Tenant onboarding  
+- Dashboards
 
-### Phase 2 – Operations
+### Phase 3 — Finance
+- Manual payments  
+- Financial summaries  
+- Exportable reports
 
-- Full unit management and pricing logic. [file:1]  
-- Tenant onboarding and lease workflows. [file:1]  
-- Basic dashboards for operations.
-
-### Phase 3 – Finance
-
-- Manual payment workflows and verification. [file:1][file:4]  
-- Financial summaries and rent roll basics. [file:6]  
-- Exportable reports (CSV/PDF planned). [file:1]
-
-### Phase 4 – Enterprise
-
-- Cloud file storage for leases and receipts. [file:1]  
-- Payment gateway integrations (Telebirr, CBE Birr, Chapa). [file:1]  
-- Advanced analytics dashboards and performance tuning. [file:1]
+### Phase 4 — Enterprise
+- Cloud storage  
+- Payment integrations  
+- Analytics dashboards
 
 ---
 
 ## 💡 Why This Platform
 
-- Designed specifically for high-volume rental operations (10,000+ units). [file:1]  
-- Built on modern, proven technologies for long-term maintainability. [file:1]  
-- Aligned with local payment ecosystems and regulatory expectations. [file:1]  
-- Modular architecture that lets different team members own clear backend and frontend areas.
+- Designed for high-volume rental operations (10,000+ units).  
+- Built for long-term scalability and maintainability.  
+- Integrated local payment ecosystems.  
+- Modular architecture for team collaboration.
 
 ---
 
 ## 📜 License
 
-This project uses a **custom/commercial license** based on client agreement and is intended for professional deployment and extension.
-
-
-
+This project uses a **custom/commercial license** based on client agreement.
