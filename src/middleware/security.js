@@ -11,4 +11,4 @@ const rateLimiter = rateLimit({
   },
 });
 
-module.exports = {applyHelmet, rateLimit}
+module.exports = {applyHelmet, rateLimiter}
