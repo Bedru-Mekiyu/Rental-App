@@ -15,9 +15,6 @@ const validateRegisterAdmin = [
   body("password")
     .isLength({ min: 8 })
     .withMessage("password must be at least 8 characters"),
-  body("role")
-    .equals("ADMIN")
-    .withMessage("Role must be ADMIN for register-admin route"),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty())

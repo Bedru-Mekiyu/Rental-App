@@ -5,6 +5,8 @@ const cors = require('cors');
 const connectDB = require('./src/config/db');
 const errorHandler = require('./src/middleware/errorHandler');
 
+const authRoutes = require('./src/routes/auth.routes')
+
 const app = express();
 
 // middleware
@@ -20,7 +22,7 @@ app.get('/health', (req, res) => {
 });
 
 // routes
-app.use('/api/auth', require('./src/routes/auth.routes'));
+app.use('/auth', authRoutes);
 app.use('/api/payments', require('./src/routes/payment.routes'));
 app.use('/api/finance', require('./src/routes/finance.routes'));
 app.use('/api/leases', require('./src/routes/lease.routes'));
