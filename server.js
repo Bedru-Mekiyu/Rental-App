@@ -21,6 +21,10 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.get('/test-helmet', (req, res) =>{
+  res.send('helmet headers test')
+})
+
 // routes
 app.use('/auth', authRoutes);
 app.use('/api/payments', require('./src/routes/payment.routes'));
