@@ -1,21 +1,17 @@
-// src/controllers/authController.js
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { logAction } = require('../utils/auditLogger');
 
-// POST /api/auth/register-admin  (run once or restrict heavily)
 exports.registerAdmin = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
 
-    if (!fullName || !email || !password) {
-      return res.status(400).json({ message: 'Missing required fields' });
-    }
 
-    const existing = await User.findOne({ email });
-    if (existing) {
-      return res.status(400).json({ message: 'Email already in use' });
+
+    const existingAdmin = await User.findOne({ role: 'ADMIN' });
+    if (existingAdmin) {
+      return res.status(403).json({ message: 'Admin already exists' });
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -27,6 +23,14 @@ exports.registerAdmin = async (req, res) => {
       role: 'ADMIN',
       status: 'ACTIVE',
     });
+
+    await logAction({
+      userId: admin._id,
+      action: 'REGISTER_ADMIN',
+      entityType: 'USER',
+      entityId: admin._id,
+      details: {email: admin.email, role: admin.role},
+    })
 
     return res.status(201).json({
       id: admin._id,
