@@ -1,11 +1,11 @@
 // server.js
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const connectDB = require('./src/config/db');
-const errorHandler = require('./src/middleware/errorHandler');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const connectDB = require("./src/config/db");
+const errorHandler = require("./src/middleware/errorHandler");
 
-const authRoutes = require('./src/routes/auth.routes')
+const authRoutes = require("./src/routes/auth.routes");
 
 const app = express();
 
@@ -17,19 +17,20 @@ app.use(express.json());
 connectDB();
 
 // health
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
-app.get('/test-helmet', (req, res) =>{
-  res.send('helmet headers test')
-})
+app.get("/test-helmet", (req, res) => {
+  res.send("helmet headers test");
+});
 
 // routes
-app.use('/auth', authRoutes);
-app.use('/api/payments', require('./src/routes/payment.routes'));
-app.use('/api/finance', require('./src/routes/finance.routes'));
-app.use('/api/leases', require('./src/routes/lease.routes'));
+app.use("/auth", authRoutes);
+app.use("/api/payments", require("./src/routes/payment.routes"));
+app.use("/api/finance", require("./src/routes/finance.routes"));
+app.use("/api/leases", require("./src/routes/lease.routes"));
+app.use("/api/units", require("./src/routes/unit.routes"));
 
 // error handler (after routes)
 app.use(errorHandler);

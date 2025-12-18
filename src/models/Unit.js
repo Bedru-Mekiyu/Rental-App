@@ -1,5 +1,4 @@
-// src/models/Unit.js
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const unitSchema = new mongoose.Schema(
   {
@@ -9,44 +8,57 @@ const unitSchema = new mongoose.Schema(
       trim: true,
     },
     propertyId: {
-      type: String, // later you can change to ObjectId if you add Property model
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Property",
       required: true,
     },
     floor: {
       type: Number,
       required: true,
+      min: 0,
     },
     type: {
-      type: String, // e.g. "STUDIO", "1BR"
+      type: String,
       required: true,
+      trim: true,
     },
     areaSqm: {
       type: Number,
       required: true,
+      min: 1,
     },
     basePriceEtb: {
       type: Number,
       required: true,
+      min: 0,
     },
     status: {
       type: String,
-      enum: ['VACANT', 'OCCUPIED', 'UNDER_MAINTENANCE'],
-      default: 'VACANT',
+      enum: ["VACANT", "OCCUPIED", "UNDER_MAINTENANCE"],
+      default: "VACANT",
+      index: true,
     },
     amenitiesConfig: {
       type: [String],
       default: [],
+      index: true,
     },
     viewAttributes: {
       type: [String],
       default: [],
+      index: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
     },
   },
   { timestamps: true }
 );
 
 unitSchema.index({ unitNumber: 1, propertyId: 1 }, { unique: true });
-unitSchema.index({ status: 1 });
-unitSchema.index({ status: 1, floor: 1 });
+unitSchema.index({ floor: 1 });
+unitSchema.index({ type: 1 });
 
-module.exports = mongoose.model('Unit', unitSchema);
+module.exports = mongoose.model("Unit", unitSchema);
