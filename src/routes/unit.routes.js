@@ -1,15 +1,16 @@
-const express = require("express");
-const router = express.Router();
+// src/routes/unit.routes.js (ESM)
 
-const {
+import { Router } from "express";
+import {
   createUnit,
   getUnits,
   getUnitById,
   updateUnit,
   softDeleteUnit,
-} = require("../controllers/unitController");
+} from "../controllers/unitController.js";
+import { auth } from "../middleware/auth.js";
 
-const auth = require("../middleware/auth");
+const router = Router();
 
 // Allowed roles for restricted operations
 const ADMIN_PM = ["ADMIN", "PM"];
@@ -17,7 +18,7 @@ const ADMIN_PM = ["ADMIN", "PM"];
 // CREATE UNIT
 router.post("/", auth(ADMIN_PM), createUnit);
 
-// GET ALL UNITS (public or adjust if needed)
+// GET ALL UNITS
 router.get("/", auth(), getUnits);
 
 // GET ONE UNIT
@@ -29,4 +30,4 @@ router.put("/:id", auth(ADMIN_PM), updateUnit);
 // SOFT DELETE UNIT
 router.delete("/:id", auth(ADMIN_PM), softDeleteUnit);
 
-module.exports = router;
+export default router;

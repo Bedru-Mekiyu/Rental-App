@@ -1,34 +1,24 @@
-// src/routes/payment.routes.js
+// src/routes/payment.routes.js (ESM)
 
-const express = require('express');
-const router = express.Router();
-const auth = require('../middleware/auth');
-const paymentController = require('../controllers/paymentController');
+import { Router } from "express";
+import { auth } from "../middleware/auth.js";
+import {
+  createPayment,
+  updatePaymentStatus,
+  listByLease,
+  listByTenant,
+} from "../controllers/paymentController.js";
 
-const ALLOWED_ROLES = ['PM', 'ADMIN'];
+const router = Router();
 
-router.post(
-  '/',
-  auth(ALLOWED_ROLES),
-  paymentController.createPayment
-);
+const ALLOWED_ROLES = ["PM", "ADMIN"];
 
-router.patch(
-  '/:id/status',
-  auth(ALLOWED_ROLES),
-  paymentController.updatePaymentStatus
-);
+router.post("/", auth(ALLOWED_ROLES), createPayment);
 
-router.get(
-  '/by-lease/:leaseId',
-  auth(ALLOWED_ROLES),
-  paymentController.listByLease
-);
+router.patch("/:id/status", auth(ALLOWED_ROLES), updatePaymentStatus);
 
-router.get(
-  '/by-tenant/:tenantId',
-  auth(ALLOWED_ROLES),
-  paymentController.listByTenant
-);
+router.get("/by-lease/:leaseId", auth(ALLOWED_ROLES), listByLease);
 
-module.exports = router;
+router.get("/by-tenant/:tenantId", auth(ALLOWED_ROLES), listByTenant);
+
+export default router;

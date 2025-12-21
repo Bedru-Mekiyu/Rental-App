@@ -1,13 +1,17 @@
-const jwt = require('jsonwebtoken');
+// src/middleware/auth.js (ESM)
 
-const auth = (allowedRoles = []) => {
+import jwt from "jsonwebtoken";
+
+export function auth(allowedRoles = []) {
   return (req, res, next) => {
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'Unauthorized: no token provided' });
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: no token provided" });
     }
 
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(" ")[1];
 
     try {
       const payload = jwt.verify(token, process.env.JWT_SECRET);
@@ -17,15 +21,17 @@ const auth = (allowedRoles = []) => {
       };
 
       if (allowedRoles.length > 0 && !allowedRoles.includes(req.user.role)) {
-        return res.status(403).json({ message: 'Forbidden: insufficient permissions' });
+        return res
+          .status(403)
+          .json({ message: "Forbidden: insufficient permissions" });
       }
 
       next();
     } catch (err) {
-      console.error('auth middleware error:', err.message);
-      return res.status(401).json({ message: 'unauthorized: Invalid or expired token' });
+      console.error("auth middleware error:", err.message);
+      return res
+        .status(401)
+        .json({ message: "unauthorized: Invalid or expired token" });
     }
   };
 }
-
-module.exports = auth;

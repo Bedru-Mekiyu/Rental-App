@@ -179,6 +179,40 @@ rms-backend/
 ├─ package.json  
 └─ README.md
 
+---
+
+## 🗂 Project Structure (Frontend)
+
+frontend/
+├─ package.json
+├─ vite.config.ts
+├─ tailwind.config.cjs
+├─ postcss.config.cjs
+├─ index.html
+├─ tsconfig.json
+├─ src/
+│  ├─ main.tsx
+│  ├─ App.tsx
+│  ├─ routes/AppRoutes.tsx
+│  ├─ layouts/
+│  │  ├─ DashboardLayout.tsx
+│  │  └─ AuthLayout.tsx
+│  ├─ features/
+│  │  ├─ auth/
+│  │  ├─ users/
+│  │  ├─ units/
+│  │  ├─ leases/
+│  │  ├─ payments/
+│  │  ├─ finance/
+│  │  └─ profile/
+│  ├─ pages/
+│  ├─ components/
+│  ├─ lib/
+│  ├─ hooks/
+│  ├─ assets/
+│  └─ styles/index.css
+
+---
 
 ## Key Backend Concepts
 

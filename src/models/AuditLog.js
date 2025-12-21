@@ -1,9 +1,11 @@
-const mongoose = require('mongoose');
+// src/models/AuditLog.js (ESM)
+
+import mongoose from "mongoose";
 
 const auditLogSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
   },
   action: {
     type: String,
@@ -27,4 +29,6 @@ const auditLogSchema = new mongoose.Schema({
 auditLogSchema.index({ userId: 1, timestamp: -1 });
 auditLogSchema.index({ entityType: 1, entityId: 1 });
 
-module.exports = mongoose.model('AuditLog', auditLogSchema);
+const AuditLog = mongoose.model("AuditLog", auditLogSchema);
+
+export default AuditLog;

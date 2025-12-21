@@ -1,15 +1,26 @@
-// server.js
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const connectDB = require("./src/config/db");
-const errorHandler = require("./src/middleware/errorHandler");
+// server.js (ES modules)
 
-const authRoutes = require("./src/routes/auth.routes");
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+
+import { connectDB } from "./src/config/db.js";
+import errorHandler from "./src/middleware/errorHandler.js";
+import authRoutes from "./src/routes/auth.routes.js";
+import userRoutes from "./src/routes/user.routes.js";       // <-- added
+import paymentRoutes from "./src/routes/payment.routes.js";
+import financeRoutes from "./src/routes/finance.routes.js";
+import leaseRoutes from "./src/routes/lease.routes.js";
+import unitRoutes from "./src/routes/unit.routes.js";
+import { applyHelmet, rateLimiter } from "./src/middleware/security.js";
 
 const app = express();
 
-// middleware
+// global security middleware
+app.use(applyHelmet);
+app.use(rateLimiter);
+
+// common middleware
 app.use(cors());
 app.use(express.json());
 
@@ -26,11 +37,12 @@ app.get("/test-helmet", (req, res) => {
 });
 
 // routes
-app.use("/auth", authRoutes);
-app.use("/api/payments", require("./src/routes/payment.routes"));
-app.use("/api/finance", require("./src/routes/finance.routes"));
-app.use("/api/leases", require("./src/routes/lease.routes"));
-app.use("/api/units", require("./src/routes/unit.routes"));
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);          // <-- added
+app.use("/api/payments", paymentRoutes);
+app.use("/api/finance", financeRoutes);
+app.use("/api/leases", leaseRoutes);
+app.use("/api/units", unitRoutes);
 
 // error handler (after routes)
 app.use(errorHandler);

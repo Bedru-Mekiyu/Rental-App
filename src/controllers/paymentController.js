@@ -1,15 +1,15 @@
-// src/controllers/paymentController.js
+// src/controllers/paymentController.js (ESM)
 
-const Payment = require('../models/Payment');
-const Lease = require('../models/Lease');
-const { logAction } = require('../utils/auditLogger');
+import Payment from "../models/Payment.js";
+import Lease from "../models/Lease.js";
+import { logAction } from "../utils/auditLogger.js";
 
 /**
  * POST /api/payments
  * Roles: FS, PM, ADMIN
  * Create a manual payment record (initially PENDING or VERIFIED)
  */
-exports.createPayment = async (req, res) => {
+export async function createPayment(req, res) {
   try {
     const {
       leaseId,
@@ -22,12 +22,12 @@ exports.createPayment = async (req, res) => {
     } = req.body;
 
     if (!leaseId || !amountEtb || !transactionDate || !paymentMethod) {
-      return res.status(400).json({ message: 'Missing required fields' });
+      return res.status(400).json({ message: "Missing required fields" });
     }
 
     const lease = await Lease.findById(leaseId);
     if (!lease) {
-      return res.status(404).json({ message: 'Lease not found' });
+      return res.status(404).json({ message: "Lease not found" });
     }
 
     const payment = await Payment.create({
@@ -37,13 +37,13 @@ exports.createPayment = async (req, res) => {
       paymentMethod,
       externalTransactionId,
       receiptUrl,
-      status: status || 'PENDING',
+      status: status || "PENDING",
     });
 
     await logAction({
       userId: req.user.id,
-      action: 'PAYMENT_CREATE',
-      entityType: 'PAYMENT',
+      action: "PAYMENT_CREATE",
+      entityType: "PAYMENT",
       entityId: payment._id,
       details: {
         leaseId,
@@ -55,27 +55,27 @@ exports.createPayment = async (req, res) => {
 
     return res.status(201).json(payment);
   } catch (err) {
-    console.error('createPayment error:', err);
-    return res.status(500).json({ message: 'Failed to create payment' });
+    console.error("createPayment error:", err);
+    return res.status(500).json({ message: "Failed to create payment" });
   }
-};
+}
 
 /**
  * PATCH /api/payments/:id/status
  * Roles: FS, PM, ADMIN
  * Update payment status (PENDING, VERIFIED, REJECTED)
  */
-exports.updatePaymentStatus = async (req, res) => {
+export async function updatePaymentStatus(req, res) {
   try {
     const { status } = req.body;
 
-    if (!['PENDING', 'VERIFIED', 'REJECTED'].includes(status)) {
-      return res.status(400).json({ message: 'Invalid status value' });
+    if (!["PENDING", "VERIFIED", "REJECTED"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
     }
 
     const payment = await Payment.findById(req.params.id);
     if (!payment) {
-      return res.status(404).json({ message: 'Payment not found' });
+      return res.status(404).json({ message: "Payment not found" });
     }
 
     payment.status = status;
@@ -83,25 +83,27 @@ exports.updatePaymentStatus = async (req, res) => {
 
     await logAction({
       userId: req.user.id,
-      action: 'PAYMENT_STATUS_UPDATE',
-      entityType: 'PAYMENT',
+      action: "PAYMENT_STATUS_UPDATE",
+      entityType: "PAYMENT",
       entityId: payment._id,
       details: { status },
     });
 
     return res.json(payment);
   } catch (err) {
-    console.error('updatePaymentStatus error:', err);
-    return res.status(500).json({ message: 'Failed to update payment status' });
+    console.error("updatePaymentStatus error:", err);
+    return res
+      .status(500)
+      .json({ message: "Failed to update payment status" });
   }
-};
+}
 
 /**
  * GET /api/payments/by-lease/:leaseId
  * Roles: FS, PM, ADMIN
  * List payments for a specific lease
  */
-exports.listByLease = async (req, res) => {
+export async function listByLease(req, res) {
   try {
     const { leaseId } = req.params;
 
@@ -111,19 +113,19 @@ exports.listByLease = async (req, res) => {
 
     return res.json(payments);
   } catch (err) {
-    console.error('listByLease error:', err);
+    console.error("listByLease error:", err);
     return res
       .status(500)
-      .json({ message: 'Failed to fetch payments by lease' });
+      .json({ message: "Failed to fetch payments by lease" });
   }
-};
+}
 
 /**
  * GET /api/payments/by-tenant/:tenantId
  * Roles: FS, PM, ADMIN
  * List payments for all leases of a specific tenant
  */
-exports.listByTenant = async (req, res) => {
+export async function listByTenant(req, res) {
   try {
     const { tenantId } = req.params;
 
@@ -134,15 +136,17 @@ exports.listByTenant = async (req, res) => {
       return res.json([]);
     }
 
-    const payments = await Payment.find({ leaseId: { $in: leaseIds } }).sort({
+    const payments = await Payment.find({
+      leaseId: { $in: leaseIds },
+    }).sort({
       transactionDate: -1,
     });
 
     return res.json(payments);
   } catch (err) {
-    console.error('listByTenant error:', err);
+    console.error("listByTenant error:", err);
     return res
       .status(500)
-      .json({ message: 'Failed to fetch payments by tenant' });
+      .json({ message: "Failed to fetch payments by tenant" });
   }
-};
+}

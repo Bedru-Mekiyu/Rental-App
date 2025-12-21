@@ -1,12 +1,14 @@
-const mongoose = require("mongoose");
+// src/config/db.js (ESM)
 
-const connectDB = async () => {
+import mongoose from "mongoose";
+
+export async function connectDB() {
   const MONGODB_URI =
-    process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/rms";
+    process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/Rental";
 
   if (!MONGODB_URI) {
     console.error("MONGODB_URI missed in environment variables");
-    process.exit(1)
+    process.exit(1);
   }
 
   try {
@@ -24,6 +26,4 @@ const connectDB = async () => {
     console.error("MongoDB connection error:", err);
     process.exit(1);
   }
-};
-
-module.exports = connectDB;
+}

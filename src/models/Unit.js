@@ -1,4 +1,6 @@
-const mongoose = require("mongoose");
+// src/models/Unit.js (ESM)
+
+import mongoose from "mongoose";
 
 const unitSchema = new mongoose.Schema(
   {
@@ -61,4 +63,6 @@ unitSchema.index({ unitNumber: 1, propertyId: 1 }, { unique: true });
 unitSchema.index({ floor: 1 });
 unitSchema.index({ type: 1 });
 
-module.exports = mongoose.model("Unit", unitSchema);
+const Unit = mongoose.model("Unit", unitSchema);
+
+export default Unit;

@@ -1,21 +1,22 @@
-// src/models/Lease.js
-const mongoose = require('mongoose');
+// src/models/Lease.js (ESM)
+
+import mongoose from "mongoose";
 
 const leaseSchema = new mongoose.Schema(
   {
     unitId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Unit',
+      ref: "Unit",
       required: true,
     },
     tenantId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     managerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     startDate: {
@@ -36,8 +37,8 @@ const leaseSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['PENDING', 'ACTIVE', 'ENDED'],
-      default: 'PENDING',
+      enum: ["PENDING", "ACTIVE", "ENDED"],
+      default: "PENDING",
     },
     digitalSignatureMeta: {
       signatureHash: String,
@@ -55,4 +56,6 @@ leaseSchema.index({ unitId: 1 });
 leaseSchema.index({ tenantId: 1, status: 1 });
 leaseSchema.index({ endDate: 1 });
 
-module.exports = mongoose.model('Lease', leaseSchema);
+const Lease = mongoose.model("Lease", leaseSchema);
+
+export default Lease;

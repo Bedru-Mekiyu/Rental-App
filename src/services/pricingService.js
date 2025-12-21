@@ -1,3 +1,5 @@
+// src/services/pricingService.js (ESM)
+
 const calculateFloorMultiplier = (floor) => {
   if (floor <= 1) return 1.2; // +20% premium
   if (floor <= 5) return 1.0; // normal
@@ -15,7 +17,7 @@ const calculateViewBonus = (views = []) => {
   return 1 + views.length * 0.03;
 };
 
-exports.calculateUnitPrice = (unit) => {
+export function calculateUnitPrice(unit) {
   const {
     basePriceEtb,
     floor,
@@ -37,4 +39,4 @@ exports.calculateUnitPrice = (unit) => {
     basePriceEtb * floorMultiplier * amenityMultiplier * viewMultiplier;
 
   return Math.round(finalPrice);
-};
+}

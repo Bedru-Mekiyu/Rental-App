@@ -1,13 +1,16 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
-const { logAction } = require("../utils/auditLogger");
+// src/controllers/authController.js (ESM)
 
-exports.registerAdmin = async (req, res) => {
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { User } from "../models/User.js";
+import { logAction } from "../utils/auditLogger.js";
+
+export async function registerAdmin(req, res) {
   try {
     const { fullName, email, password } = req.body;
 
     const existingAdmin = await User.findOne({ role: "ADMIN" });
+    // const existingAdmin = await User.findOne({ email });
     if (existingAdmin) {
       return res.status(403).json({ message: "Admin already exists" });
     }
@@ -40,16 +43,21 @@ exports.registerAdmin = async (req, res) => {
     console.error("registerAdmin error:", err);
     return res.status(500).json({ message: "Failed to register admin" });
   }
-};
+}
 
 // POST /api/auth/login
-exports.login = async (req, res) => {
+export async function login(req, res) {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    // block non‑active accounts
+    if (user.status !== "ACTIVE") {
+      return res.status(403).json({ message: "Account not active" });
     }
 
     const isMatch = await user.comparePassword(password);
@@ -59,7 +67,7 @@ exports.login = async (req, res) => {
 
     const payload = { id: user._id, role: user.role };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "30m", // matches 30-minute inactivity requirement roughly
+      expiresIn: "30m", // ~30 minutes
     });
 
     await logAction({
@@ -83,12 +91,14 @@ exports.login = async (req, res) => {
     console.error("login error:", err);
     return res.status(500).json({ message: "Failed to login" });
   }
-};
-exports.logout = async (req, res) => {
+}
+
+export async function logout(req, res) {
   try {
+    // stateless JWT: client just discards token
     return res.json({ message: "Logout successful" });
   } catch (err) {
     console.error("logout error:", err);
     return res.status(500).json({ message: "Failed to logout" });
   }
-};
+}

@@ -1,6 +1,8 @@
-const AuditLog = require('../models/AuditLog');
+// src/utils/auditLogger.js (ESM)
 
-async function logAction({ userId, action, entityType, entityId, details }) {
+import AuditLog from "../models/AuditLog.js";
+
+export async function logAction({ userId, action, entityType, entityId, details }) {
   try {
     await AuditLog.create({
       userId,
@@ -11,8 +13,6 @@ async function logAction({ userId, action, entityType, entityId, details }) {
     });
   } catch (err) {
     // Do not break main request if logging fails
-    console.error('Audit log error:', err.message);
+    console.error("Audit log error:", err.message);
   }
 }
-
-module.exports = { logAction };

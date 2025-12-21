@@ -1,17 +1,26 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from "express";
 
-const authController = require('../controllers/authController');
-const {rateLimiter, applyHelmet} = require('../middleware/security')
-const {validateLogin, validateRegisterAdmin} = require('../middleware/validators')
+import { login, registerAdmin, logout } from "../controllers/authController.js";
+import { auth } from "../middleware/auth.js";
+import {
+  validateLogin,
+  validateRegisterAdmin,
+} from "../middleware/validators.js";
+import {
+  rateLimiter,
+  applyHelmet,
+} from "../middleware/security.js";
+
+const router = Router();
 
 // security
-router.use(applyHelmet)
-router.use(rateLimiter)
+router.use(applyHelmet);
+router.use(rateLimiter);
 
-// Public routes 
-router.post('/register-admin', validateRegisterAdmin, authController.registerAdmin);
-router.post('/login', validateLogin, authController.login);
-router.post('/logout', authController.logout);
+router.post("/register-admin", validateRegisterAdmin, registerAdmin);
+router.post("/login", validateLogin, login);
 
-module.exports = router;
+// optional: protect logout so only logged‑in users call it
+router.post("/logout", auth(), logout);
+
+export default router;

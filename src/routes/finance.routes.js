@@ -1,17 +1,18 @@
-// src/routes/finance.routes.js
+// src/routes/finance.routes.js (ESM)
 
-const express = require('express');
-const router = express.Router();
-const auth = require('../middleware/auth');
-const financeController = require('../controllers/financeController');
+import { Router } from "express";
+import { auth } from "../middleware/auth.js";
+import { getLeaseSummary } from "../controllers/financeController.js";
+
+const router = Router();
 
 // FS, PM, GM, ADMIN can view summaries
-const ALLOWED_ROLES = ['FS', 'PM', 'GM', 'ADMIN'];
+const ALLOWED_ROLES = ["FS", "PM", "GM", "ADMIN"];
 
 router.get(
-  '/lease/:leaseId/summary',
+  "/lease/:leaseId/summary",
   auth(ALLOWED_ROLES),
-  financeController.getLeaseSummary
+  getLeaseSummary
 );
 
-module.exports = router;
+export default router;

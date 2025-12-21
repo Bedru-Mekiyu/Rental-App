@@ -1,7 +1,7 @@
-// src/services/financialSummaryService.js
+// src/services/financialSummaryService.js (ESM)
 
-const Payment = require('../models/Payment');
-const Lease = require('../models/Lease');
+import Payment from "../models/Payment.js";
+import Lease from "../models/Lease.js";
 
 /**
  * Compute simple financial summary for a lease:
@@ -10,15 +10,15 @@ const Lease = require('../models/Lease');
  * - balance
  * - overdue bucket (CURRENT, 0-30, 31-60, 61-90, 90+)
  */
-async function getLeaseFinancialSummary(leaseId) {
+export async function getLeaseFinancialSummary(leaseId) {
   const lease = await Lease.findById(leaseId);
   if (!lease) {
-    throw new Error('Lease not found');
+    throw new Error("Lease not found");
   }
 
   const verifiedPayments = await Payment.find({
     leaseId,
-    status: 'VERIFIED',
+    status: "VERIFIED",
   });
 
   const totalPaid = verifiedPayments.reduce(
@@ -33,17 +33,17 @@ async function getLeaseFinancialSummary(leaseId) {
   const now = new Date();
   const dueDate = lease.endDate; // placeholder; later you can use invoice due dates
   let overdueDays = 0;
-  let bucket = 'CURRENT';
+  let bucket = "CURRENT";
 
   if (balance > 0 && dueDate && dueDate < now) {
     overdueDays = Math.floor(
       (now.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24)
     );
 
-    if (overdueDays <= 30) bucket = '0-30';
-    else if (overdueDays <= 60) bucket = '31-60';
-    else if (overdueDays <= 90) bucket = '61-90';
-    else bucket = '90+';
+    if (overdueDays <= 30) bucket = "0-30";
+    else if (overdueDays <= 60) bucket = "31-60";
+    else if (overdueDays <= 90) bucket = "61-90";
+    else bucket = "90+";
   }
 
   return {
@@ -55,5 +55,3 @@ async function getLeaseFinancialSummary(leaseId) {
     bucket,
   };
 }
-
-module.exports = { getLeaseFinancialSummary };

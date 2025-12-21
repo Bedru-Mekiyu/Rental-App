@@ -1,40 +1,34 @@
-// src/routes/lease.routes.js
+// src/routes/lease.routes.js (ESM)
 
-const express = require('express');
-const router = express.Router();
-const auth = require('../middleware/auth');
-const leaseController = require('../controllers/leaseController');
+import { Router } from "express";
+import { auth } from "../middleware/auth.js";
+import {
+  createLease,
+  getLeaseById,
+  listLeasesByTenant,
+  endLease,
+  listAllLeases,
+} from "../controllers/leaseController.js";
+
+const router = Router();
 
 // adjust allowed roles if needed
-const MANAGE_ROLES = ['PM', 'ADMIN'];
-const VIEW_ROLES = ['PM', 'ADMIN', 'FS', 'GM', 'TENANT'];
+const MANAGE_ROLES = ["PM", "ADMIN"];
+const VIEW_ROLES = ["PM", "ADMIN", "FS", "GM", "TENANT"];
+
+// List all leases (no TENANT here)
+router.get("/", auth(["PM", "ADMIN", "FS", "GM"]), listAllLeases);
 
 // Create lease
-router.post(
-  '/',
-  auth(MANAGE_ROLES),
-  leaseController.createLease
-);
-
-// Get lease by id
-router.get(
-  '/:id',
-  auth(VIEW_ROLES),
-  leaseController.getLeaseById
-);
+router.post("/", auth(MANAGE_ROLES), createLease);
 
 // List leases by tenant
-router.get(
-  '/by-tenant/:tenantId',
-  auth(VIEW_ROLES),
-  leaseController.listLeasesByTenant
-);
+router.get("/by-tenant/:tenantId", auth(VIEW_ROLES), listLeasesByTenant);
+
+// Get lease by id
+router.get("/:id", auth(VIEW_ROLES), getLeaseById);
 
 // End lease
-router.patch(
-  '/:id/end',
-  auth(MANAGE_ROLES),
-  leaseController.endLease
-);
+router.patch("/:id/end", auth(MANAGE_ROLES), endLease);
 
-module.exports = router;
+export default router;

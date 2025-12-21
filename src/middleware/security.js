@@ -1,8 +1,11 @@
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
+// src/middleware/security.js (ESM)
 
-const applyHelmet = helmet();
-const rateLimiter = rateLimit({
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+
+export const applyHelmet = helmet();
+
+export const rateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   message: {
@@ -10,5 +13,3 @@ const rateLimiter = rateLimit({
     message: "too many requests from this IP. please try again later",
   },
 });
-
-module.exports = {applyHelmet, rateLimiter}

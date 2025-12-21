@@ -1,10 +1,12 @@
-const mongoose = require('mongoose');
+// src/models/Payment.js (ESM)
+
+import mongoose from "mongoose";
 
 const paymentSchema = new mongoose.Schema(
   {
     leaseId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Lease',
+      ref: "Lease",
       required: true,
     },
     transactionDate: {
@@ -22,8 +24,8 @@ const paymentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['PENDING', 'VERIFIED', 'REJECTED'],
-      default: 'PENDING',
+      enum: ["PENDING", "VERIFIED", "REJECTED"],
+      default: "PENDING",
     },
     externalTransactionId: {
       type: String,
@@ -41,4 +43,6 @@ const paymentSchema = new mongoose.Schema(
 paymentSchema.index({ leaseId: 1 });
 paymentSchema.index({ status: 1, transactionDate: -1 });
 
-module.exports = mongoose.model('Payment', paymentSchema);
+const Payment = mongoose.model("Payment", paymentSchema);
+
+export default Payment;

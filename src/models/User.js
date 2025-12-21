@@ -1,5 +1,7 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+// src/models/User.js (ESM)
+
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const USER_ROLES = ["ADMIN", "PM", "GM", "FS", "TENANT"];
 
@@ -58,5 +60,6 @@ userSchema.methods.comparePassword = function (plain) {
   return bcrypt.compare(plain, this.passwordHash);
 };
 
-module.exports = mongoose.model("User", userSchema);
-module.exports.USER_ROLES = USER_ROLES;
+const User = mongoose.model("User", userSchema);
+
+export { User, USER_ROLES };
