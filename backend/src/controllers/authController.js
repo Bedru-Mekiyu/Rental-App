@@ -9,8 +9,8 @@ export async function registerAdmin(req, res) {
   try {
     const { fullName, email, password } = req.body;
 
-    const existingAdmin = await User.findOne({ role: "ADMIN" });
-    // const existingAdmin = await User.findOne({ email });
+    // const existingAdmin = await User.findOne({ role: "ADMIN" });
+    const existingAdmin = await User.findOne({ email });
     if (existingAdmin) {
       return res.status(403).json({ message: "Admin already exists" });
     }
