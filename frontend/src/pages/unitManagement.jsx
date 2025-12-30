@@ -76,6 +76,7 @@ export default function UnitManagement() {
 
   return (
     <div>
+      {/* header */}
       <div>
         <h1 className="text-2xl font-semibold text-gray-900">
           Unit Management - Pricing Rules
@@ -85,6 +86,21 @@ export default function UnitManagement() {
           price, floor-based multipliers and amenity bonuses.
         </p>
       </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* left */}
+        <div className="lg:col-span-2 space-y-6"></div>
+
+        {/* right */}
+        <div></div>
+      </div>
     </div>
   );
 }
+
+const Card = ({ title, children }) => (
+  <div className="p-6 bg-white rounded-xl shadow-sm">
+    <h2 className="font-semibold text-gray-800 mb-4">{title}</h2>
+    {children}
+  </div>
+);
