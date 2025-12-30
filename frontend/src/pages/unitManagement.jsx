@@ -33,12 +33,13 @@ const calculateRentPreview = ({ baseRent, unit }) => {
   };
 };
 
-export default function unitManagement() {
+export default function UnitManagement() {
+  const [baseRent, setBaseRent] = useState(8000);
   const [units, setUnits] = useState([]);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
 
   useEffect(() => {
-    const mockUnit = [
+    const mockUnits = [
       {
         id: 1,
         name: "Unit 101 (5th floor)",
@@ -48,7 +49,42 @@ export default function unitManagement() {
       },
     ];
 
-    setUnits(mockUnit);
-    setSelectedUnitId(mockUnit[0].id);
+    setUnits(mockUnits);
+    setSelectedUnitId(mockUnits[0].id);
   }, []);
+
+  const selectedUnit = units.find((unit) => unit.id === selectedUnitId);
+
+  const rent = useMemo(() => {
+    if (!selectedUnit) return null;
+    return calculateRentPreview({
+      baseRent,
+      unit: selectedUnit,
+    });
+  }, [baseRent, selectedUnit]);
+
+  if (!selectedUnit || !rent) {
+    return <div className="text-gray-600">Loading pricing rules...</div>;
+  }
+
+  const floorMultipliers = [
+    { minFloor: 0, maxFloor: 1, multiplier: 1.2 },
+    { minFloor: 2, maxFloor: 5, multiplier: 1.0 },
+    { minFloor: 6, maxFloor: 10, multiplier: 0.95 },
+    { minFloor: 11, maxFloor: 25, multiplier: 0.9 },
+  ];
+
+  return (
+    <div>
+      <div>
+        <h1 className="text-2xl font-semibold text-gray-900">
+          Unit Management - Pricing Rules
+        </h1>
+        <p className="text-gray-600 mt-2 max-w-3xl">
+          Configure detailed pricing rules for rental units including base
+          price, floor-based multipliers and amenity bonuses.
+        </p>
+      </div>
+    </div>
+  );
 }
