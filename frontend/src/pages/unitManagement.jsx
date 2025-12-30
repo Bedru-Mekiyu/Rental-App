@@ -130,7 +130,58 @@ export default function UnitManagement() {
         {/* right */}
         <div>
           <Card title="Rent Preview Calculator">
-            <p></p>
+            <p className="mb-4 text-sm text-gray-600">
+              See the estimated rent based on your configured rules.
+            </p>
+            <div className="mb-4">
+              <label className="mb-1 text-xs font-medium block text-gray-500  ">
+                Select unit for preview
+              </label>
+              <select
+                value={selectedUnitId}
+                onChange={(e) => selectedUnitId(Number(e.target.value))}
+                className="border rounded-lg text-sm w-full px-3 py-2"
+              >
+                {units.map((unit) => (
+                  <option key={unit.id} value={unit.id}>
+                    {unit.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-4 text-sm">
+              <Row label="Base Rent" value={`${rent.baseRent} ETB`} />
+              <Row
+                label="Floor Adjustment"
+                value={`${rent.floorAdjustment} ETB`}
+              />
+              <Row
+                label="Amenity Adjustments"
+                value={`${rent.amenityAdjustment} ETB`}
+              />
+
+              <hr />
+              <div className="font-semibold text-lg text-indigo-600 flex justify-between  ">
+                <span>Total Estimated Rent</span>
+                <span>{rent.total} ETB</span>
+              </div>
+
+              <div className="pt-4 text-xs text-gray-600">
+                <p>
+                  <b>Unit:</b> {selectedUnit.name}
+                </p>
+                <p>
+                  <b>Floor:</b> {selectedUnit.floor}
+                </p>
+                <p>
+                  <b>Amenities:</b> {selectedUnit.amenitiesConfig.join(", ")}
+                </p>
+                <p>
+                  <b>Views:</b> {selectedUnit.viewAttributes.join(",")}
+                </p>
+              </div>
+            </div>
           </Card>
         </div>
       </div>
@@ -142,5 +193,12 @@ const Card = ({ title, children }) => (
   <div className="p-6 bg-white rounded-xl shadow-sm">
     <h2 className="font-semibold text-gray-800 mb-4">{title}</h2>
     {children}
+  </div>
+);
+
+const Row = ({ label, value }) => (
+  <div className="flex justify-between">
+    <span className="text-gray-600 ">{label}</span>
+    <span className="font-medium ">{value}</span>
   </div>
 );
