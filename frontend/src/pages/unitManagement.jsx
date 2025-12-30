@@ -77,7 +77,7 @@ export default function UnitManagement() {
   return (
     <div>
       {/* header */}
-      <div>
+      <div className="mt-5">
         <h1 className="text-2xl font-semibold text-gray-900">
           Unit Management - Pricing Rules
         </h1>
@@ -87,12 +87,52 @@ export default function UnitManagement() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
         {/* left */}
-        <div className="lg:col-span-2 space-y-6"></div>
+        <div className="lg:col-span-2 space-y-6">
+          <Card title="Base Price Configuration">
+            <label className="text-sm text-gray-600 ">
+              Base Monthly Rent(ETB)
+            </label>
+            <input
+              type="number "
+              value={baseRent}
+              onChange={(e) => setBaseRent(+e.target.value)}
+              className="mt-2 w-full border rounded-lg px-4 py-2"
+            />
+          </Card>
+
+          <Card title="Floor-Based Adjustments (Multipliers)">
+            <div className="grid grid-cols-3 gap-4 text-xs font-semibold mb-2 text-gray-500">
+              <span>Min Floor</span>
+              <span>Max Floor</span>
+              <span>Multiplier</span>
+            </div>
+
+            {floorMultipliers.map((rule, i) => (
+              <div key={i} className="grid grid-cols-3 gap-4 mb-3">
+                <input
+                  disabled
+                  value={rule.minFloor}
+                  className="border px-3 rounded py-2 bg-gray-50"
+                />
+                <input
+                  disabled
+                  value={rule.maxFloor}
+                  className="border px-3 rounded py-2 bg-gray-50"
+                />
+                <input disabled value={`× ${rule.multiplier}`} />
+              </div>
+            ))}
+          </Card>
+        </div>
 
         {/* right */}
-        <div></div>
+        <div>
+          <Card title="Rent Preview Calculator">
+            <p></p>
+          </Card>
+        </div>
       </div>
     </div>
   );

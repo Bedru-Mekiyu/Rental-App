@@ -9,7 +9,9 @@ export default function Navbar() {
       <div className="px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold text-indigo-700">RMS</h1>
-          <span className="text-sm text-gray-500">Rental Management System</span>
+          <span className="text-sm text-gray-500">
+            Rental Management System
+          </span>
         </div>
 
         {user && (

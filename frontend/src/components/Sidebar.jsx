@@ -53,9 +53,7 @@ export default function Sidebar() {
                 to={item.to}
                 className={({ isActive }) =>
                   `block px-5 py-3 rounded-lg transition duration-200 font-medium ${
-                    isActive
-                      ? "bg-indigo-800 shadow-lg"
-                      : "hover:bg-indigo-600"
+                    isActive ? "bg-indigo-800 shadow-lg" : "hover:bg-indigo-600"
                   }`
                 }
               >

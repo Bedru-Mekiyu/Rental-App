@@ -17,8 +17,14 @@ export default function Layout() {
         {user && <Sidebar />}
 
         {/* Main Content Area */}
-        <main className={`flex-1 transition-all duration-300 ${user ? "ml-64" : "ml-0"}`}>
-          <div className="p-6 pt-20"> {/* pt-20 = space below fixed navbar (top-16 in Sidebar) */}
+        <main
+          className={`flex-1 transition-all duration-300 ${
+            user ? "ml-64" : "ml-0"
+          }`}
+        >
+          <div className="p-6 pt-20">
+            {" "}
+            {/* pt-20 = space below fixed navbar (top-16 in Sidebar) */}
             <Outlet />
           </div>
         </main>
