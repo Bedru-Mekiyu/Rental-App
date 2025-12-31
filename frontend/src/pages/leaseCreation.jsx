@@ -37,4 +37,51 @@ const calculateViewBonus = (views = []) => {
   return 1 + views.length * 0.03;
 };
 
-export default function LeaseCreation() {}
+export default function LeaseCreation() {
+  const [tenant, setTenant] = useState("");
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-[2.5fr_1fr gap-6 p-6 min-h-screen bg-gray-50]">
+      {/* left */}
+      <div>
+        <h2 className="text-2xl font-semibold mb-6 ">Create New Lease</h2>
+        <div className="bg-white p-5 mb-5 rounded-xl shadow-sm">
+          <h4 className="mb-4 font-semibold">Tenant &Unit Selection</h4>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">Tenant Name</label>
+              <select
+                value={tenant}
+                onChange={(e) => setTenant(e.target.value)}
+                className="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500"
+              >
+                <option>Select Tenant</option>
+                {tenants.map((t) => (
+                  <option key={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Unit</label>
+              <select>
+                <option>Select Unit</option>
+              </select>
+            </div>
+            <div>
+              <div>
+                <label className="text-sm font-medium">Lease Start Date</label>
+                <input />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Lease End Date</label>
+                <input />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* right */}
+      <div className="space-y-4"></div>
+    </div>
+  );
+}
