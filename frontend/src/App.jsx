@@ -9,7 +9,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 // Pages
 // import Login from "./pages/Login";
 // import PropertyManagerDashboard from "./pages/PropertyManagerDashboard";
-import UnitManagement from "./pages/unitManagement";
+// import UnitManagement from "./pages/unitManagement";
+import LeaseCreation from "./pages/leaseCreation";
 // import GeneralManagerDashboard from "./pages/GeneralManagerDashboard";
 // import FinancialStaffDashboard from "./pages/FinancialStaffDashboard";
 // import TenantDashboard from "./pages/TenantDashboard";
@@ -20,7 +21,8 @@ function App() {
     <Routes>
       <Route element={<Layout />}>
         {/* <Route path="/" element={<PropertyManagerDashboard />} /> */}
-        <Route path="/" element={<UnitManagement />} />
+        {/* <Route path="/" element={<UnitManagement />} /> */}
+        <Route path="/" element={<LeaseCreation />} />
       </Route>
     </Routes>
   );
