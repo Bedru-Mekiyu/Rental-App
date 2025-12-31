@@ -39,6 +39,9 @@ const calculateViewBonus = (views = []) => {
 
 export default function LeaseCreation() {
   const [tenant, setTenant] = useState("");
+  const [unitId, setUnitId] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[2.5fr_1fr gap-6 p-6 min-h-screen bg-gray-50]">
       {/* left */}
@@ -62,18 +65,37 @@ export default function LeaseCreation() {
             </div>
             <div>
               <label className="text-sm font-medium">Unit</label>
-              <select>
-                <option>Select Unit</option>
+              <select
+                value={unitId}
+                onChange={(e) => setUnitId(e.target.value)}
+                className="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="">Select Unit</option>
+                {units.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.name}
+                  </option>
+                ))}
               </select>
             </div>
-            <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium">Lease Start Date</label>
-                <input />
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500"
+                />
               </div>
               <div>
                 <label className="text-sm font-medium">Lease End Date</label>
-                <input />
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500"
+                />
               </div>
             </div>
           </div>
