@@ -42,6 +42,7 @@ export default function LeaseCreation() {
   const [unitId, setUnitId] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [deposit, setDeposit] = useState("");
 
   const selectedUnit = units.find((u) => u.id === Number(unitId));
 
@@ -56,7 +57,7 @@ export default function LeaseCreation() {
     const baseRent = selectedUnit.basePriceEtb;
     const floorMultiplier = calculateFloorMultiplier(selectedUnit.floor);
     const amenityMultiplier = calculateAmenityBonus(
-      selectedUnit.amenitiesConfig
+      selectedUnit.amenitiesConfig,
     );
     const viewMultiplier = calculateViewBonus(selectedUnit.viewAttributes);
 
@@ -154,10 +155,53 @@ export default function LeaseCreation() {
             </div>
           </div>
         )}
+
+        <div className="bg-white rounded-xl shadow-sm p-5 ">
+          <h4 className="font-semibold mb-4 ">Additional Terms & Notes</h4>
+          <div className="space-y-4 ">
+            <div>
+              <label className="text-sm font-medium">
+                Security Deposit (ETB)
+              </label>
+              <input
+                type="number"
+                value={deposit}
+                onChange={(e) => setDeposit(e.target.value)}
+                className="w-full mt-1 border rounded-lg px-3 py-2"
+              />
+            </div>
+            <div>
+              <label htmlFor="" className="text-sm font-medium">
+                Notes
+              </label>
+              <textarea
+                name=""
+                id=""
+                rows="3"
+                placeholder="Special lease terms..."
+                className="w-full mt-1 border rounded-lg px-3 py-2"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* right */}
-      {/* <div className="space-y-4"></div> */}
+      <div className="space-y-4">
+        <div className="bg-white rounded-xl shadow-sm p-6 text-center border border-dashed">
+          <h4 className="font-semibold mb-2">Lease Document Preview</h4>
+          <p className="text-sm text-gray-500 mb-4 ">No preview generated</p>
+          <button className="px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50">
+            Generate Preview
+          </button>
+        </div>
+        <button className="w-full py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700">
+          Finalize Lease
+        </button>
+        <button className="w-full py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700">
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }
