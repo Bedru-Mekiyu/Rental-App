@@ -17,6 +17,10 @@ import Payments from "./pages/Payments";
 import Maintenance from "./pages/Maintenance";
 // import UnitsPage from "./pages/UnitsPage";
 
+import UnitsPage from "./pages/UnitsPage";
+import CreateLease from "./pages/CreateLease"
+
+
 function App() {
 //    <Routes>
 // <Route path="/dashboard" element={<Dashboard />} />
