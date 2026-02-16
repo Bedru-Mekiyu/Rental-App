@@ -7,20 +7,16 @@ import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
-// import Login from "./pages/Login";
+import Login from "./pages/Login";
 import PropertyManagerDashboard from "./pages/PropertyManagerDashboard";
 import GeneralManagerDashboard from "./pages/GeneralManagerDashboard";
 import FinancialStaffDashboard from "./pages/FinancialStaffDashboard";
-import AdminUserManagement from "./pages/AdminUserManagment";
 import TenantDashboard from "./pages/TenantDashboard";
 import Dashboard from "./pages/Dashboard";
 import Payments from "./pages/Payments";
 import Maintenance from "./pages/Maintenance";
-// import UnitsPage from "./pages/UnitsPage";
-
 import UnitsPage from "./pages/UnitsPage";
 import CreateLease from "./pages/CreateLease"
-
 
 function App() {
 //    <Routes>
