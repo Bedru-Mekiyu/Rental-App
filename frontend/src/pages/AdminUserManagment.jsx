@@ -77,3 +77,4 @@ const AdminUserManagement = () => {
     </div>
   );
 };
+module.exports = AdminUserManagement;
