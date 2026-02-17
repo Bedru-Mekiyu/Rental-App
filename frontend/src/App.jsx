@@ -7,23 +7,87 @@ import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
-// import Login from "./pages/Login";
-// import PropertyManagerDashboard from "./pages/PropertyManagerDashboard";
-import UnitManagement from "./pages/unitManagement";
-import LeaseCreation from "./pages/leaseCreation";
-// import GeneralManagerDashboard from "./pages/GeneralManagerDashboard";
-// import FinancialStaffDashboard from "./pages/FinancialStaffDashboard";
-// import TenantDashboard from "./pages/TenantDashboard";
-// import UnitsPage from "./pages/UnitsPage";
+import Login from "./pages/Login";
+import PropertyManagerDashboard from "./pages/PropertyManagerDashboard";
+import GeneralManagerDashboard from "./pages/GeneralManagerDashboard";
+import FinancialStaffDashboard from "./pages/FinancialStaffDashboard";
+import TenantDashboard from "./pages/TenantDashboard";
+import Dashboard from "./pages/Dashboard";
+import Payments from "./pages/Payments";
+import Maintenance from "./pages/Maintenance";
+import UnitsPage from "./pages/UnitsPage";
+import CreateLease from "./pages/CreateLease";
 
 function App() {
+  //    <Routes>
+  // <Route path="/dashboard" element={<Dashboard />} />
+  // <Route path="/payments" element={<Payments />} />
+  // <Route path="/maintenance" element={<Maintenance />} />
+  // </Routes>)
+
+  const { user, loading } = useAuthStore();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-indigo-600 mx-auto"></div>
+          <p className="mt-8 text-lg text-gray-600">Loading RMS...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Routes>
-      <Route element={<Layout />}>
-        {/* <Route path="/" element={<PropertyManagerDashboard />} /> */}
-        <Route path="/" element={<UnitManagement />} />
-        <Route path="/" element={<LeaseCreation />} />
-        {/* <Route path="/" element={<FinancialStaffDashboard />} /> */}
+      {/* Public Route */}
+      <Route
+        path="/login"
+        element={
+          !user ? (
+            <Login />
+          ) : (
+            <Navigate to={getDefaultRoute(user.role)} replace />
+          )
+        }
+      />
+
+      {/* Protected Routes with Layout */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
+        {/* Role-Based Dashboard */}
+        <Route path="/dashboard" element={<RoleBasedDashboard />} />
+
+        {/* Functional Pages */}
+        {/* <Route path="/units" element={<UnitsPage />} /> */}
+        <Route path="/my-lease" element={<TenantDashboard />} />
+        <Route path="/finance" element={<FinancialStaffDashboard />} />
+
+        {/* Future Pages (Safe Fallbacks) */}
+        <Route
+          path="/leases"
+          element={<ComingSoonPage title="Lease Management" />}
+        />
+        <Route
+          path="/payments"
+          element={<ComingSoonPage title="Payments Overview" />}
+        />
+
+        {/* Root Redirect */}
+        <Route
+          path="/"
+          element={
+            <Navigate
+              to={user ? getDefaultRoute(user.role) : "/login"}
+              replace
+            />
+          }
+        />
       </Route>
     </Routes>
   );
