@@ -1,15 +1,15 @@
 // src/pages/Login.jsx
 import { useState } from "react";
-import { useAuthStore } from "../store/authStore"; // ← Use Zustand
+import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast"; // Optional: for nice success/error messages
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const login = useAuthStore((state) => state.login); // Get login function from store
+  const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -33,7 +33,7 @@ export default function Login() {
 
     if (result.success) {
       toast.success("Login successful! Welcome back.");
-      navigate("/dashboard"); // Redirect to role-based dashboard
+      navigate("/dashboard");
     } else {
       setError(result.message || "Invalid email or password");
       toast.error(result.message || "Login failed");

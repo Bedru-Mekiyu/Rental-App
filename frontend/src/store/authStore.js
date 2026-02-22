@@ -1,43 +1,49 @@
-import { create } from 'zustand';
-import axios from 'axios';
+import { create } from "zustand";
+import axios from "axios";
 
 export const useAuthStore = create((set) => ({
   user: null,
   loading: true,
   init: () => {
-    const token = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
     if (token && storedUser) {
       try {
         set({ user: JSON.parse(storedUser), loading: false });
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        return;
       } catch {
-        // Invalid stored user data, clear it
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        set({ loading: false });
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
       }
-    } else {
-      set({ loading: false });
     }
+
+    set({ loading: false });
   },
   login: async (email, password) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
       const { token, user } = res.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       set({ user });
       return { success: true };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || 'Login failed' };
+      return {
+        success: false,
+        message: err.response?.data?.message || "Login failed",
+      };
     }
   },
   logout: () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    delete axios.defaults.headers.common['Authorization'];
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    delete axios.defaults.headers.common["Authorization"];
     set({ user: null });
   },
 }));

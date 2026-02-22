@@ -26,6 +26,12 @@ import TenantsPage from "./pages/TenantsPage";
 import MyLeasePage from "./pages/MyLeasePage";
 
 function App() {
+  //    <Routes>
+  // <Route path="/dashboard" element={<Dashboard />} />
+  // <Route path="/payments" element={<Payments />} />
+  // <Route path="/maintenance" element={<Maintenance />} />
+  // </Routes>)
+
   const { user, loading } = useAuthStore();
 
   if (loading) {
