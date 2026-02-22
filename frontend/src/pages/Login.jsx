@@ -41,70 +41,101 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-gray-100 px-4 transition-colors duration-300">
-      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-indigo-700">RMS</h1>
-          <p className="text-gray-600 mt-2">Rental Management System</p>
-          <h2 className="text-2xl font-semibold text-gray-800 mt-6">Welcome Back</h2>
-          <p className="text-sm text-gray-500 mt-2">Sign in to access your dashboard</p>
+    <div className="min-h-screen px-4 py-10">
+      <div className="mx-auto grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white/80 shadow-2xl backdrop-blur md:grid-cols-[1.1fr_0.9fr]">
+        <div className="relative flex flex-col justify-between bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-950 p-8 text-white">
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute -top-16 -left-16 h-56 w-56 rounded-full bg-cyan-400/30 blur-3xl" />
+            <div className="absolute -bottom-10 right-0 h-48 w-48 rounded-full bg-indigo-400/30 blur-3xl" />
+          </div>
+          <div className="relative space-y-4">
+            <span className="pill bg-white/20 text-white">Portfolio OS</span>
+            <h1 className="app-title text-3xl font-semibold">
+              Rental Management System
+            </h1>
+            <p className="text-sm text-indigo-100">
+              Track units, leases, and payments with a single, high-clarity dashboard.
+            </p>
+          </div>
+          <div className="relative space-y-4 text-sm text-indigo-100">
+            <div className="flex items-center gap-3">
+              <span className="h-2 w-2 rounded-full bg-emerald-400" />
+              Real-time occupancy and payment insights
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="h-2 w-2 rounded-full bg-cyan-300" />
+              Role-based dashboards for each team
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="h-2 w-2 rounded-full bg-orange-300" />
+              Unified audit trail and finance summaries
+            </div>
+          </div>
         </div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-white text-gray-900 placeholder-gray-500"
-              placeholder="admin@example.com"
-            />
+        <div className="p-8 sm:p-10">
+          <div className="mb-8 space-y-2">
+            <h2 className="app-title text-2xl font-semibold text-slate-900">
+              Welcome back
+            </h2>
+            <p className="text-sm text-slate-500">
+              Sign in to continue managing your portfolio.
+            </p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-white text-gray-900 placeholder-gray-500"
-              placeholder="••••••••"
-            />
+          {error && (
+            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Email address
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                required
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+                placeholder="admin@example.com"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                required
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+                placeholder="••••••••"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full rounded-2xl px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition ${
+                loading
+                  ? "cursor-not-allowed bg-slate-400"
+                  : "bg-slate-900 hover:-translate-y-0.5 hover:bg-slate-800"
+              }`}
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+
+          <div className="mt-8 text-xs text-slate-500">
+            First time? Contact your administrator to create an account.
           </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-3 px-6 rounded-lg font-semibold text-white transition ${
-              loading
-                ? "bg-indigo-400 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 shadow-lg"
-            }`}
-          >
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-        </form>
-
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>First time? Contact your administrator to create an account.</p>
-          <p className="mt-2">
-            Test with your registered admin or PM account.
-          </p>
         </div>
       </div>
     </div>

@@ -9,12 +9,12 @@ export default function DashboardCard({
   const renderedActions = actions || action;
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="surface-panel p-6">
       {(title || description || renderedActions) && (
-        <div className="mb-3 flex items-start justify-between gap-2">
+        <div className="mb-4 flex items-start justify-between gap-3">
           <div>
             {title && (
-              <h2 className="text-sm font-semibold text-slate-800">
+              <h2 className="app-title text-base font-semibold text-slate-900">
                 {title}
               </h2>
             )}

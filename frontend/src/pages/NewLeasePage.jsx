@@ -30,7 +30,7 @@ export default function NewLeasePage() {
   const loadUnits = async () => {
     try {
       const res = await API.get("/units");
-      setUnits(res.data.data || []);
+      setUnits(res.data?.data || []);
     } catch {
       toast.error("Failed to load units");
     }
@@ -39,7 +39,7 @@ export default function NewLeasePage() {
   const loadTenants = async () => {
     try {
       const res = await API.get("/users?role=TENANT");
-      setTenants(res.data || []);
+      setTenants(res.data?.data || []);
     } catch {
       toast.error("Failed to load tenants");
     }

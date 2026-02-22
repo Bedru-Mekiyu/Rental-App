@@ -36,6 +36,7 @@ const maintenanceSchema = z.object({
 
 export default function TenantDashboard() {
   const { user } = useAuthStore();
+  const userId = user?._id || user?.id;
 
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -82,14 +83,27 @@ export default function TenantDashboard() {
       setLoading(true);
 
       const [leaseRes, paymentRes, maintenanceRes] = await Promise.allSettled([
-        API.get(`/leases/by-tenant/${user._id}`).catch(() => ({ data: [] })),
-        API.get(`/payments/by-tenant/${user._id}`).catch(() => ({ data: [] })),
-        API.get(`/maintenance/by-tenant/${user._id}`).catch(() => ({ data: { data: [] } })),
+        API.get(`/leases/by-tenant/${userId}`).catch(() => ({ data: { data: [] } })),
+        API.get(`/payments/by-tenant/${userId}`).catch(() => ({ data: { data: [] } })),
+        API.get(`/maintenance/by-tenant/${userId}`).catch(() => ({ data: { data: [] } })),
       ]);
 
-      setLease(leaseRes.status === 'fulfilled' ? leaseRes.value?.[0] || null : null);
-      setPayments(paymentRes.status === 'fulfilled' ? paymentRes.value || [] : []);
-      setRequests(maintenanceRes.status === 'fulfilled' ? maintenanceRes.value.data || [] : []);
+      const leaseData =
+        leaseRes.status === "fulfilled"
+          ? leaseRes.value?.data?.data || []
+          : [];
+      const paymentData =
+        paymentRes.status === "fulfilled"
+          ? paymentRes.value?.data?.data || []
+          : [];
+      const maintenanceData =
+        maintenanceRes.status === "fulfilled"
+          ? maintenanceRes.value?.data?.data || []
+          : [];
+
+      setLease(leaseData[0] || null);
+      setPayments(paymentData);
+      setRequests(maintenanceData);
 
       setDocuments([
         "Lease Agreement.pdf",
@@ -116,15 +130,15 @@ export default function TenantDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [user?._id]);
+  }, [userId]);
 
   useEffect(() => {
-    if (!user?._id) {
+    if (!userId) {
       setLoading(false);
       return;
     }
     loadData();
-  }, [user?._id, loadData]); // loadData is memoized with useCallback
+  }, [userId, loadData]); // loadData is memoized with useCallback
 
   // Set default lease when lease data loads
   useEffect(() => {
@@ -227,24 +241,28 @@ export default function TenantDashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="card-enhanced mb-8 p-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+      <div className="relative overflow-hidden rounded-3xl bg-slate-900 p-8 text-white shadow-2xl">
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute -right-10 -top-12 h-52 w-52 rounded-full bg-indigo-500/40 blur-3xl" />
+          <div className="absolute -bottom-16 left-8 h-64 w-64 rounded-full bg-cyan-400/30 blur-3xl" />
+        </div>
         <div className="relative flex items-center justify-between">
           <div className="flex-1">
-            <h1 className="text-4xl font-bold mb-2">
+            <span className="pill bg-white/20 text-white">Tenant Portal</span>
+            <h1 className="app-title mt-3 text-4xl font-semibold mb-2">
               Welcome back, {user?.fullName?.split(' ')[0] || 'Tenant'}!
             </h1>
             <p className="text-indigo-100 text-lg">
               Manage your lease, payments, and maintenance requests all in one place.
             </p>
             <div className="flex items-center gap-4 mt-4">
-              <div className="flex items-center gap-2 bg-white/20 rounded-full px-4 py-2 backdrop-blur-sm">
+              <div className="flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 backdrop-blur-sm">
                 <User className="h-5 w-5" />
                 <span className="text-sm font-medium">
                   {user?.fullName || user?.email}
                 </span>
               </div>
-              <div className="flex items-center gap-2 bg-white/20 rounded-full px-4 py-2 backdrop-blur-sm">
+              <div className="flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 backdrop-blur-sm">
                 <Calendar className="h-4 w-4" />
                 <span className="text-sm">
                   {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -252,7 +270,7 @@ export default function TenantDashboard() {
               </div>
             </div>
           </div>
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm shadow-xl">
+          <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/15 backdrop-blur-sm shadow-xl">
             <span className="text-3xl">🏠</span>
           </div>
         </div>
@@ -261,7 +279,7 @@ export default function TenantDashboard() {
       {/* Lease + payments */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Lease summary */}
-        <section className="lg:col-span-1 rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 shadow-lg hover-lift fade-in">
+        <section className="lg:col-span-1 surface-panel p-6 hover-lift fade-in">
           <div className="flex items-center space-x-2 mb-4">
             <div className="rounded-lg bg-indigo-100 p-2">
               <Home className="h-5 w-5 text-indigo-600" />
@@ -335,7 +353,7 @@ export default function TenantDashboard() {
         </section>
 
         {/* Payment history */}
-        <section className="lg:col-span-2 rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 shadow-lg hover-lift">
+        <section className="lg:col-span-2 surface-panel p-6 hover-lift">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <div className="rounded-lg bg-emerald-100 p-2">
@@ -353,7 +371,7 @@ export default function TenantDashboard() {
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowPaymentForm(!showPaymentForm)}
-                className="inline-flex items-center space-x-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all"
+                className="inline-flex items-center space-x-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
               >
                 <Plus className="h-4 w-4" />
                 <span>Add Payment</span>
@@ -375,9 +393,9 @@ export default function TenantDashboard() {
               </p>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-              <table className="min-w-full divide-y divide-gray-200 text-sm">
-                <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+              <table className="min-w-full divide-y divide-slate-200 text-sm">
+                <thead className="bg-slate-50">
                   <tr>
                     <th className="px-4 py-3 text-left font-semibold text-gray-700">
                       Date
@@ -393,9 +411,9 @@ export default function TenantDashboard() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 bg-white">
+                <tbody className="divide-y divide-slate-100 bg-white">
                   {payments.map((p) => (
-                    <tr key={p._id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={p._id} className="transition hover:bg-slate-50">
                       <td className="px-4 py-3 text-gray-700">
                         <div className="flex items-center space-x-2">
                           <Calendar className="h-4 w-4 text-gray-400" />
@@ -443,7 +461,7 @@ export default function TenantDashboard() {
 
       {/* Payment form */}
       {showPaymentForm && (
-        <section className="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 shadow-lg">
+        <section className="surface-panel p-6">
           <div className="flex items-center space-x-2 mb-6">
             <div className="rounded-lg bg-emerald-100 p-2">
               <Plus className="h-5 w-5 text-emerald-600" />

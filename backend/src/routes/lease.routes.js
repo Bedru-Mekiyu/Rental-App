@@ -9,6 +9,7 @@ import {
   endLease,
   listAllLeases,
 } from "../controllers/leaseController.js";
+import { validateCreateLease } from "../middleware/validators.js";
 
 const router = Router();
 
@@ -20,7 +21,7 @@ const VIEW_ROLES = ["PM", "ADMIN", "FS", "GM", "TENANT"];
 router.get("/", auth(["PM", "ADMIN", "FS", "GM"]), listAllLeases);
 
 // Create lease
-router.post("/", auth(MANAGE_ROLES), createLease);
+router.post("/", auth(MANAGE_ROLES), validateCreateLease, createLease);
 
 // List leases by tenant
 router.get("/by-tenant/:tenantId", auth(VIEW_ROLES), listLeasesByTenant);

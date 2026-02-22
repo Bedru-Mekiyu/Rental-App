@@ -1,6 +1,7 @@
 // src/controllers/unitController.js (ESM)
 
 import Unit from "../models/Unit.js";
+import { buildPaginationMeta, getPagination } from "../utils/pagination.js";
 
 export async function createUnit(req, res) {
   try {
@@ -8,24 +9,37 @@ export async function createUnit(req, res) {
     const unit = await Unit.create(data);
     res.status(201).json({ success: true, data: unit });
   } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
+    res
+      .status(400)
+      .json({ success: false, message: err.message });
   }
 }
 
 export async function getUnits(req, res) {
   try {
+    const { page, limit, skip } = getPagination(req);
+    const { page: _page, limit: _limit, ...rest } = req.query;
     const filters = {
       isDeleted: false,
-      ...req.query,
+      ...rest,
     };
 
     if (filters.floor) filters.floor = Number(filters.floor);
     if (filters.basePriceEtb) filters.basePriceEtb = Number(filters.basePriceEtb);
 
-    const units = await Unit.find(filters);
-    res.json({ success: true, data: units });
+    const [units, total] = await Promise.all([
+      Unit.find(filters).skip(skip).limit(limit),
+      Unit.countDocuments(filters),
+    ]);
+    res.json({
+      success: true,
+      data: units,
+      meta: buildPaginationMeta({ page, limit, total }),
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res
+      .status(500)
+      .json({ success: false, message: err.message });
   }
 }
 
@@ -39,7 +53,9 @@ export async function getUnitById(req, res) {
 
     res.json({ success: true, data: unit });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res
+      .status(500)
+      .json({ success: false, message: err.message });
   }
 }
 
@@ -58,7 +74,9 @@ export async function updateUnit(req, res) {
 
     res.json({ success: true, data: unit });
   } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
+    res
+      .status(400)
+      .json({ success: false, message: err.message });
   }
 }
 
@@ -77,6 +95,8 @@ export async function softDeleteUnit(req, res) {
 
     res.json({ success: true, message: "Unit soft deleted" });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res
+      .status(500)
+      .json({ success: false, message: err.message });
   }
 }

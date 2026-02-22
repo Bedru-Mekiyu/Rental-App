@@ -40,13 +40,13 @@ export default function PaymentsPage() {
 
         if (user.role === "TENANT") {
           const res = await API.get(`/payments/by-tenant/${user.id}`);
-          setPayments(res.data || []);
+          setPayments(res.data?.data || []);
           return;
         }
 
         if (user.role === "PM" || user.role === "ADMIN") {
           const res = await API.get("/payments");
-          setPayments(res.data || []);
+          setPayments(res.data?.data || []);
           return;
         }
 
@@ -113,7 +113,7 @@ export default function PaymentsPage() {
       const res = await API.post("/payments", payload); // POST /api/payments
       toast.success("Payment recorded");
 
-      setPayments((prev) => [res.data, ...prev]);
+      setPayments((prev) => [res.data?.data, ...prev].filter(Boolean));
 
       setForm({
         leaseId: "",
@@ -141,7 +141,7 @@ export default function PaymentsPage() {
       }); // PATCH /api/payments/:id/status
 
       setPayments((prev) =>
-        prev.map((p) => (p._id === id ? res.data : p))
+        prev.map((p) => (p._id === id ? res.data?.data : p))
       );
 
       toast.success("Payment status updated");
@@ -173,13 +173,13 @@ export default function PaymentsPage() {
             <input
               type="text"
               placeholder="Search by method or transaction ID"
-              className="w-64 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-64 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
 
             <select
-              className="rounded-lg border border-slate-200 px-2 py-2 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
@@ -191,7 +191,7 @@ export default function PaymentsPage() {
             </select>
 
             <select
-              className="rounded-lg border border-slate-200 px-2 py-2 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
               value={method}
               onChange={(e) => setMethod(e.target.value)}
             >
@@ -207,7 +207,7 @@ export default function PaymentsPage() {
         {canCreate && (
           <form
             onSubmit={handleCreate}
-            className="mb-6 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs"
+            className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs"
           >
             <div className="mb-3 font-semibold text-slate-700">
               New Payment
@@ -223,7 +223,7 @@ export default function PaymentsPage() {
                   value={form.leaseId}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border border-slate-200 px-2 py-2 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
                   placeholder="Lease ID"
                 />
               </div>
@@ -239,7 +239,7 @@ export default function PaymentsPage() {
                   onChange={handleChange}
                   required
                   min={0}
-                  className="w-full rounded-lg border border-slate-200 px-2 py-2 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
                 />
               </div>
 
@@ -253,7 +253,7 @@ export default function PaymentsPage() {
                   value={form.transactionDate}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border border-slate-200 px-2 py-2 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
                 />
               </div>
 

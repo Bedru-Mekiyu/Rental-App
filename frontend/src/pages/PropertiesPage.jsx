@@ -22,7 +22,7 @@ export default function PropertiesPage() {
     try {
       setLoading(true);
       const res = await API.get("/properties");
-      setProperties(res.data || []);
+      setProperties(res.data?.data || []);
     } catch {
       toast.error("Failed to load properties");
     } finally {
@@ -36,7 +36,7 @@ export default function PropertiesPage() {
       setCreating(true);
       const res = await API.post("/properties", form);
       toast.success("Property saved");
-      setProperties([res.data]); // only one active property
+      setProperties(res.data?.data ? [res.data.data] : []); // only one active property
       setForm({ name: "", address: "", description: "" });
     } catch (err) {
       toast.error(

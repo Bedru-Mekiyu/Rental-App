@@ -144,21 +144,28 @@ export default function PropertyManagerDashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-lg shadow-lg">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Home className="h-8 w-8" />
+      <div className="relative overflow-hidden rounded-3xl bg-slate-900 p-6 text-white shadow-2xl">
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute -right-8 -top-10 h-44 w-44 rounded-full bg-indigo-500/40 blur-3xl" />
+          <div className="absolute -bottom-16 left-10 h-56 w-56 rounded-full bg-cyan-400/30 blur-3xl" />
+        </div>
+        <div className="relative flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15">
+              <Home className="h-6 w-6" />
+            </div>
             <div>
-              <h1 className="text-3xl font-bold">
+              <span className="pill bg-white/20 text-white">Property Ops</span>
+              <h1 className="app-title mt-2 text-3xl font-semibold">
                 Property Manager Dashboard
               </h1>
-              <p className="mt-1 text-blue-100">
+              <p className="mt-1 text-sm text-indigo-100">
                 Overview of your property management operations.
               </p>
             </div>
           </div>
-          <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium">
-            Logged in as {user?.fullName || user?.email}
+          <div className="rounded-full bg-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-wide">
+            {user?.fullName || user?.email}
           </div>
         </div>
       </div>
@@ -178,7 +185,7 @@ export default function PropertyManagerDashboard() {
       {/* Units + leases */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Units list */}
-        <section className="lg:col-span-2 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <section className="lg:col-span-2 surface-panel p-5">
           <div className="flex justify-end">
             <div className="flex items-center gap-2">
               <input
@@ -186,18 +193,18 @@ export default function PropertyManagerDashboard() {
                 placeholder="Search by unit, floor, or status"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full sm:w-64 rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                className="w-full sm:w-64 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
               />
               <Link
                 to="/units"
-                className="inline-flex items-center space-x-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 transition-colors"
+                className="inline-flex items-center space-x-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
               >
                 <Eye className="h-4 w-4" />
                 <span>Units</span>
               </Link>
               <Link
                 to="/users"
-                className="inline-flex items-center space-x-2 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 transition-colors"
+                className="inline-flex items-center space-x-2 rounded-full bg-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
               >
                 <Users className="h-4 w-4" />
                 <span>Users</span>
@@ -205,7 +212,7 @@ export default function PropertyManagerDashboard() {
               {user?.role === "ADMIN" || user?.role === "PM" ? (
                 <Link
                   to="/users/new"
-                  className="inline-flex items-center space-x-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 transition-colors"
+                  className="inline-flex items-center space-x-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-700"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Create</span>
@@ -240,7 +247,7 @@ export default function PropertyManagerDashboard() {
                 return (
                   <article
                     key={unit._id}
-                    className="flex flex-col justify-between rounded-md border border-gray-200 bg-white p-3 text-xs shadow-sm"
+                    className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 text-xs shadow-sm"
                   >
                     <div className="flex items-start justify-between">
                       <div>
@@ -279,7 +286,7 @@ export default function PropertyManagerDashboard() {
         </section>
 
         {/* Recent leases */}
-        <section className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <section className="surface-panel p-5">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-semibold text-gray-900">
@@ -307,7 +314,7 @@ export default function PropertyManagerDashboard() {
               {leases.slice(0, 5).map((lease) => (
                 <li
                   key={lease._id}
-                  className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 p-2.5"
+                  className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-3"
                 >
                   <div className="flex items-center gap-2">
                     <Avatar
@@ -344,7 +351,7 @@ export default function PropertyManagerDashboard() {
       </div>
 
       {/* Maintenance requests */}
-      <section className="mt-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <section className="surface-panel mt-4 p-5">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-sm font-semibold text-gray-900">
@@ -365,9 +372,9 @@ export default function PropertyManagerDashboard() {
             No maintenance requests yet.
           </p>
         ) : (
-          <div className="mt-4 overflow-hidden rounded-lg border border-gray-200">
-            <table className="min-w-full divide-y divide-gray-200 text-xs">
-              <thead className="bg-gray-50">
+          <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+            <table className="min-w-full divide-y divide-slate-200 text-xs">
+              <thead className="bg-slate-50">
                 <tr>
                   <th className="px-3 py-2 text-left font-medium text-gray-700">
                     Tenant
@@ -389,7 +396,7 @@ export default function PropertyManagerDashboard() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-slate-100 bg-white">
                 {maintenanceRequests.map((r) => (
                   <tr key={r._id}>
                     <td className="px-3 py-2">
@@ -434,7 +441,7 @@ export default function PropertyManagerDashboard() {
                             e.target.value
                           )
                         }
-                        className="rounded-md border border-gray-300 px-2 py-1 text-[11px] text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
                       >
                         <option value="open">Open</option>
                         <option value="in_progress">
@@ -459,15 +466,21 @@ export default function PropertyManagerDashboard() {
 
 function StatCard({ label, value, icon: Icon }) {
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+    <div className="surface-panel">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600">{label}</p>
-          <p className="mt-2 text-3xl font-bold text-gray-900">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            {label}
+          </p>
+          <p className="mt-2 text-3xl font-semibold text-slate-900">
             {value}
           </p>
         </div>
-        {Icon && <Icon className="h-8 w-8 text-indigo-600" />}
+        {Icon && (
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900/10 text-slate-800">
+            <Icon className="h-6 w-6" />
+          </div>
+        )}
       </div>
     </div>
   );

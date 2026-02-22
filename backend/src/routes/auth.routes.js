@@ -1,10 +1,15 @@
 // src/routes/auth.routes.js
-import { Router } from 'express';
-import { login, registerAdmin, logout } from '../controllers/authController.js';
-import { auth } from '../middleware/auth.js';
+import { Router } from "express";
+import {
+  login,
+  registerAdmin,
+  logout,
+  refreshAccessToken,
+} from "../controllers/authController.js";
 import {
   validateLogin,
   validateRegisterAdmin,
+  validateRefreshToken,
 } from '../middleware/validators.js';
 // You already apply helmet + rateLimiter globally in server.js
 // import { rateLimiter, applyHelmet } from '../middleware/security.js';
@@ -15,8 +20,9 @@ const router = Router();
 // router.use(applyHelmet);
 // router.use(rateLimiter);
 
-router.post('/register-admin', validateRegisterAdmin, registerAdmin);
-router.post('/login', validateLogin, login);
-router.post('/logout', auth(), logout);
+router.post("/register-admin", validateRegisterAdmin, registerAdmin);
+router.post("/login", validateLogin, login);
+router.post("/refresh", validateRefreshToken, refreshAccessToken);
+router.post("/logout", validateRefreshToken, logout);
 
 export default router;

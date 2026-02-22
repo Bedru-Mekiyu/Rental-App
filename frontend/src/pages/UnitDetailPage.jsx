@@ -26,7 +26,7 @@ export default function UnitDetailPage() {
         API.get("/leases", { params: { unitId } }),
       ]);
       setUnit(unitRes.data?.data || null); // backend returns { success, data }
-      setLeases(leasesRes.data || []);
+      setLeases(leasesRes.data?.data || []);
     } catch {
       toast.error("Failed to load unit details");
     } finally {

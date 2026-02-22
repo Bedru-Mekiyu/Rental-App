@@ -5,40 +5,44 @@ export default function Navbar() {
   const { user, logout } = useAuthStore();
 
   return (
-    <header className="glass flex h-16 items-center justify-between border-b border-white/20 bg-gradient-to-r from-white/10 to-white/5 px-6 backdrop-blur-md">
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
-          <span className="text-lg font-bold text-white">RMS</span>
+    <header className="app-shell sticky top-0 z-30 border-b border-white/40 bg-white/70">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-400 shadow-lg">
+            <span className="text-base font-bold text-white">RMS</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="app-title text-lg font-semibold text-slate-900">
+              Rental Management
+            </span>
+            <span className="text-xs text-slate-500">
+              Unified portfolio workspace
+            </span>
+          </div>
         </div>
-        <div className="flex flex-col">
-          <span className="gradient-text text-lg font-bold tracking-tight">
-            Rental Management System
-          </span>
-          {user && (
-            <span className="rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 px-2 py-0.5 text-xs font-medium text-white shadow-sm">
+
+        {user && (
+          <div className="flex items-center gap-4 text-sm">
+            <span className="pill bg-emerald-100 text-emerald-700">
               {user.role}
             </span>
-          )}
-        </div>
-      </div>
-      {user && (
-        <div className="flex items-center gap-4 text-sm">
-          <div className="text-right">
-            <div className="font-semibold text-slate-800">
-              {user.fullName}
+            <div className="text-right">
+              <div className="font-semibold text-slate-900">
+                {user.fullName}
+              </div>
+              <div className="text-xs text-slate-500">
+                {user.email}
+              </div>
             </div>
-            <div className="text-xs text-slate-600">
-              {user.email}
-            </div>
+            <button
+              onClick={logout}
+              className="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:-translate-y-0.5 hover:shadow-lg"
+            >
+              Logout
+            </button>
           </div>
-          <button
-            onClick={logout}
-            className="btn-primary rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105"
-          >
-            Logout
-          </button>
-        </div>
-      )}
+        )}
+      </div>
     </header>
   );
 }

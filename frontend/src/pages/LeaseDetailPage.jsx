@@ -36,16 +36,16 @@ export default function LeaseDetailPage() {
           data: null,
         })), // finance summary
       ]);
-      const leaseData = leaseRes.data;
+      const leaseData = leaseRes.data?.data;
       setLease(leaseData);
-      setSummary(summaryRes.data);
+      setSummary(summaryRes.data?.data || summaryRes.data);
 
       if (leaseData?.tenantId?._id) {
         const payRes = await API.get(
           `/payments/by-tenant/${leaseData.tenantId._id}`
         ); // list tenant payments
         // filter only this lease's payments if leaseId field exists
-        const allPayments = payRes.data || [];
+        const allPayments = payRes.data?.data || [];
         const filtered = allPayments.filter(
           (p) => !p.leaseId || p.leaseId === leaseId
         );

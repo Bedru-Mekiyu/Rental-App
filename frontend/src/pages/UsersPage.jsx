@@ -67,7 +67,7 @@ export default function UsersPage() {
 
       // Backend: GET /api/users (listUsers)
       const res = await API.get("/users", { params });
-      setUsers(res.data || []);
+      setUsers(res.data?.data || []);
     } catch (err) {
       console.error("Failed to load users:", err);
       toast.error(

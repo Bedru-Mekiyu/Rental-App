@@ -25,7 +25,7 @@ export default function FinancePage() {
     try {
       setLoadingLeases(true);
       const res = await API.get("/leases"); // list all leases for selector
-      setLeases(res.data || []);
+      setLeases(res.data?.data || []);
     } catch {
       toast.error("Failed to load leases for finance summary");
     } finally {
@@ -38,7 +38,7 @@ export default function FinancePage() {
       try {
         setLoadingSummary(true);
         const res = await API.get("/finance/portfolio/summary");
-        setSummary(res.data);
+        setSummary(res.data?.data || res.data);
       } catch {
         toast.error("Failed to load portfolio summary");
         setSummary(null);
@@ -49,7 +49,7 @@ export default function FinancePage() {
       try {
         setLoadingSummary(true);
         const res = await API.get(`/finance/lease/${leaseId}/summary`);
-        setSummary(res.data);
+        setSummary(res.data?.data || res.data);
       } catch (err) {
         const msg =
           err.response?.status === 404

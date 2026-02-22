@@ -13,7 +13,10 @@ export async function createUser(req, res) {
     if (existing) {
       return res
         .status(409)
-        .json({ message: "User with this email already exists" });
+        .json({
+          success: false,
+          message: "User with this email already exists",
+        });
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -36,16 +39,21 @@ export async function createUser(req, res) {
     });
 
     return res.status(201).json({
-      id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      status: user.status,
+      success: true,
+      data: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        status: user.status,
+      },
     });
   } catch (err) {
     console.error("createUser error:", err);
-    return res.status(500).json({ message: "Failed to create user" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to create user" });
   }
 }
 
@@ -53,18 +61,36 @@ export async function createUser(req, res) {
 export async function listUsers(req, res) {
   try {
     const { role, status } = req.query;
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 100);
+    const skip = (page - 1) * limit;
     const filter = {};
     if (role) filter.role = role;
     if (status) filter.status = status;
 
-    const users = await User.find(filter).select(
-      "fullName email phone role status createdAt"
-    );
+    const [users, total] = await Promise.all([
+      User.find(filter)
+        .select("fullName email phone role status createdAt")
+        .skip(skip)
+        .limit(limit),
+      User.countDocuments(filter),
+    ]);
 
-    return res.json(users);
+    return res.json({
+      success: true,
+      data: users,
+      meta: {
+        page,
+        limit,
+        total,
+        pages: Math.max(Math.ceil(total / limit), 1),
+      },
+    });
   } catch (err) {
     console.error("listUsers error:", err);
-    return res.status(500).json({ message: "Failed to list users" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to list users" });
   }
 }
 
@@ -76,13 +102,17 @@ export async function getUserById(req, res) {
     );
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
-    return res.json(user);
+    return res.json({ success: true, data: user });
   } catch (err) {
     console.error("getUserById error:", err);
-    return res.status(500).json({ message: "Failed to fetch user" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch user" });
   }
 }
 
@@ -92,7 +122,10 @@ export async function updateUser(req, res) {
     const { fullName, phone, role, status } = req.body;
 
     const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
 
     if (fullName !== undefined) user.fullName = fullName;
     if (phone !== undefined) user.phone = phone;
@@ -110,16 +143,21 @@ export async function updateUser(req, res) {
     });
 
     return res.json({
-      id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      status: user.status,
+      success: true,
+      data: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        status: user.status,
+      },
     });
   } catch (err) {
     console.error("updateUser error:", err);
-    return res.status(500).json({ message: "Failed to update user" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to update user" });
   }
 }
 
@@ -127,9 +165,12 @@ export async function updateUser(req, res) {
 export async function deactivateUser(req, res) {
   try {
     const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
 
-  user.status = "SUSPENDED"; 
+    user.status = "SUSPENDED";
     await user.save();
 
     await logAction({
@@ -140,10 +181,15 @@ export async function deactivateUser(req, res) {
       details: { status: user.status },
     });
 
-    return res.json({ message: "User deactivated successfully" });
+    return res.json({
+      success: true,
+      message: "User deactivated successfully",
+    });
   } catch (err) {
     console.error("deactivateUser error:", err);
-    return res.status(500).json({ message: "Failed to deactivate user" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to deactivate user" });
   }
 }
 
@@ -153,13 +199,16 @@ export async function changeOwnPassword(req, res) {
     const { currentPassword, newPassword } = req.body;
 
     const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
 
     const isMatch = await user.comparePassword(currentPassword);
     if (!isMatch) {
       return res
         .status(400)
-        .json({ message: "Current password is incorrect" });
+        .json({ success: false, message: "Current password is incorrect" });
     }
 
     user.passwordHash = await bcrypt.hash(newPassword, 10);
@@ -173,9 +222,14 @@ export async function changeOwnPassword(req, res) {
       details: {},
     });
 
-    return res.json({ message: "Password updated successfully" });
+    return res.json({
+      success: true,
+      message: "Password updated successfully",
+    });
   } catch (err) {
     console.error("changeOwnPassword error:", err);
-    return res.status(500).json({ message: "Failed to change password" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to change password" });
   }
 }

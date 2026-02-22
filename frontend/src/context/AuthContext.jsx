@@ -23,9 +23,14 @@ export function AuthProvider({ children }) {
         password,
       });
 
-      const { token, user } = res.data;
+      const payload = res.data?.data || res.data;
+      const { token, refreshToken, user } = payload || {};
+      if (!token || !refreshToken || !user) {
+        return { success: false, message: "Invalid login response" };
+      }
 
       localStorage.setItem("token", token);
+      localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("user", JSON.stringify(user));
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser(user);

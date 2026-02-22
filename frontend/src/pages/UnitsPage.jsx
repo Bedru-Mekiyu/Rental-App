@@ -32,7 +32,7 @@ export default function UnitsPage() {
     try {
       setLoading(true);
       const res = await API.get("/units");
-      setUnits(res.data.data || []); // { success, data }
+      setUnits(res.data?.data || []); // { success, data }
     } catch {
       toast.error("Failed to load units");
     } finally {
@@ -72,7 +72,7 @@ export default function UnitsPage() {
 
       const res = await API.post("/units", payload);
       toast.success("Unit created");
-      setUnits((prev) => [...prev, res.data.data]);
+      setUnits((prev) => [...prev, res.data?.data].filter(Boolean));
       setForm({
         unitNumber: "",
         // propertyId: "",
@@ -99,9 +99,10 @@ export default function UnitsPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+      <header className="flex flex-wrap items-center justify-between gap-4">
+        <div className="space-y-1">
+          <span className="pill bg-indigo-100 text-indigo-700">Inventory</span>
+          <h1 className="app-title text-3xl font-semibold tracking-tight">
             Units
           </h1>
           <p className="mt-1 text-sm text-slate-500">
@@ -113,7 +114,7 @@ export default function UnitsPage() {
             const el = document.getElementById("create-unit-form");
             if (el) el.scrollIntoView({ behavior: "smooth" });
           }}
-          className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white"
+          className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
         >
           + New Unit
         </button>
@@ -128,10 +129,10 @@ export default function UnitsPage() {
               placeholder="Search by unit number or type..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
             />
           </div>
-          <div className="flex gap-1 rounded-full bg-slate-100 p-1 text-xs">
+          <div className="flex flex-wrap gap-1 rounded-full bg-slate-100 p-1 text-xs">
             {statusFilters.map((s) => (
               <button
                 key={s}
@@ -157,9 +158,9 @@ export default function UnitsPage() {
         {filteredUnits.length === 0 ? (
           <p className="text-xs text-slate-500">No units found.</p>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-slate-200">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
             <table className="min-w-full divide-y divide-slate-200 text-sm">
-              <thead className="bg-slate-50">
+              <thead className="bg-slate-50/80">
                 <tr>
                   <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500">
                     Unit Number
@@ -186,7 +187,7 @@ export default function UnitsPage() {
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
                 {filteredUnits.map((u) => (
-                  <tr key={u._id}>
+                  <tr key={u._id} className="transition hover:bg-slate-50/80">
                     <td className="px-4 py-2 text-sm">
                       {u.unitNumber || `Unit ${u._id.slice(-4)}`}
                     </td>
@@ -201,14 +202,14 @@ export default function UnitsPage() {
                     </td>
                     <td className="px-4 py-2 text-sm">
                       <span
-                        className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${
+                        className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${
                           u.status === "VACANT"
-                            ? "bg-success-100 text-success-700"
+                            ? "bg-emerald-100 text-emerald-700"
                             : u.status === "OCCUPIED"
-                            ? "bg-primary-100 text-primary-700"
+                            ? "bg-indigo-100 text-indigo-700"
                             : u.status === "UNDER_MAINTENANCE"
-                            ? "bg-warning-100 text-warning-700"
-                            : "bg-neutral-100 text-neutral-700"
+                            ? "bg-amber-100 text-amber-700"
+                            : "bg-slate-100 text-slate-600"
                         }`}
                       >
                         {u.status}
@@ -220,7 +221,7 @@ export default function UnitsPage() {
                     <td className="px-4 py-2 text-sm">
                       <Link
                         to={`/units/${u._id}`}
-                        className="text-xs font-medium text-indigo-600 hover:text-indigo-700"
+                        className="text-xs font-semibold text-indigo-600 hover:text-indigo-700"
                       >
                         View
                       </Link>

@@ -5,6 +5,7 @@ import Lease from "../models/Lease.js";
 import Unit from "../models/Unit.js";
 import { logAction } from "../utils/auditLogger.js";
 import { calculateUnitPrice } from "../services/pricingService.js";
+import { buildPaginationMeta, getPagination } from "../utils/pagination.js";
 
 /**
  * POST /api/leases
@@ -16,12 +17,16 @@ export async function createLease(req, res) {
     const { unitId, tenantId, startDate, endDate, taxRate } = req.body;
 
     if (!unitId || !tenantId || !startDate || !endDate) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required fields" });
     }
 
     const unit = await Unit.findById(unitId);
     if (!unit) {
-      return res.status(404).json({ message: "Unit not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Unit not found" });
     }
 
     // use pricing engine
@@ -50,10 +55,12 @@ export async function createLease(req, res) {
       details: { unitId: lease.unitId, tenantId: lease.tenantId },
     });
 
-    return res.status(201).json(lease);
+    return res.status(201).json({ success: true, data: lease });
   } catch (err) {
     console.error("createLease error:", err);
-    return res.status(500).json({ message: "Failed to create lease" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to create lease" });
   }
 }
 
@@ -64,20 +71,33 @@ export async function createLease(req, res) {
  */
 export async function listAllLeases(req, res) {
   try {
-    const { status, tenantId, managerId } = req.query;
+    const { page, limit, skip } = getPagination(req);
+    const { status, tenantId, managerId, unitId } = req.query;
     const filter = {};
     if (status) filter.status = status;
     if (tenantId) filter.tenantId = tenantId;
     if (managerId) filter.managerId = managerId;
+    if (unitId) filter.unitId = unitId;
 
-    const leases = await Lease.find(filter)
-      .populate("unitId")
-      .populate("tenantId", "fullName email");
+    const [leases, total] = await Promise.all([
+      Lease.find(filter)
+        .populate("unitId")
+        .populate("tenantId", "fullName email")
+        .skip(skip)
+        .limit(limit),
+      Lease.countDocuments(filter),
+    ]);
 
-    return res.json(leases);
+    return res.json({
+      success: true,
+      data: leases,
+      meta: buildPaginationMeta({ page, limit, total }),
+    });
   } catch (err) {
     console.error("listAllLeases error:", err);
-    return res.status(500).json({ message: "Failed to fetch leases" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch leases" });
   }
 }
 
@@ -87,8 +107,10 @@ export async function listAllLeases(req, res) {
  */
 export async function getLeaseById(req, res) {
   try {
-    if (!req.params.id || req.params.id === 'undefined' || !mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ message: "Invalid lease ID" });
+    if (!req.params.id || req.params.id === "undefined" || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid lease ID" });
     }
 
     const lease = await Lease.findById(req.params.id)
@@ -96,7 +118,9 @@ export async function getLeaseById(req, res) {
       .populate("tenantId", "fullName email");
 
     if (!lease) {
-      return res.status(404).json({ message: "Lease not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Lease not found" });
     }
 
     // Tenant can only see own lease
@@ -104,13 +128,17 @@ export async function getLeaseById(req, res) {
       req.user.role === "TENANT" &&
       String(lease.tenantId._id || lease.tenantId) !== String(req.user.id)
     ) {
-      return res.status(403).json({ message: "Forbidden" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Forbidden" });
     }
 
-    return res.json(lease);
+    return res.json({ success: true, data: lease });
   } catch (err) {
     console.error("getLeaseById error:", err);
-    return res.status(500).json({ message: "Failed to fetch lease" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch lease" });
   }
 }
 
@@ -121,21 +149,33 @@ export async function getLeaseById(req, res) {
 export async function listLeasesByTenant(req, res) {
   try {
     const { tenantId } = req.params;
+    const { page, limit, skip } = getPagination(req);
 
     // Tenant can only list their own leases
     if (
       req.user.role === "TENANT" &&
       String(tenantId) !== String(req.user.id)
     ) {
-      return res.status(403).json({ message: "Forbidden" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Forbidden" });
     }
 
-    const leases = await Lease.find({ tenantId }).populate("unitId");
+    const [leases, total] = await Promise.all([
+      Lease.find({ tenantId }).populate("unitId").skip(skip).limit(limit),
+      Lease.countDocuments({ tenantId }),
+    ]);
 
-    return res.json(leases);
+    return res.json({
+      success: true,
+      data: leases,
+      meta: buildPaginationMeta({ page, limit, total }),
+    });
   } catch (err) {
     console.error("listLeasesByTenant error:", err);
-    return res.status(500).json({ message: "Failed to fetch leases" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch leases" });
   }
 }
 
@@ -148,7 +188,9 @@ export async function endLease(req, res) {
   try {
     const lease = await Lease.findById(req.params.id);
     if (!lease) {
-      return res.status(404).json({ message: "Lease not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Lease not found" });
     }
 
     lease.status = "ENDED";
@@ -169,9 +211,11 @@ export async function endLease(req, res) {
       details: { unitId: lease.unitId, tenantId: lease.tenantId },
     });
 
-    return res.json(lease);
+    return res.json({ success: true, data: lease });
   } catch (err) {
     console.error("endLease error:", err);
-    return res.status(500).json({ message: "Failed to end lease" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to end lease" });
   }
 }

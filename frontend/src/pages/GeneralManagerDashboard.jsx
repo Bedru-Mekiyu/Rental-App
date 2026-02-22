@@ -58,7 +58,7 @@ export default function GeneralManagerDashboard() {
       ]); // /api/units + /api/leases
 
       const units = unitsRes.data?.data || [];
-      const leases = leasesRes.data || [];
+      const leases = leasesRes.data?.data || [];
 
       // Distinct properties from units
       const propertyIds = new Set(

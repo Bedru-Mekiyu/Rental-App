@@ -22,7 +22,7 @@ export default function LeasesPage() {
     try {
       setLoading(true);
       const res = await API.get("/leases"); // GET /api/leases[listAllLeases]
-      setLeases(res.data || []);
+      setLeases(res.data?.data || []);
     } catch {
       toast.error("Failed to load leases");
     } finally {
@@ -64,9 +64,10 @@ export default function LeasesPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+      <header className="flex flex-wrap items-center justify-between gap-4">
+        <div className="space-y-1">
+          <span className="pill bg-cyan-100 text-cyan-700">Leases</span>
+          <h1 className="app-title text-3xl font-semibold tracking-tight">
             Leases
           </h1>
           <p className="mt-1 text-sm text-slate-500">
@@ -75,7 +76,7 @@ export default function LeasesPage() {
         </div>
         <Link
           to="/leases/new"
-          className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white"
+          className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
         >
           + New Lease
         </Link>
@@ -90,7 +91,7 @@ export default function LeasesPage() {
               placeholder="Search by unit or tenant..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
             />
           </div>
           <div className="flex gap-1 rounded-full bg-slate-100 p-1 text-xs">
@@ -127,7 +128,7 @@ export default function LeasesPage() {
             <p className="text-sm text-slate-400 mt-1">Try adjusting your search or filters.</p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <table className="min-w-full divide-y divide-slate-200 text-sm">
               <thead className="bg-gradient-to-r from-slate-50 to-slate-100">
                 <tr>

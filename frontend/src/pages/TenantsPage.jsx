@@ -48,7 +48,7 @@ export default function TenantsPage() {
 
       // GET /api/users?role=TENANT&status=...
       const res = await API.get("/users", { params });
-      setTenants(res.data || []);
+      setTenants(res.data?.data || []);
     } catch (err) {
       console.error("TenantsPage loadTenants error:", err);
       toast.error(

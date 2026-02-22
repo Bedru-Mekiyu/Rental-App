@@ -1,6 +1,7 @@
 // src/controllers/maintenanceController.js
 
 import MaintenanceRequest from "../models/MaintenanceRequest.js";
+import { buildPaginationMeta, getPagination } from "../utils/pagination.js";
 
 // Tenant creates a maintenance request
 export async function createMaintenanceRequest(req, res) {
@@ -32,17 +33,28 @@ export async function createMaintenanceRequest(req, res) {
 // Get all maintenance requests (admin/PM)
 export async function getMaintenanceRequests(req, res) {
   try {
+    const { page, limit, skip } = getPagination(req);
+    const { page: _page, limit: _limit, ...rest } = req.query;
     const filters = {
       isDeleted: false,
-      ...req.query,
+      ...rest,
     };
 
-    const requests = await MaintenanceRequest.find(filters)
-      .populate("tenantId")
-      .populate("unitId")
-      .sort({ createdAt: -1 });
+    const [requests, total] = await Promise.all([
+      MaintenanceRequest.find(filters)
+        .populate("tenantId")
+        .populate("unitId")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      MaintenanceRequest.countDocuments(filters),
+    ]);
 
-    return res.json({ success: true, data: requests });
+    return res.json({
+      success: true,
+      data: requests,
+      meta: buildPaginationMeta({ page, limit, total }),
+    });
   } catch (err) {
     console.error("getMaintenanceRequests error:", err);
     return res
@@ -55,15 +67,32 @@ export async function getMaintenanceRequests(req, res) {
 export async function getMaintenanceRequestsByTenant(req, res) {
   try {
     const tenantId = req.params.tenantId;
+    const { page, limit, skip } = getPagination(req);
 
-    const requests = await MaintenanceRequest.find({
-      tenantId,
-      isDeleted: false,
-    })
-      .populate("unitId")
-      .sort({ createdAt: -1 });
+    if (
+      req.user?.role === "TENANT" &&
+      String(tenantId) !== String(req.user.id)
+    ) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Forbidden" });
+    }
 
-    return res.json({ success: true, data: requests });
+    const filter = { tenantId, isDeleted: false };
+    const [requests, total] = await Promise.all([
+      MaintenanceRequest.find(filter)
+        .populate("unitId")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      MaintenanceRequest.countDocuments(filter),
+    ]);
+
+    return res.json({
+      success: true,
+      data: requests,
+      meta: buildPaginationMeta({ page, limit, total }),
+    });
   } catch (err) {
     console.error("getMaintenanceRequestsByTenant error:", err);
     return res

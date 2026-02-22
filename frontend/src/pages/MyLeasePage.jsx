@@ -17,11 +17,11 @@ export default function MyLeasePage() {
     try {
       setLoading(true);
       const res = await API.get(`/leases/by-tenant/${user._id}`);
-      const leases = res.data || [];
+      const leases = res.data?.data || [];
 
       if (leases.length > 0) {
         // If tenant has leases, redirect to the first active one
-        const activeLease = leases.find(l => l.status === 'ACTIVE') || leases[0];
+        const activeLease = leases.find((l) => l.status === "ACTIVE") || leases[0];
         navigate(`/leases/${activeLease._id}`, { replace: true });
         return;
       }

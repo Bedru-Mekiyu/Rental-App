@@ -6,6 +6,7 @@ export const useAuthStore = create((set) => ({
   loading: true,
   init: () => {
     const token = localStorage.getItem("token");
+    const refreshToken = localStorage.getItem("refreshToken");
     const storedUser = localStorage.getItem("user");
 
     if (token && storedUser) {
@@ -19,6 +20,26 @@ export const useAuthStore = create((set) => ({
       }
     }
 
+    if (refreshToken && storedUser) {
+      axios
+        .post("http://localhost:5000/api/auth/refresh", { refreshToken })
+        .then((res) => {
+          const payload = res.data?.data || res.data;
+          const { token: newToken, refreshToken: newRefresh } = payload || {};
+          if (!newToken || !newRefresh) return;
+          localStorage.setItem("token", newToken);
+          localStorage.setItem("refreshToken", newRefresh);
+          axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
+          set({ user: JSON.parse(storedUser) });
+        })
+        .catch(() => {
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("user");
+        })
+        .finally(() => set({ loading: false }));
+      return;
+    }
+
     set({ loading: false });
   },
   login: async (email, password) => {
@@ -27,8 +48,13 @@ export const useAuthStore = create((set) => ({
         email,
         password,
       });
-      const { token, user } = res.data;
+      const payload = res.data?.data || res.data;
+      const { token, refreshToken, user } = payload || {};
+      if (!token || !refreshToken || !user) {
+        return { success: false, message: "Invalid login response" };
+      }
       localStorage.setItem("token", token);
+      localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("user", JSON.stringify(user));
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       set({ user });
@@ -40,8 +66,19 @@ export const useAuthStore = create((set) => ({
       };
     }
   },
-  logout: () => {
+  logout: async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken) {
+      try {
+        await axios.post("http://localhost:5000/api/auth/logout", {
+          refreshToken,
+        });
+      } catch {
+        // ignore logout failures
+      }
+    }
     localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     delete axios.defaults.headers.common["Authorization"];
     set({ user: null });

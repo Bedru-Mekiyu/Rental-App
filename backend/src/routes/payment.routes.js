@@ -9,6 +9,7 @@ import {
   listByTenant,
   listPayments,
 } from "../controllers/paymentController.js";
+import { validateCreatePayment } from "../middleware/validators.js";
 
 const router = Router();
 
@@ -19,7 +20,12 @@ const STAFF_ROLES = ["PM", "ADMIN"];
 router.get("/", auth(STAFF_ROLES), listPayments);
 
 // Tenants + admin can create a payment record (no FS; add "PM" if you want)
-router.post("/", auth(["TENANT", "ADMIN"]), createPayment);
+router.post(
+  "/",
+  auth(["TENANT", "ADMIN"]),
+  validateCreatePayment,
+  createPayment
+);
 
 // Only PM and ADMIN can change status (verify/reject)
 router.patch("/:id/status", auth(STAFF_ROLES), updatePaymentStatus);

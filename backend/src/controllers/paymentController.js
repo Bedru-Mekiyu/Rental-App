@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import Payment from "../models/Payment.js";
 import Lease from "../models/Lease.js";
 import { logAction } from "../utils/auditLogger.js";
+import { buildPaginationMeta, getPagination } from "../utils/pagination.js";
 
 /**
  * POST /api/payments
@@ -23,17 +24,23 @@ export async function createPayment(req, res) {
     } = req.body;
 
     if (!leaseId || !amountEtb || !transactionDate || !paymentMethod) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required fields" });
     }
 
     // Validate leaseId format
     if (!mongoose.Types.ObjectId.isValid(leaseId)) {
-      return res.status(400).json({ message: "Invalid lease ID format" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid lease ID format" });
     }
 
     const lease = await Lease.findById(leaseId);
     if (!lease) {
-      return res.status(404).json({ message: "Lease not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Lease not found" });
     }
 
     const payment = await Payment.create({
@@ -61,10 +68,12 @@ export async function createPayment(req, res) {
       },
     });
 
-    return res.status(201).json(payment);
+    return res.status(201).json({ success: true, data: payment });
   } catch (err) {
     console.error("createPayment error:", err);
-    return res.status(500).json({ message: "Failed to create payment" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to create payment" });
   }
 }
 
@@ -78,19 +87,21 @@ export async function updatePaymentStatus(req, res) {
     const { status } = req.body;
 
     if (!["PENDING", "VERIFIED", "REJECTED"].includes(status)) {
-      return res.status(400).json({ message: "Invalid status value" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid status value" });
     }
 
     const payment = await Payment.findById(req.params.id);
     if (!payment) {
-      return res.status(404).json({ message: "Payment not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Payment not found" });
     }
 
     payment.status = status;
     payment.verifiedBy = req.user.id;
     payment.verifiedAt = new Date();
-    await payment.save();
-
     await payment.save();
 
     await logAction({
@@ -101,12 +112,12 @@ export async function updatePaymentStatus(req, res) {
       details: { status },
     });
 
-    return res.json(payment);
+    return res.json({ success: true, data: payment });
   } catch (err) {
     console.error("updatePaymentStatus error:", err);
     return res
       .status(500)
-      .json({ message: "Failed to update payment status" });
+      .json({ success: false, message: "Failed to update payment status" });
   }
 }
 
@@ -118,6 +129,7 @@ export async function updatePaymentStatus(req, res) {
 export async function listPayments(req, res) {
   try {
     const { status, method, q } = req.query;
+    const { page, limit, skip } = getPagination(req);
 
     const filter = {};
 
@@ -137,14 +149,24 @@ export async function listPayments(req, res) {
       ];
     }
 
-    const payments = await Payment.find(filter)
-      .sort({ transactionDate: -1 })
-      .limit(200);
+    const [payments, total] = await Promise.all([
+      Payment.find(filter)
+        .sort({ transactionDate: -1 })
+        .skip(skip)
+        .limit(limit),
+      Payment.countDocuments(filter),
+    ]);
 
-    return res.json(payments);
+    return res.json({
+      success: true,
+      data: payments,
+      meta: buildPaginationMeta({ page, limit, total }),
+    });
   } catch (err) {
     console.error("listPayments error:", err);
-    return res.status(500).json({ message: "Failed to fetch payments" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch payments" });
   }
 }
 
@@ -155,17 +177,26 @@ export async function listPayments(req, res) {
 export async function listByLease(req, res) {
   try {
     const { leaseId } = req.params;
+    const { page, limit, skip } = getPagination(req);
 
-    const payments = await Payment.find({ leaseId }).sort({
-      transactionDate: -1,
+    const [payments, total] = await Promise.all([
+      Payment.find({ leaseId })
+        .sort({ transactionDate: -1 })
+        .skip(skip)
+        .limit(limit),
+      Payment.countDocuments({ leaseId }),
+    ]);
+
+    return res.json({
+      success: true,
+      data: payments,
+      meta: buildPaginationMeta({ page, limit, total }),
     });
-
-    return res.json(payments);
   } catch (err) {
     console.error("listByLease error:", err);
     return res
       .status(500)
-      .json({ message: "Failed to fetch payments by lease" });
+      .json({ success: false, message: "Failed to fetch payments by lease" });
   }
 }
 
@@ -176,25 +207,45 @@ export async function listByLease(req, res) {
 export async function listByTenant(req, res) {
   try {
     const { tenantId } = req.params;
+    const { page, limit, skip } = getPagination(req);
+
+    if (
+      req.user?.role === "TENANT" &&
+      String(tenantId) !== String(req.user.id)
+    ) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Forbidden" });
+    }
 
     const leases = await Lease.find({ tenantId }, { _id: 1 });
     const leaseIds = leases.map((l) => l._id);
 
     if (leaseIds.length === 0) {
-      return res.json([]);
+      return res.json({
+        success: true,
+        data: [],
+        meta: buildPaginationMeta({ page, limit, total: 0 }),
+      });
     }
 
-    const payments = await Payment.find({
-      leaseId: { $in: leaseIds },
-    }).sort({
-      transactionDate: -1,
-    });
+    const [payments, total] = await Promise.all([
+      Payment.find({ leaseId: { $in: leaseIds } })
+        .sort({ transactionDate: -1 })
+        .skip(skip)
+        .limit(limit),
+      Payment.countDocuments({ leaseId: { $in: leaseIds } }),
+    ]);
 
-    return res.json(payments);
+    return res.json({
+      success: true,
+      data: payments,
+      meta: buildPaginationMeta({ page, limit, total }),
+    });
   } catch (err) {
     console.error("listByTenant error:", err);
     return res
       .status(500)
-      .json({ message: "Failed to fetch payments by tenant" });
+      .json({ success: false, message: "Failed to fetch payments by tenant" });
   }
 }

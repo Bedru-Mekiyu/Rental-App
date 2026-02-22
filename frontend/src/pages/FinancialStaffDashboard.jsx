@@ -103,8 +103,9 @@ export default function FinancialStaffDashboard() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">
+      <header className="space-y-1">
+        <span className="pill bg-emerald-100 text-emerald-700">Finance</span>
+        <h1 className="app-title text-3xl font-semibold tracking-tight">
           Financial Staff Dashboard
         </h1>
         <p className="mt-1 text-sm text-slate-500">

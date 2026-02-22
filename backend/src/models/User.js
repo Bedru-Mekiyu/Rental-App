@@ -60,6 +60,8 @@ userSchema.methods.comparePassword = function (plain) {
   return bcrypt.compare(plain, this.passwordHash);
 };
 
+userSchema.index({ role: 1, status: 1 });
+
 const User = mongoose.model("User", userSchema);
 
 export { User, USER_ROLES };

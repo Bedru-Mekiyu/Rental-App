@@ -44,7 +44,11 @@ router.delete("/:id", auth(["ADMIN", "PM"]), deactivateUser);
 router.post("/:id/reactivate", auth(["ADMIN", "PM"]), async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
 
     user.status = "ACTIVE";
     await user.save();
@@ -57,10 +61,15 @@ router.post("/:id/reactivate", auth(["ADMIN", "PM"]), async (req, res) => {
       details: { status: user.status },
     });
 
-    return res.json({ message: "User reactivated successfully" });
+    return res.json({
+      success: true,
+      message: "User reactivated successfully",
+    });
   } catch (err) {
     console.error("reactivateUser error:", err);
-    return res.status(500).json({ message: "Failed to reactivate user" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to reactivate user" });
   }
 });
 
