@@ -12,9 +12,7 @@ useAuthStore.getState().init();
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-50">
-        <App />
-      </div>
+      <App />
     </BrowserRouter>
   </StrictMode>
 );

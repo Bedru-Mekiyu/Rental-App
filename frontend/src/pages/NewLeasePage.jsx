@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import { Home, User, Calendar, DollarSign, FileText, Save, ArrowLeft } from "lucide-react";
+import PageHeader from "../components/PageHeader";
 
 export default function NewLeasePage() {
   const navigate = useNavigate();
@@ -74,12 +75,12 @@ export default function NewLeasePage() {
 
   return (
     <div className="space-y-6">
-      <header className="bg-gradient-to-r from-green-600 to-teal-600 text-white p-6 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold">New Lease</h1>
-        <p className="mt-2 text-green-100">
-          Create a new lease agreement for a tenant and unit.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Leases"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="New Lease"
+        subtitle="Create a new lease agreement for a tenant and unit."
+      />
 
       <DashboardCard title="Lease Details">
         <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
@@ -92,7 +93,7 @@ export default function NewLeasePage() {
               required
               value={form.unitId}
               onChange={handleChange("unitId")}
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
             >
               <option value="">Select Unit</option>
               {units
@@ -114,7 +115,7 @@ export default function NewLeasePage() {
               required
               value={form.tenantId}
               onChange={handleChange("tenantId")}
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
             >
               <option value="">Select Tenant</option>
               {tenants.map((t) => (
@@ -135,7 +136,7 @@ export default function NewLeasePage() {
               required
               value={form.startDate}
               onChange={handleChange("startDate")}
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
             />
           </div>
 
@@ -149,7 +150,7 @@ export default function NewLeasePage() {
               required
               value={form.endDate}
               onChange={handleChange("endDate")}
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
             />
           </div>
 
@@ -163,7 +164,7 @@ export default function NewLeasePage() {
               required
               value={form.monthlyRentEtb}
               onChange={handleChange("monthlyRentEtb")}
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
               placeholder="5000"
             />
           </div>
@@ -178,7 +179,7 @@ export default function NewLeasePage() {
               required
               value={form.securityDepositEtb}
               onChange={handleChange("securityDepositEtb")}
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
               placeholder="5000"
             />
           </div>
@@ -192,7 +193,7 @@ export default function NewLeasePage() {
               value={form.notes}
               onChange={handleChange("notes")}
               rows={3}
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
               placeholder="Additional notes..."
             />
           </div>
@@ -209,7 +210,7 @@ export default function NewLeasePage() {
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center space-x-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60 transition-colors"
+              className="inline-flex items-center space-x-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-60 transition-colors"
             >
               <Save className="h-4 w-4" />
               <span>{submitting ? "Creating..." : "Create Lease"}</span>

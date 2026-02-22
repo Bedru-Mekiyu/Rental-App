@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
+import DashboardCard from "../components/DashboardCard";
+import PageHeader from "../components/PageHeader";
 
 const tenants = ["Abebe Kebede", "Sara Mohammed"];
 const units = [
@@ -77,19 +79,25 @@ export default function LeaseCreation() {
   }, [selectedUnit]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[2.5fr_1fr] gap-6 p-6 min-h-screen bg-gray-50]">
-      {/* left */}
-      <div>
-        <h2 className="text-2xl font-semibold mb-6 ">Create New Lease</h2>
-        <div className="bg-white p-5 mb-5 rounded-xl shadow-sm">
-          <h4 className="mb-4 font-semibold">Tenant &Unit Selection</h4>
-          <div className="space-y-4">
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Leases"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="Create New Lease"
+        subtitle="Configure tenant, unit, and billing details for a new lease."
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-[2.5fr_1fr] gap-6">
+        {/* left */}
+        <div className="space-y-6">
+          <DashboardCard title="Tenant & Unit Selection">
+            <div className="space-y-4">
             <div>
               <label className="text-sm font-medium">Tenant Name</label>
               <select
                 value={tenant}
                 onChange={(e) => setTenant(e.target.value)}
-                className="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500"
+                className="w-full mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               >
                 <option value="">Select Tenant</option>
                 {tenants.map((t) => (
@@ -102,7 +110,7 @@ export default function LeaseCreation() {
               <select
                 value={unitId}
                 onChange={(e) => setUnitId(e.target.value)}
-                className="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500"
+                className="w-full mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               >
                 <option value="">Select Unit</option>
                 {units.map((u) => (
@@ -119,7 +127,7 @@ export default function LeaseCreation() {
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
                 />
               </div>
               <div>
@@ -128,15 +136,14 @@ export default function LeaseCreation() {
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
                 />
               </div>
             </div>
-          </div>
-        </div>
+            </div>
+          </DashboardCard>
         {rentSummary && (
-          <div className="bg-white rounded-xl shadow-sm p-5 mb-5">
-            <h4 className="mb-4 font-semibold">Rent Calculation Summary</h4>
+          <DashboardCard title="Rent Calculation Summary">
             {[
               ["Base Rent", rentSummary.baseRent],
               ["Floor Adjustment", rentSummary.floorAdjustment],
@@ -149,16 +156,15 @@ export default function LeaseCreation() {
                 <span>ETB {value}</span>
               </div>
             ))}
-            <div className="flex justify-between font-semibold text-indigo-600 border-t mt-3 pt-3">
+            <div className="flex justify-between font-semibold text-emerald-600 border-t mt-3 pt-3">
               <span>Total Monthly rent</span>
               <span>ETB {rentSummary.total}</span>
             </div>
-          </div>
+          </DashboardCard>
         )}
 
-        <div className="bg-white rounded-xl shadow-sm p-5 ">
-          <h4 className="font-semibold mb-4 ">Additional Terms & Notes</h4>
-          <div className="space-y-4 ">
+        <DashboardCard title="Additional Terms & Notes">
+          <div className="space-y-4">
             <div>
               <label className="text-sm font-medium">
                 Security Deposit (ETB)
@@ -167,7 +173,7 @@ export default function LeaseCreation() {
                 type="number"
                 value={deposit}
                 onChange={(e) => setDeposit(e.target.value)}
-                className="w-full mt-1 border rounded-lg px-3 py-2"
+                className="w-full mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               />
             </div>
             <div>
@@ -179,28 +185,27 @@ export default function LeaseCreation() {
                 id=""
                 rows="3"
                 placeholder="Special lease terms..."
-                className="w-full mt-1 border rounded-lg px-3 py-2"
+                className="w-full mt-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               />
             </div>
           </div>
-        </div>
+        </DashboardCard>
       </div>
 
-      {/* right */}
-      <div className="space-y-4">
-        <div className="bg-white rounded-xl shadow-sm p-6 text-center border border-dashed">
-          <h4 className="font-semibold mb-2">Lease Document Preview</h4>
-          <p className="text-sm text-gray-500 mb-4 ">No preview generated</p>
-          <button className="px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50">
-            Generate Preview
+        {/* right */}
+        <div className="space-y-4">
+          <DashboardCard title="Lease Document Preview" description="No preview generated yet.">
+            <button className="px-4 py-2 border border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-50">
+              Generate Preview
+            </button>
+          </DashboardCard>
+          <button className="btn-primary w-full rounded-lg py-3 font-medium">
+            Finalize Lease
+          </button>
+          <button className="w-full py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700">
+            Cancel
           </button>
         </div>
-        <button className="w-full py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700">
-          Finalize Lease
-        </button>
-        <button className="w-full py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700">
-          Cancel
-        </button>
       </div>
     </div>
   );

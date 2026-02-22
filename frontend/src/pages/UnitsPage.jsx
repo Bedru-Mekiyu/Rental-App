@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
+import PageHeader from "../components/PageHeader";
 
 const statusFilters = ["All", "VACANT", "OCCUPIED", "UNDER_MAINTENANCE"];
 
@@ -99,26 +100,23 @@ export default function UnitsPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <div className="space-y-1">
-          <span className="pill bg-indigo-100 text-indigo-700">Inventory</span>
-          <h1 className="app-title text-3xl font-semibold tracking-tight">
-            Units
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Manage units, pricing, and availability.
-          </p>
-        </div>
-        <button
-          onClick={() => {
-            const el = document.getElementById("create-unit-form");
-            if (el) el.scrollIntoView({ behavior: "smooth" });
-          }}
-          className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
-        >
-          + New Unit
-        </button>
-      </header>
+      <PageHeader
+        eyebrow="Inventory"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="Units"
+        subtitle="Manage units, pricing, and availability."
+        actions={
+          <button
+            onClick={() => {
+              const el = document.getElementById("create-unit-form");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="btn-primary rounded-full px-5 py-2 text-sm font-semibold"
+          >
+            + New Unit
+          </button>
+        }
+      />
 
       {/* Filters and search */}
       <DashboardCard>
@@ -129,7 +127,7 @@ export default function UnitsPage() {
               placeholder="Search by unit number or type..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-200"
             />
           </div>
           <div className="flex flex-wrap gap-1 rounded-full bg-slate-100 p-1 text-xs">
@@ -187,7 +185,7 @@ export default function UnitsPage() {
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
                 {filteredUnits.map((u) => (
-                  <tr key={u._id} className="transition hover:bg-slate-50/80">
+                  <tr key={u._id} className="stagger-item transition hover:bg-slate-50/80">
                     <td className="px-4 py-2 text-sm">
                       {u.unitNumber || `Unit ${u._id.slice(-4)}`}
                     </td>
@@ -206,7 +204,7 @@ export default function UnitsPage() {
                           u.status === "VACANT"
                             ? "bg-emerald-100 text-emerald-700"
                             : u.status === "OCCUPIED"
-                            ? "bg-indigo-100 text-indigo-700"
+                            ? "bg-teal-100 text-teal-700"
                             : u.status === "UNDER_MAINTENANCE"
                             ? "bg-amber-100 text-amber-700"
                             : "bg-slate-100 text-slate-600"
@@ -221,7 +219,7 @@ export default function UnitsPage() {
                     <td className="px-4 py-2 text-sm">
                       <Link
                         to={`/units/${u._id}`}
-                        className="text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                        className="text-xs font-semibold text-emerald-600 hover:text-emerald-700"
                       >
                         View
                       </Link>
@@ -255,7 +253,7 @@ export default function UnitsPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, unitNumber: e.target.value }))
               }
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               placeholder="e.g. 10A"
             />
           </div>
@@ -269,7 +267,7 @@ export default function UnitsPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, floor: e.target.value }))
               }
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               placeholder="e.g. 3"
             />
           </div>
@@ -283,7 +281,7 @@ export default function UnitsPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, type: e.target.value }))
               }
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               placeholder="e.g. 2BR, Studio"
             />
           </div>
@@ -299,7 +297,7 @@ export default function UnitsPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, areaSqm: e.target.value }))
               }
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               placeholder="e.g. 85"
             />
           </div>
@@ -318,7 +316,7 @@ export default function UnitsPage() {
                   basePriceEtb: e.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               placeholder="e.g. 10000"
             />
           </div>
@@ -330,7 +328,7 @@ export default function UnitsPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, status: e.target.value }))
               }
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
             >
               <option value="VACANT">VACANT</option>
               <option value="OCCUPIED">OCCUPIED</option>
@@ -344,7 +342,7 @@ export default function UnitsPage() {
             <button
               type="submit"
               disabled={creating}
-              className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+              className="btn-primary rounded-md px-4 py-2 text-sm font-medium disabled:opacity-60"
             >
               {creating ? "Creating..." : "Create Unit"}
             </button>

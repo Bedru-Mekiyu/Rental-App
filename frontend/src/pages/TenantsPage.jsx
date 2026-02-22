@@ -6,6 +6,7 @@ import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import { useAuthStore } from "../store/authStore";
 import { Users, Search, Filter, UserPlus, Eye, UserX, UserCheck } from "lucide-react";
+import PageHeader from "../components/PageHeader";
 
 const STATUS_OPTIONS = ["ALL", "ACTIVE", "SUSPENDED", "INVITED"];
 
@@ -116,25 +117,26 @@ export default function TenantsPage() {
   }
 
   return (
-    <DashboardCard
-      title={
-        <div className="flex items-center space-x-2">
-          <Users className="h-5 w-5 text-indigo-600" />
-          <span>Tenant Management</span>
-        </div>
-      }
-      action={
-        currentUser?.role === "ADMIN" || currentUser?.role === "PM" ? (
-          <Link
-            to="/users/new?role=TENANT"
-            className="inline-flex items-center space-x-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition-colors"
-          >
-            <UserPlus className="h-4 w-4" />
-            <span>New Tenant</span>
-          </Link>
-        ) : null
-      }
-    >
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Tenants"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="Tenant Management"
+        subtitle="Manage tenant accounts, access status, and profiles."
+        actions={
+          currentUser?.role === "ADMIN" || currentUser?.role === "PM" ? (
+            <Link
+              to="/users/new?role=TENANT"
+              className="btn-primary inline-flex items-center space-x-2 rounded-lg px-4 py-2 text-sm font-semibold"
+            >
+              <UserPlus className="h-4 w-4" />
+              <span>New Tenant</span>
+            </Link>
+          ) : null
+        }
+      />
+
+      <DashboardCard title="Tenant Directory">
       {/* Filters */}
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-1 items-center gap-3">
@@ -143,7 +145,7 @@ export default function TenantsPage() {
             <input
               type="text"
               placeholder="Search by name, email, or phone"
-              className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -152,7 +154,7 @@ export default function TenantsPage() {
         <div className="flex items-center gap-3">
           <Filter className="h-4 w-4 text-gray-500" />
           <select
-            className="rounded-lg border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+            className="rounded-lg border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -168,7 +170,7 @@ export default function TenantsPage() {
       {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
         <table className="min-w-full divide-y divide-gray-200 text-sm">
-          <thead className="bg-gradient-to-r from-indigo-50 to-blue-50">
+          <thead className="bg-gradient-to-r from-emerald-50 to-teal-50">
             <tr>
               <th className="px-6 py-4 text-left font-semibold text-gray-700">
                 Name / Contact
@@ -197,7 +199,7 @@ export default function TenantsPage() {
               </tr>
             ) : (
               filteredTenants.map((t) => (
-                <tr key={t._id} className="hover:bg-gray-50 transition-colors">
+                <tr key={t._id} className="stagger-item hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="font-medium text-gray-900">
                       {t.fullName || "Unnamed"}
@@ -254,6 +256,7 @@ export default function TenantsPage() {
           </tbody>
         </table>
       </div>
-    </DashboardCard>
+      </DashboardCard>
+    </div>
   );
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
+import PageHeader from "../components/PageHeader";
 
 export default function PropertiesPage() {
   const [properties, setProperties] = useState([]);
@@ -59,14 +60,12 @@ export default function PropertiesPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Property
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Configure your main building/property details.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Property"
+        eyebrowClassName="bg-slate-100 text-slate-700"
+        title="Property"
+        subtitle="Configure your main building/property details."
+      />
 
       <DashboardCard title="Current Property">
         {property ? (
@@ -109,7 +108,7 @@ export default function PropertiesPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, name: e.target.value }))
               }
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               placeholder="e.g. Main Apartment Building"
             />
           </div>
@@ -122,7 +121,7 @@ export default function PropertiesPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, address: e.target.value }))
               }
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               placeholder="e.g. Addis Ababa, Bole, XYZ Street"
             />
           </div>
@@ -138,7 +137,7 @@ export default function PropertiesPage() {
                   description: e.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               rows={3}
             />
           </div>
@@ -146,7 +145,7 @@ export default function PropertiesPage() {
             <button
               type="submit"
               disabled={creating}
-              className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+              className="btn-primary rounded-md px-4 py-2 text-sm font-medium disabled:opacity-60"
             >
               {creating ? "Saving..." : "Save Property"}
             </button>

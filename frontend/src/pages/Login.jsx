@@ -43,27 +43,27 @@ export default function Login() {
   return (
     <div className="min-h-screen px-4 py-10">
       <div className="mx-auto grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white/80 shadow-2xl backdrop-blur md:grid-cols-[1.1fr_0.9fr]">
-        <div className="relative flex flex-col justify-between bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-950 p-8 text-white">
+        <div className="relative flex flex-col justify-between bg-gradient-to-br from-slate-900 via-teal-900 to-emerald-950 p-8 text-white">
           <div className="absolute inset-0 opacity-30">
-            <div className="absolute -top-16 -left-16 h-56 w-56 rounded-full bg-cyan-400/30 blur-3xl" />
-            <div className="absolute -bottom-10 right-0 h-48 w-48 rounded-full bg-indigo-400/30 blur-3xl" />
+            <div className="absolute -top-16 -left-16 h-56 w-56 rounded-full bg-emerald-400/30 blur-3xl" />
+            <div className="absolute -bottom-10 right-0 h-48 w-48 rounded-full bg-amber-300/30 blur-3xl" />
           </div>
           <div className="relative space-y-4">
             <span className="pill bg-white/20 text-white">Portfolio OS</span>
             <h1 className="app-title text-3xl font-semibold">
               Rental Management System
             </h1>
-            <p className="text-sm text-indigo-100">
+            <p className="text-sm text-emerald-100">
               Track units, leases, and payments with a single, high-clarity dashboard.
             </p>
           </div>
-          <div className="relative space-y-4 text-sm text-indigo-100">
+          <div className="relative space-y-4 text-sm text-emerald-100">
             <div className="flex items-center gap-3">
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
               Real-time occupancy and payment insights
             </div>
             <div className="flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-cyan-300" />
+              <span className="h-2 w-2 rounded-full bg-teal-300" />
               Role-based dashboards for each team
             </div>
             <div className="flex items-center gap-3">
@@ -100,7 +100,7 @@ export default function Login() {
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-200"
                 placeholder="admin@example.com"
               />
             </div>
@@ -115,7 +115,7 @@ export default function Login() {
                 value={form.password}
                 onChange={handleChange}
                 required
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-200"
                 placeholder="••••••••"
               />
             </div>
@@ -126,7 +126,7 @@ export default function Login() {
               className={`w-full rounded-2xl px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition ${
                 loading
                   ? "cursor-not-allowed bg-slate-400"
-                  : "bg-slate-900 hover:-translate-y-0.5 hover:bg-slate-800"
+                  : "btn-primary hover:-translate-y-0.5"
               }`}
             >
               {loading ? "Signing in..." : "Sign In"}

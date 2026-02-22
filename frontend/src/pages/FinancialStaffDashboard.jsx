@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
+import PageHeader from "../components/PageHeader";
 
 const Avatar = ({ name }) => {
   const initials = (name || "")
@@ -15,7 +16,7 @@ const Avatar = ({ name }) => {
     .slice(0, 2);
 
   return (
-    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
+    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-xs font-semibold text-emerald-700">
       {initials || "T"}
     </div>
   );
@@ -103,15 +104,12 @@ export default function FinancialStaffDashboard() {
 
   return (
     <div className="space-y-6">
-      <header className="space-y-1">
-        <span className="pill bg-emerald-100 text-emerald-700">Finance</span>
-        <h1 className="app-title text-3xl font-semibold tracking-tight">
-          Financial Staff Dashboard
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          View invoices, payment status, and financial reports.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Finance"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="Financial Staff Dashboard"
+        subtitle="View invoices, payment status, and financial reports."
+      />
 
       {/* KPI row */}
       <div className="grid gap-4 md:grid-cols-4">
@@ -182,7 +180,7 @@ export default function FinancialStaffDashboard() {
             {queue.map((item) => (
               <li
                 key={item._id}
-                className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2"
+                className="stagger-item flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2"
               >
                 <div className="flex items-center gap-3">
                   <Avatar name={item.tenantName || "Tenant"} />
@@ -271,29 +269,29 @@ export default function FinancialStaffDashboard() {
           description="Key financial reports (view‑only)."
         >
           <ul className="space-y-2 text-xs">
-            <li className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
+            <li className="stagger-item flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
               <span>Monthly Revenue Report</span>
               <Link
                 to="#"
-                className="text-indigo-600 hover:text-indigo-700"
+                className="text-emerald-600 hover:text-emerald-700"
               >
                 View
               </Link>
             </li>
-            <li className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
+            <li className="stagger-item flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
               <span>Delinquency Report</span>
               <Link
                 to="#"
-                className="text-indigo-600 hover:text-indigo-700"
+                className="text-emerald-600 hover:text-emerald-700"
               >
                 View
               </Link>
             </li>
-            <li className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
+            <li className="stagger-item flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
               <span>Expense Report</span>
               <Link
                 to="#"
-                className="text-indigo-600 hover:text-indigo-700"
+                className="text-emerald-600 hover:text-emerald-700"
               >
                 View
               </Link>

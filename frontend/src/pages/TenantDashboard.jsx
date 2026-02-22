@@ -26,6 +26,7 @@ import {
   Plus,
   X,
 } from "lucide-react";
+import PageHeader from "../components/PageHeader";
 
 const maintenanceSchema = z.object({
   description: z
@@ -216,7 +217,7 @@ export default function TenantDashboard() {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-primary-200 border-t-primary-600"></div>
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-600"></div>
           <p className="mt-4 text-sm text-gray-500">
             Loading user data...
           </p>
@@ -229,7 +230,7 @@ export default function TenantDashboard() {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600"></div>
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-600"></div>
           <p className="mt-4 text-sm text-gray-500">
             Loading your dashboard...
           </p>
@@ -243,8 +244,8 @@ export default function TenantDashboard() {
       {/* Header */}
       <div className="relative overflow-hidden rounded-3xl bg-slate-900 p-8 text-white shadow-2xl">
         <div className="absolute inset-0 opacity-40">
-          <div className="absolute -right-10 -top-12 h-52 w-52 rounded-full bg-indigo-500/40 blur-3xl" />
-          <div className="absolute -bottom-16 left-8 h-64 w-64 rounded-full bg-cyan-400/30 blur-3xl" />
+          <div className="absolute -right-10 -top-12 h-52 w-52 rounded-full bg-emerald-500/40 blur-3xl" />
+          <div className="absolute -bottom-16 left-8 h-64 w-64 rounded-full bg-amber-400/30 blur-3xl" />
         </div>
         <div className="relative flex items-center justify-between">
           <div className="flex-1">
@@ -252,7 +253,7 @@ export default function TenantDashboard() {
             <h1 className="app-title mt-3 text-4xl font-semibold mb-2">
               Welcome back, {user?.fullName?.split(' ')[0] || 'Tenant'}!
             </h1>
-            <p className="text-indigo-100 text-lg">
+            <p className="text-emerald-100 text-lg">
               Manage your lease, payments, and maintenance requests all in one place.
             </p>
             <div className="flex items-center gap-4 mt-4">
@@ -281,8 +282,8 @@ export default function TenantDashboard() {
         {/* Lease summary */}
         <section className="lg:col-span-1 surface-panel p-6 hover-lift fade-in">
           <div className="flex items-center space-x-2 mb-4">
-            <div className="rounded-lg bg-indigo-100 p-2">
-              <Home className="h-5 w-5 text-indigo-600" />
+            <div className="rounded-lg bg-emerald-100 p-2">
+              <Home className="h-5 w-5 text-emerald-600" />
             </div>
             <h2 className="text-lg font-semibold text-gray-900">
               My Lease
@@ -434,38 +435,21 @@ export default function TenantDashboard() {
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <span className={`inline-flex items-center space-x-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          p.status === 'VERIFIED' ? 'bg-emerald-100 text-emerald-800' :
-                          p.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                          p.status === 'REJECTED' ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {p.status === 'VERIFIED' && <CheckCircle className="h-3 w-3" />}
-                          {p.status === 'PENDING' && <Clock className="h-3 w-3" />}
-                          {p.status === 'REJECTED' && <AlertCircle className="h-3 w-3" />}
-                          <span>{p.status}</span>
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-gray-500 font-mono text-xs">
-                        {p.externalTransactionId || "—"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      </div>
-
-      {/* Payment form */}
-      {showPaymentForm && (
-        <section className="surface-panel p-6">
-          <div className="flex items-center space-x-2 mb-6">
-            <div className="rounded-lg bg-emerald-100 p-2">
-              <Plus className="h-5 w-5 text-emerald-600" />
-            </div>
+                      <div className="space-y-6">
+                        <PageHeader
+                          eyebrow="Tenant Portal"
+                          eyebrowClassName="bg-emerald-100 text-emerald-700"
+                          title={`Welcome back, ${user?.fullName?.split(" ")[0] || "Tenant"}!`}
+                          subtitle="Manage your lease, payments, and maintenance requests all in one place."
+                          actions={
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="pill bg-slate-900 text-white">Tenant</span>
+                              <span className="pill bg-slate-100 text-slate-700">
+                                Unit {lease?.unitId?.unitNumber || "N/A"}
+                              </span>
+                            </div>
+                          }
+                        />
             <h2 className="text-lg font-semibold text-gray-900">
               Record New Payment
             </h2>
@@ -731,7 +715,7 @@ export default function TenantDashboard() {
                   <div className="flex flex-col items-end gap-2">
                     <span className={`inline-flex items-center space-x-1 rounded-full px-2 py-0.5 text-xs font-medium ${
                       r.status?.toLowerCase().includes('completed') ? 'bg-emerald-100 text-emerald-800' :
-                      r.status?.toLowerCase().includes('in_progress') || r.status?.toLowerCase().includes('progress') ? 'bg-blue-100 text-blue-800' :
+                      r.status?.toLowerCase().includes('in_progress') || r.status?.toLowerCase().includes('progress') ? 'bg-teal-100 text-teal-800' :
                       r.status?.toLowerCase().includes('pending') ? 'bg-yellow-100 text-yellow-800' :
                       'bg-gray-100 text-gray-800'
                     }`}>
@@ -759,8 +743,8 @@ export default function TenantDashboard() {
         <div className="space-y-4">
           <section className="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 shadow-lg hover-lift">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="rounded-lg bg-blue-100 p-2">
-                <FileText className="h-5 w-5 text-blue-600" />
+              <div className="rounded-lg bg-teal-100 p-2">
+                <FileText className="h-5 w-5 text-teal-600" />
               </div>
               <h2 className="text-lg font-semibold text-gray-900">
                 Documents
@@ -785,7 +769,7 @@ export default function TenantDashboard() {
                       <span className="text-sm font-medium text-gray-700">{doc}</span>
                     </div>
                     <button
-                      className="inline-flex items-center space-x-1 rounded-lg border border-blue-200 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 transition-colors"
+                      className="inline-flex items-center space-x-1 rounded-lg border border-teal-200 px-3 py-1.5 text-xs font-medium text-teal-600 hover:bg-teal-50 transition-colors"
                       onClick={() => {
                         toast.info(`Downloading ${doc}...`, {
                           description: 'Document download feature coming soon!'
@@ -803,8 +787,8 @@ export default function TenantDashboard() {
 
           <section className="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 shadow-lg hover-lift">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="rounded-lg bg-purple-100 p-2">
-                <Bell className="h-5 w-5 text-purple-600" />
+              <div className="rounded-lg bg-amber-100 p-2">
+                <Bell className="h-5 w-5 text-amber-600" />
               </div>
               <h2 className="text-lg font-semibold text-gray-900">
                 Notifications
@@ -827,8 +811,8 @@ export default function TenantDashboard() {
                     key={idx}
                     className="flex items-start space-x-3 p-3 rounded-lg bg-white border border-gray-100 shadow-sm"
                   >
-                    <div className="rounded-full bg-purple-100 p-1.5 mt-0.5">
-                      <Bell className="h-3 w-3 text-purple-600" />
+                    <div className="rounded-full bg-amber-100 p-1.5 mt-0.5">
+                      <Bell className="h-3 w-3 text-amber-600" />
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-800 mb-1">

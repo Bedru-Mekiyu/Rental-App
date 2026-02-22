@@ -4,6 +4,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
+import PageHeader from "../components/PageHeader";
 
 export default function UnitDetailPage() {
   const { unitId } = useParams();
@@ -78,24 +79,21 @@ export default function UnitDetailPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {unit.name || "Unit Detail"}
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            {unit.address || "No address"} · Floor {unit.floor ?? "N/A"} ·{" "}
-            {unit.status}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => navigate("/units")}
-          className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
-        >
-          Back to Units
-        </button>
-      </header>
+      <PageHeader
+        eyebrow="Unit"
+        eyebrowClassName="bg-slate-100 text-slate-700"
+        title={unit.name || "Unit Detail"}
+        subtitle={`${unit.address || "No address"} · Floor ${unit.floor ?? "N/A"} · ${unit.status}`}
+        actions={
+          <button
+            type="button"
+            onClick={() => navigate("/units")}
+            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
+          >
+            Back to Units
+          </button>
+        }
+      />
 
       {/* Unit info */}
       <DashboardCard title="Unit Information">
@@ -213,7 +211,7 @@ export default function UnitDetailPage() {
                     <td className="px-4 py-2">
                       <Link
                         to={`/leases/${lease._id}`}
-                        className="text-indigo-600 hover:text-indigo-700"
+                        className="text-emerald-600 hover:text-emerald-700"
                       >
                         View lease
                       </Link>
@@ -230,7 +228,7 @@ export default function UnitDetailPage() {
             Active lease:{" "}
             <Link
               to={`/leases/${activeLease._id}`}
-              className="font-medium text-indigo-600 hover:text-indigo-700"
+              className="font-medium text-emerald-600 hover:text-emerald-700"
             >
               {activeLease.tenantId?.fullName || "Tenant"}
             </Link>

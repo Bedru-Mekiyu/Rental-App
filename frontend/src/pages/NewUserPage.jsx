@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
+import PageHeader from "../components/PageHeader";
 
 const ROLE_OPTIONS = ["ADMIN", "PM", "GM", "FS", "TENANT"];
 
@@ -56,23 +57,21 @@ export default function NewUserPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Add New User
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Create a new account and assign an appropriate role.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => navigate("/users")}
-          className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
-        >
-          Back to Users
-        </button>
-      </header>
+      <PageHeader
+        eyebrow="Users"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="Add New User"
+        subtitle="Create a new account and assign an appropriate role."
+        actions={
+          <button
+            type="button"
+            onClick={() => navigate("/users")}
+            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
+          >
+            Back to Users
+          </button>
+        }
+      />
 
       <DashboardCard title="User Details">
         <form
@@ -88,7 +87,7 @@ export default function NewUserPage() {
               required
               value={form.fullName}
               onChange={handleChange("fullName")}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               placeholder="Alice Johnson"
             />
           </div>
@@ -102,7 +101,7 @@ export default function NewUserPage() {
               required
               value={form.email}
               onChange={handleChange("email")}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               placeholder="alice@example.com"
             />
           </div>
@@ -115,7 +114,7 @@ export default function NewUserPage() {
               type="tel"
               value={form.phone}
               onChange={handleChange("phone")}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               placeholder="+251..."
             />
           </div>
@@ -129,7 +128,7 @@ export default function NewUserPage() {
               required
               value={form.password}
               onChange={handleChange("password")}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               placeholder="Temporary password"
             />
           </div>
@@ -141,7 +140,7 @@ export default function NewUserPage() {
             <select
               value={form.role}
               onChange={handleChange("role")}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
             >
               {ROLE_OPTIONS.map((r) => (
                 <option key={r} value={r}>
@@ -155,7 +154,7 @@ export default function NewUserPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+              className="btn-primary rounded-md px-4 py-2 text-sm font-medium disabled:opacity-60"
             >
               {submitting ? "Creating..." : "Create User"}
             </button>

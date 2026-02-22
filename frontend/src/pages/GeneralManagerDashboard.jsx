@@ -17,6 +17,7 @@ import {
 } from "recharts";
 import jsPDF from "jspdf";
 import Papa from "papaparse";
+import PageHeader from "../components/PageHeader";
 
 export default function GeneralManagerDashboard() {
   const { user } = useAuthStore();
@@ -184,7 +185,7 @@ export default function GeneralManagerDashboard() {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent" />
       </div>
     );
   }
@@ -192,22 +193,12 @@ export default function GeneralManagerDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="card-enhanced mb-8 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="gradient-text text-3xl font-bold">
-              General Manager Dashboard
-            </h1>
-            <p className="mt-2 text-sm text-slate-600">
-              Welcome back, {user?.fullName || "General Manager"}. Here's your portfolio overview.
-            </p>
-          </div>
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
-            <span className="text-2xl">📊
-            </span>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Portfolio"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="General Manager Dashboard"
+        subtitle={`Welcome back, ${user?.fullName || "General Manager"}. Here's your portfolio overview.`}
+      />
 
       {/* KPI Cards */}
       <div className="grid gap-6 md:grid-cols-3">
@@ -215,26 +206,26 @@ export default function GeneralManagerDashboard() {
           label="Total Properties"
           value={kpis.totalProperties}
           icon="🏢"
-          gradient="from-blue-500 to-cyan-500"
+          gradient="from-emerald-500 to-teal-500"
         />
         <KpiCard
           label="Active Leases"
           value={kpis.activeLeases}
           icon="📄"
-          gradient="from-green-500 to-emerald-500"
+          gradient="from-amber-500 to-orange-500"
         />
         <KpiCard
           label="Overall Occupancy"
           value={`${kpis.occupancyRate}%`}
           icon="📊"
-          gradient="from-purple-500 to-pink-500"
+          gradient="from-teal-600 to-emerald-500"
         />
       </div>
 
       {/* Revenue analytics */}
       <section className="card-enhanced p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
             <span className="text-lg">💰</span>
           </div>
           <div>
@@ -267,13 +258,13 @@ export default function GeneralManagerDashboard() {
                   dataKey="revenue"
                   stroke="url(#revenueGradient)"
                   strokeWidth={3}
-                  dot={{ fill: '#4F46E5', strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, stroke: '#4F46E5', strokeWidth: 2 }}
+                  dot={{ fill: '#0f766e', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: '#0f766e', strokeWidth: 2 }}
                 />
                 <defs>
                   <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#4F46E5" stopOpacity={0.1}/>
+                    <stop offset="5%" stopColor="#0f766e" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#0f766e" stopOpacity={0.1}/>
                   </linearGradient>
                 </defs>
               </LineChart>
@@ -287,14 +278,14 @@ export default function GeneralManagerDashboard() {
                 icon="📈"
               />
             </div>
-            <div className="rounded-xl bg-gradient-to-r from-blue-50 to-cyan-50 p-4 border border-blue-100">
+            <div className="rounded-xl bg-gradient-to-r from-teal-50 to-emerald-50 p-4 border border-teal-100">
               <Stat
                 label="Month-to-Date Revenue"
                 value={formatCurrency(revenueStats.monthToDate)}
                 icon="📊"
               />
             </div>
-            <div className="rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 p-4 border border-purple-100">
+            <div className="rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 p-4 border border-amber-100">
               <Stat
                 label="Avg Revenue per Occupied Unit"
                 value={formatCurrency(revenueStats.avgPerUnit)}
@@ -321,7 +312,7 @@ export default function GeneralManagerDashboard() {
                 <XAxis dataKey="type" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="occupancy" fill="#F472B6" />
+                <Bar dataKey="occupancy" fill="#14b8a6" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -382,7 +373,7 @@ export default function GeneralManagerDashboard() {
 
 function KpiCard({ label, value, icon, gradient }) {
   return (
-    <div className={`card-enhanced p-6 fade-in hover:scale-105 transition-all duration-300`}>
+    <div className={`card-enhanced card-reveal stagger-item p-6 hover:scale-[1.02] transition-all duration-300`}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-slate-600 mb-2">{label}</p>

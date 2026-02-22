@@ -8,9 +8,8 @@ import {
   Clock,
 } from "lucide-react";
 
-import AppHeader from "../components/AppHeader";
-import BottomNav from "../components/BottomNav";
 import Card from "../components/Card";
+import PageHeader from "../components/PageHeader";
 
 export default function Payments() {
   const [rent] = useState(4500);
@@ -123,127 +122,124 @@ export default function Payments() {
       : "text-gray-600";
 
   return (
-    <div className="bg-gray-100 min-h-screen flex justify-center p-4">
-      <div className="w-full bg-white rounded-xl shadow-md overflow-hidden my-8">
-        <AppHeader title="Payments" />
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Payments"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="Payments"
+        subtitle="Track your monthly rent, make payments, and upload receipts."
+      />
 
-        {/* 🔹 Rent Overview */}
-        <Card>
+      {/* 🔹 Rent Overview */}
+      <Card>
+        <div>
+          <div className="flex justify-between items-center">
+            <p className="text-gray-600 font-medium">Current Monthly Rent</p>
+            <CalendarDays className="text-emerald-500" />
+          </div>
+
+          <h2 className="text-emerald-600 text-3xl font-bold mt-2">
+            ETB {rent.toLocaleString()}
+          </h2>
+
+          <p className="text-sm text-gray-400 mt-1">Due: {dueDate}</p>
+
+          <div className="flex items-center gap-2 mt-2">
+            <Clock className="w-4 h-4" />
+            <span className={`font-medium ${statusColor}`}>
+              {paymentStatus}
+            </span>
+          </div>
+        </div>
+      </Card>
+
+      {/* 🔹 Digital Payments */}
+      <Card title="Digital Payment Options">
+        <div
+          onClick={() => handleDigitalPayment("Telebirr")}
+          className="flex justify-between items-center py-2 border-b cursor-pointer hover:bg-gray-50"
+        >
           <div>
-            <div className="flex justify-between items-center">
-              <p className="text-gray-600 font-medium">Current Monthly Rent</p>
-              <CalendarDays className="text-indigo-500" />
-            </div>
-
-            <h2 className="text-indigo-500 text-3xl font-bold mt-2">
-              ETB {rent.toLocaleString()}
-            </h2>
-
-            <p className="text-sm text-gray-400 mt-1">Due: {dueDate}</p>
-
-            <div className="flex items-center gap-2 mt-2">
-              <Clock className="w-4 h-4" />
-              <span className={`font-medium ${statusColor}`}>{paymentStatus}</span>
-            </div>
+            <p className="font-medium">Telebirr</p>
+            <p className="text-sm text-gray-400">Linked account: +251-912-345-678</p>
           </div>
-        </Card>
+          <span>›</span>
+        </div>
 
-        {/* 🔹 Digital Payments */}
-        <Card>
-          <p className="font-medium mb-3">Digital Payment Options</p>
-
-          <div
-            onClick={() => handleDigitalPayment("Telebirr")}
-            className="flex justify-between items-center py-2 border-b cursor-pointer hover:bg-gray-50"
-          >
-            <div>
-              <p className="font-medium">Telebirr</p>
-              <p className="text-sm text-gray-400">Linked account: +251-912-345-678</p>
-            </div>
-            <span>›</span>
+        <div
+          onClick={() => handleDigitalPayment("CBE Birr")}
+          className="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50"
+        >
+          <div>
+            <p className="font-medium">CBE Birr</p>
+            <p className="text-sm text-gray-400">Linked account: 1000012345678</p>
           </div>
+          <span>›</span>
+        </div>
+      </Card>
 
-          <div
-            onClick={() => handleDigitalPayment("CBE Birr")}
-            className="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50"
-          >
-            <div>
-              <p className="font-medium">CBE Birr</p>
-              <p className="text-sm text-gray-400">Linked account: 1000012345678</p>
-            </div>
-            <span>›</span>
+      {/* 🔹 Manual Receipt Upload */}
+      <Card
+        title="Upload Manual Payment Receipt"
+        description="Attach image or PDF of payment proof."
+      >
+        {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
+
+        <label className="mt-3 flex items-center justify-center gap-2 border rounded-md py-2 text-sm cursor-pointer hover:bg-gray-50">
+          <Upload className="w-4 h-4" />
+          Choose File
+          <input
+            type="file"
+            accept="image/*,application/pdf"
+            hidden
+            onChange={(e) => handleReceiptUpload(e.target.files[0])}
+          />
+        </label>
+
+        {receipt && (
+          <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+            <FileText className="w-4 h-4" />
+            {receipt.name}
           </div>
-        </Card>
-
-        {/* 🔹 Manual Receipt Upload */}
-        <Card>
-          <p className="font-medium">Upload Manual Payment Receipt</p>
-          <p className="text-sm text-gray-400 mt-1">
-            Attach image or PDF of payment proof.
-          </p>
-
-          {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
-
-          <label className="mt-3 flex items-center justify-center gap-2 border rounded-md py-2 text-sm cursor-pointer hover:bg-gray-50">
-            <Upload className="w-4 h-4" />
-            Choose File
-            <input
-              type="file"
-              accept="image/*,application/pdf"
-              hidden
-              onChange={(e) => handleReceiptUpload(e.target.files[0])}
-            />
-          </label>
-
-          {receipt && (
-            <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-              <FileText className="w-4 h-4" />
-              {receipt.name}
-            </div>
-          )}
-
-          <button
-            onClick={handleSubmitReceipt}
-            disabled={!receipt || loading}
-            className={`w-full mt-4 py-2 rounded-lg text-white ${
-              loading ? "bg-indigo-400 cursor-not-allowed" : "bg-indigo-500 hover:bg-indigo-600"
-            }`}
-          >
-            {loading ? "Verifying..." : "Submit Receipt"}
-          </button>
-        </Card>
-
-        {/* 🔹 Payment History */}
-        {history.length > 0 && (
-          <Card>
-            <h3 className="font-semibold mb-3">Payment History</h3>
-
-            {history.map((item) => (
-              <div key={item.id} className="border-b py-3">
-                <div className="flex justify-between items-center">
-                  <p className="font-medium">
-                    ETB {item.amount.toLocaleString()} - {item.method}
-                  </p>
-                  <span className="text-green-500 flex items-center gap-1 text-sm">
-                    <CheckCircle className="w-4 h-4" />
-                    {item.status}
-                  </span>
-                </div>
-
-                <p className="text-xs text-gray-400">
-                  {new Date(item.date).toLocaleString()}
-                </p>
-
-                {item.fileName && (
-                  <p className="text-xs text-gray-500">File: {item.fileName}</p>
-                )}
-              </div>
-            ))}
-          </Card>
         )}
 
-        <BottomNav />
-      </div>
+        <button
+          onClick={handleSubmitReceipt}
+          disabled={!receipt || loading}
+          className={`w-full mt-4 py-2 rounded-lg text-white ${
+            loading ? "bg-emerald-400 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-700"
+          }`}
+        >
+          {loading ? "Verifying..." : "Submit Receipt"}
+        </button>
+      </Card>
+
+      {/* 🔹 Payment History */}
+      {history.length > 0 && (
+        <Card title="Payment History">
+          {history.map((item) => (
+            <div key={item.id} className="stagger-item border-b py-3">
+              <div className="flex justify-between items-center">
+                <p className="font-medium">
+                  ETB {item.amount.toLocaleString()} - {item.method}
+                </p>
+                <span className="text-green-500 flex items-center gap-1 text-sm">
+                  <CheckCircle className="w-4 h-4" />
+                  {item.status}
+                </span>
+              </div>
+
+              <p className="text-xs text-gray-400">
+                {new Date(item.date).toLocaleString()}
+              </p>
+
+              {item.fileName && (
+                <p className="text-xs text-gray-500">File: {item.fileName}</p>
+              )}
+            </div>
+          ))}
+        </Card>
+      )}
     </div>
   );
 }

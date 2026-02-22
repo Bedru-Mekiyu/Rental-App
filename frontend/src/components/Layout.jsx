@@ -7,16 +7,16 @@ export default function Layout() {
   return (
     <div className="relative min-h-screen text-slate-900">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-24 right-8 h-64 w-64 rounded-full bg-indigo-300/30 blur-3xl" />
-        <div className="absolute -bottom-24 left-10 h-72 w-72 rounded-full bg-cyan-300/30 blur-3xl" />
-        <div className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-200/20 blur-3xl" />
+        <div className="absolute -top-24 right-8 h-64 w-64 rounded-full bg-emerald-300/30 blur-3xl" />
+        <div className="absolute -bottom-24 left-10 h-72 w-72 rounded-full bg-teal-300/30 blur-3xl" />
+        <div className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-200/25 blur-3xl" />
       </div>
 
       <Navbar />
       <div className="relative flex min-h-[calc(100vh-64px)]">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto px-6 pb-10 pt-8">
-          <div className="mx-auto w-full max-w-7xl">
+        <main className="flex-1 overflow-y-auto px-6 pb-12 pt-10">
+          <div className="mx-auto w-full max-w-6xl">
             <div className="fade-in">
               <Outlet />
             </div>

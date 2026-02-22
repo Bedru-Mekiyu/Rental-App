@@ -6,6 +6,7 @@ import API from "../services/api";
 import toast from "react-hot-toast";
 import DashboardCard from "../components/DashboardCard";
 import { FileText, AlertCircle } from "lucide-react";
+import PageHeader from "../components/PageHeader";
 
 export default function MyLeasePage() {
   const { user } = useAuthStore();
@@ -48,40 +49,49 @@ export default function MyLeasePage() {
 
   if (loading) {
     return (
-      <DashboardCard title="My Lease">
-        <div className="py-8 text-center text-sm text-gray-500">
-          Loading lease information...
-        </div>
-      </DashboardCard>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Lease"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="My Lease"
+          subtitle="View your current lease details and status."
+        />
+        <DashboardCard>
+          <div className="py-8 text-center text-sm text-gray-500">
+            Loading lease information...
+          </div>
+        </DashboardCard>
+      </div>
     );
   }
 
   if (!lease) {
     return (
-      <DashboardCard
-        title={
-          <div className="flex items-center space-x-2">
-            <FileText className="h-5 w-5 text-indigo-600" />
-            <span>My Lease</span>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Lease"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="My Lease"
+          subtitle="View your current lease details and status."
+        />
+        <DashboardCard>
+          <div className="py-12 text-center">
+            <AlertCircle className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No Active Lease Found
+            </h3>
+            <p className="text-sm text-gray-500 mb-6">
+              You don't have an active lease at this time. Please contact your property manager for assistance.
+            </p>
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="btn-primary inline-flex items-center space-x-2 rounded-lg px-4 py-2 text-sm font-semibold"
+            >
+              Return to Dashboard
+            </button>
           </div>
-        }
-      >
-        <div className="py-12 text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No Active Lease Found
-          </h3>
-          <p className="text-sm text-gray-500 mb-6">
-            You don't have an active lease at this time. Please contact your property manager for assistance.
-          </p>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="inline-flex items-center space-x-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition-colors"
-          >
-            Return to Dashboard
-          </button>
-        </div>
-      </DashboardCard>
+        </DashboardCard>
+      </div>
     );
   }
 

@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import { useAuthStore } from "../store/authStore";
+import PageHeader from "../components/PageHeader";
 
 const STATUS_FILTERS = ["All", "PENDING", "VERIFIED", "REJECTED"];
 const METHOD_FILTERS = ["All", "CASH", "BANK_TRANSFER", "CARD", "OTHER"];
@@ -164,22 +165,26 @@ export default function PaymentsPage() {
 
   return (
     <div className="space-y-6">
-      <DashboardCard
+      <PageHeader
+        eyebrow="Payments"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
         title="Payments"
-        description="Record tenant payments and verify them once confirmed."
-      >
+        subtitle="Record tenant payments and verify them once confirmed."
+      />
+
+      <DashboardCard>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
             <input
               type="text"
               placeholder="Search by method or transaction ID"
-              className="w-64 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+              className="w-64 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-200"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
 
             <select
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-200"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
@@ -191,7 +196,7 @@ export default function PaymentsPage() {
             </select>
 
             <select
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-200"
               value={method}
               onChange={(e) => setMethod(e.target.value)}
             >
@@ -223,7 +228,7 @@ export default function PaymentsPage() {
                   value={form.leaseId}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
                   placeholder="Lease ID"
                 />
               </div>
@@ -239,7 +244,7 @@ export default function PaymentsPage() {
                   onChange={handleChange}
                   required
                   min={0}
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
                 />
               </div>
 
@@ -253,7 +258,7 @@ export default function PaymentsPage() {
                   value={form.transactionDate}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
                 />
               </div>
 
@@ -265,7 +270,7 @@ export default function PaymentsPage() {
                   name="paymentMethod"
                   value={form.paymentMethod}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-200 px-2 py-2 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-slate-200 px-2 py-2 text-xs focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                 >
                   {METHOD_FILTERS.filter((m) => m !== "All").map((m) => (
                     <option key={m} value={m}>
@@ -284,7 +289,7 @@ export default function PaymentsPage() {
                   name="externalTransactionId"
                   value={form.externalTransactionId}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-200 px-2 py-2 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-slate-200 px-2 py-2 text-xs focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                 />
               </div>
             </div>
@@ -295,8 +300,8 @@ export default function PaymentsPage() {
                 disabled={creating}
                 className={`rounded-lg px-4 py-2 text-xs font-semibold text-white ${
                   creating
-                    ? "bg-indigo-400"
-                    : "bg-indigo-600 hover:bg-indigo-700"
+                    ? "bg-emerald-400"
+                    : "bg-emerald-600 hover:bg-emerald-700"
                 }`}
               >
                 {creating ? "Saving..." : "Record payment"}
@@ -339,7 +344,7 @@ export default function PaymentsPage() {
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
                 {filteredPayments.slice(0, PAGE_SIZE).map((p) => (
-                  <tr key={p._id}>
+                  <tr key={p._id} className="stagger-item">
                     <td className="px-3 py-2">
                       {formatDate(p.transactionDate)}
                     </td>
@@ -369,7 +374,7 @@ export default function PaymentsPage() {
                       {p.leaseId ? (
                         <Link
                           to={`/leases/${p.leaseId}`}
-                          className="text-indigo-600 hover:underline"
+                          className="text-emerald-600 hover:underline"
                         >
                           View lease
                         </Link>

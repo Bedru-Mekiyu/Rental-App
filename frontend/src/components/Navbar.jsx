@@ -5,10 +5,10 @@ export default function Navbar() {
   const { user, logout } = useAuthStore();
 
   return (
-    <header className="app-shell sticky top-0 z-30 border-b border-white/40 bg-white/70">
+    <header className="nav-shell sticky top-0 z-30">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-400 shadow-lg">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-400 shadow-lg">
             <span className="text-base font-bold text-white">RMS</span>
           </div>
           <div className="flex flex-col">
@@ -16,7 +16,7 @@ export default function Navbar() {
               Rental Management
             </span>
             <span className="text-xs text-slate-500">
-              Unified portfolio workspace
+              Portfolio command center
             </span>
           </div>
         </div>
@@ -36,7 +36,7 @@ export default function Navbar() {
             </div>
             <button
               onClick={logout}
-              className="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:-translate-y-0.5 hover:shadow-lg"
+              className="btn-primary rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wide"
             >
               Logout
             </button>

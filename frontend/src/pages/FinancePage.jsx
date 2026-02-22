@@ -5,6 +5,7 @@ import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { DollarSign, AlertTriangle, CheckCircle, Calendar } from "lucide-react";
+import PageHeader from "../components/PageHeader";
 
 export default function FinancePage() {
   const [leases, setLeases] = useState([]);
@@ -72,14 +73,12 @@ export default function FinancePage() {
 
   return (
     <div className="space-y-6">
-      <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-lg shadow-lg mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Finance &amp; Lease Analytics
-        </h1>
-        <p className="mt-2 text-indigo-100">
-          View financial KPIs and per-lease payment summaries.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Finance"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="Finance & Lease Analytics"
+        subtitle="View financial KPIs and per-lease payment summaries."
+      />
 
       {/* Financial Summary */}
       <DashboardCard
@@ -95,7 +94,7 @@ export default function FinancePage() {
               value={selectedLeaseId}
               onChange={(e) => setSelectedLeaseId(e.target.value)}
               disabled={loadingLeases || leases.length === 0}
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60 transition-all"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:opacity-60 transition-all"
             >
               <option value="ALL">
                 {loadingLeases ? "Loading leases..." : "All Leases (Aggregate)"}
@@ -123,18 +122,18 @@ export default function FinancePage() {
 
         {!loadingSummary && summary && selectedLeaseId === "ALL" && (
           <div className="grid gap-6 md:grid-cols-3">
-            <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200 shadow-sm hover:shadow-md transition-shadow">
+            <div className="stagger-item bg-gradient-to-br from-emerald-50 to-emerald-100 p-6 rounded-xl border border-emerald-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-green-700">Total Revenue (YTD)</p>
-                  <p className="text-2xl font-bold text-green-900 mt-1">
+                  <p className="text-sm font-medium text-emerald-700">Total Revenue (YTD)</p>
+                  <p className="text-2xl font-bold text-emerald-900 mt-1">
                     {formatCurrency(summary.totalRevenueYTD)}
                   </p>
                 </div>
-                <DollarSign className="h-8 w-8 text-green-600" />
+                <DollarSign className="h-8 w-8 text-emerald-600" />
               </div>
             </div>
-            <div className="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl border border-red-200 shadow-sm hover:shadow-md transition-shadow">
+            <div className="stagger-item bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl border border-red-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-red-700">Outstanding Balance</p>
@@ -145,15 +144,15 @@ export default function FinancePage() {
                 <AlertTriangle className="h-8 w-8 text-red-600" />
               </div>
             </div>
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200 shadow-sm hover:shadow-md transition-shadow">
+            <div className="stagger-item bg-gradient-to-br from-teal-50 to-emerald-100 p-6 rounded-xl border border-teal-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-blue-700">On-time Payment Rate</p>
-                  <p className="text-2xl font-bold text-blue-900 mt-1">
+                  <p className="text-sm font-medium text-teal-700">On-time Payment Rate</p>
+                  <p className="text-2xl font-bold text-teal-900 mt-1">
                     {summary.onTimePaymentRate}%
                   </p>
                 </div>
-                <CheckCircle className="h-8 w-8 text-blue-600" />
+                <CheckCircle className="h-8 w-8 text-teal-600" />
               </div>
             </div>
           </div>
@@ -172,12 +171,12 @@ export default function FinancePage() {
                   <XAxis dataKey="name" />
                   <YAxis tickFormatter={(value) => formatCurrency(value)} />
                   <Tooltip formatter={(value) => formatCurrency(value)} />
-                  <Bar dataKey="amount" fill="#3b82f6" />
+                  <Bar dataKey="amount" fill="#14b8a6" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
             <div className="grid gap-6 md:grid-cols-4">
-              <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-4 rounded-lg border border-slate-200 shadow-sm">
+              <div className="stagger-item bg-gradient-to-br from-slate-50 to-slate-100 p-4 rounded-lg border border-slate-200 shadow-sm">
                 <div className="flex items-center space-x-2">
                   <DollarSign className="h-5 w-5 text-slate-600" />
                   <div>
@@ -188,18 +187,18 @@ export default function FinancePage() {
                   </div>
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200 shadow-sm">
+              <div className="stagger-item bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 rounded-lg border border-emerald-200 shadow-sm">
                 <div className="flex items-center space-x-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <CheckCircle className="h-5 w-5 text-emerald-600" />
                   <div>
-                    <p className="text-xs text-green-600">Total Paid</p>
-                    <p className="text-lg font-semibold text-green-900">
+                    <p className="text-xs text-emerald-600">Total Paid</p>
+                    <p className="text-lg font-semibold text-emerald-900">
                       {formatCurrency(summary.totalPaidEtb)}
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-lg border border-red-200 shadow-sm">
+              <div className="stagger-item bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-lg border border-red-200 shadow-sm">
                 <div className="flex items-center space-x-2">
                   <AlertTriangle className="h-5 w-5 text-red-600" />
                   <div>
@@ -210,12 +209,12 @@ export default function FinancePage() {
                   </div>
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200 shadow-sm">
+              <div className="stagger-item bg-gradient-to-br from-teal-50 to-emerald-100 p-4 rounded-lg border border-teal-200 shadow-sm">
                 <div className="flex items-center space-x-2">
-                  <Calendar className="h-5 w-5 text-blue-600" />
+                  <Calendar className="h-5 w-5 text-teal-600" />
                   <div>
-                    <p className="text-xs text-blue-600">Next Due Date</p>
-                    <p className="text-sm font-medium text-blue-900">
+                    <p className="text-xs text-teal-600">Next Due Date</p>
+                    <p className="text-sm font-medium text-teal-900">
                       {summary.nextDueDate
                         ? new Date(summary.nextDueDate).toLocaleDateString()
                         : "No upcoming due date"}

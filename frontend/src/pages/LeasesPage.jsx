@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
+import PageHeader from "../components/PageHeader";
 
 const STATUS_FILTERS = ["All", "ACTIVE", "ENDED"];
 const PAGE_SIZE = 20;
@@ -64,23 +65,20 @@ export default function LeasesPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <div className="space-y-1">
-          <span className="pill bg-cyan-100 text-cyan-700">Leases</span>
-          <h1 className="app-title text-3xl font-semibold tracking-tight">
-            Leases
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            View and manage active and past leases.
-          </p>
-        </div>
-        <Link
-          to="/leases/new"
-          className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
-        >
-          + New Lease
-        </Link>
-      </header>
+      <PageHeader
+        eyebrow="Leases"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="Leases"
+        subtitle="View and manage active and past leases."
+        actions={
+          <Link
+            to="/leases/new"
+            className="btn-primary rounded-full px-5 py-2 text-sm font-semibold"
+          >
+            + New Lease
+          </Link>
+        }
+      />
 
       {/* Filters */}
       <DashboardCard>
@@ -91,7 +89,7 @@ export default function LeasesPage() {
               placeholder="Search by unit or tenant..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-200"
             />
           </div>
           <div className="flex gap-1 rounded-full bg-slate-100 p-1 text-xs">
@@ -154,10 +152,10 @@ export default function LeasesPage() {
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
                 {filteredLeases.slice(0, PAGE_SIZE).map((l, index) => (
-                  <tr key={l._id} className={`hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50 transition-all duration-300 ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'}`}>
+                  <tr key={l._id} className={`stagger-item hover:bg-gradient-to-r hover:from-slate-50 hover:to-emerald-50 transition-all duration-300 ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'}`}>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white font-bold shadow-sm">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 text-white font-bold shadow-sm">
                           {l.unitId?.unitNumber || "U"}
                         </div>
                         <div>
@@ -226,7 +224,7 @@ export default function LeasesPage() {
                       <div className="flex gap-3">
                         <Link
                           to={`/leases/${l._id}`}
-                          className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 hover:text-indigo-800 transition-all duration-200 shadow-sm"
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 transition-all duration-200 shadow-sm"
                         >
                           <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

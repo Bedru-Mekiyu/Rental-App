@@ -5,6 +5,7 @@ import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
 import API from "../services/api";
 import { Home, Users, Wrench, Plus, Eye } from "lucide-react";
+import PageHeader from "../components/PageHeader";
 
 const Avatar = ({ name = "Tenant" }) => {
   const initials = name
@@ -15,7 +16,7 @@ const Avatar = ({ name = "Tenant" }) => {
     .slice(0, 2);
 
   return (
-    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
+    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-xs font-semibold text-emerald-700">
       {initials}
     </div>
   );
@@ -25,7 +26,7 @@ const statusColors = {
   available:
     "inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700",
   occupied:
-    "inline-flex rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700",
+    "inline-flex rounded-full bg-teal-50 px-2 py-0.5 text-xs font-medium text-teal-700",
   "under maintenance":
     "inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700",
 };
@@ -143,32 +144,17 @@ export default function PropertyManagerDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-slate-900 p-6 text-white shadow-2xl">
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute -right-8 -top-10 h-44 w-44 rounded-full bg-indigo-500/40 blur-3xl" />
-          <div className="absolute -bottom-16 left-10 h-56 w-56 rounded-full bg-cyan-400/30 blur-3xl" />
-        </div>
-        <div className="relative flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15">
-              <Home className="h-6 w-6" />
-            </div>
-            <div>
-              <span className="pill bg-white/20 text-white">Property Ops</span>
-              <h1 className="app-title mt-2 text-3xl font-semibold">
-                Property Manager Dashboard
-              </h1>
-              <p className="mt-1 text-sm text-indigo-100">
-                Overview of your property management operations.
-              </p>
-            </div>
-          </div>
-          <div className="rounded-full bg-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-wide">
+      <PageHeader
+        eyebrow="Property Ops"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="Property Manager Dashboard"
+        subtitle="Overview of your property management operations."
+        actions={
+          <span className="pill bg-slate-900 text-white">
             {user?.fullName || user?.email}
-          </div>
-        </div>
-      </div>
+          </span>
+        }
+      />
 
       {/* Top stats */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -193,18 +179,18 @@ export default function PropertyManagerDashboard() {
                 placeholder="Search by unit, floor, or status"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full sm:w-64 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+                className="w-full sm:w-64 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-200"
               />
               <Link
                 to="/units"
-                className="inline-flex items-center space-x-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
+                className="btn-primary inline-flex items-center space-x-2 rounded-full px-4 py-2 text-sm font-semibold"
               >
                 <Eye className="h-4 w-4" />
                 <span>Units</span>
               </Link>
               <Link
                 to="/users"
-                className="inline-flex items-center space-x-2 rounded-full bg-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
+                className="btn-secondary inline-flex items-center space-x-2 rounded-full px-4 py-2 text-sm font-semibold"
               >
                 <Users className="h-4 w-4" />
                 <span>Users</span>
@@ -247,7 +233,7 @@ export default function PropertyManagerDashboard() {
                 return (
                   <article
                     key={unit._id}
-                    className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 text-xs shadow-sm"
+                    className="stagger-item flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 text-xs shadow-sm"
                   >
                     <div className="flex items-start justify-between">
                       <div>
@@ -273,7 +259,7 @@ export default function PropertyManagerDashboard() {
                       </p>
                       <Link
                         to="/leases"
-                        className="text-[11px] font-medium text-indigo-600 hover:underline"
+                        className="text-[11px] font-medium text-emerald-600 hover:underline"
                       >
                         View details
                       </Link>
@@ -428,7 +414,7 @@ export default function PropertyManagerDashboard() {
                       </span>
                     </td>
                     <td className="px-3 py-2">
-                      <span className="inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700">
+                      <span className="inline-flex rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-medium text-teal-700">
                         {r.status.replace("_", " ")}
                       </span>
                     </td>
@@ -441,7 +427,7 @@ export default function PropertyManagerDashboard() {
                             e.target.value
                           )
                         }
-                        className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                        className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
                       >
                         <option value="open">Open</option>
                         <option value="in_progress">
@@ -466,7 +452,7 @@ export default function PropertyManagerDashboard() {
 
 function StatCard({ label, value, icon: Icon }) {
   return (
-    <div className="surface-panel">
+    <div className="surface-panel card-reveal stagger-item p-5">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">

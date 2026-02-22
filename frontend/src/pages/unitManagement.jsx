@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import API from "../services/api";
+import Card from "../components/Card";
+import PageHeader from "../components/PageHeader";
 
 const calculateFloorMultiplier = (floor) => {
   if (floor <= 1) return 1.2; // +20% premium
@@ -76,19 +78,15 @@ export default function UnitManagement() {
   ];
 
   return (
-    <div>
-      {/* header */}
-      <div className="mt-5">
-        <h1 className="text-2xl font-semibold text-gray-900">
-          Unit Management - Pricing Rules
-        </h1>
-        <p className="text-gray-600 mt-2 max-w-3xl">
-          Configure detailed pricing rules for rental units including base
-          price, floor-based multipliers and amenity bonuses.
-        </p>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Pricing"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="Unit Management - Pricing Rules"
+        subtitle="Configure pricing rules for base rent, floor multipliers, and amenity bonuses."
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* left */}
         <div className="lg:col-span-2 space-y-6">
           <Card title="Base Price Configuration">
@@ -99,7 +97,7 @@ export default function UnitManagement() {
               type="number "
               value={baseRent}
               onChange={(e) => setBaseRent(+e.target.value)}
-              className="mt-2 w-full border rounded-lg px-4 py-2"
+              className="mt-2 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
             />
           </Card>
 
@@ -141,7 +139,7 @@ export default function UnitManagement() {
               <select
                 value={selectedUnitId}
                 onChange={(e) => selectedUnitId(Number(e.target.value))}
-                className="border rounded-lg text-sm w-full px-3 py-2"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
               >
                 {units.map((unit) => (
                   <option key={unit.id} value={unit.id}>
@@ -163,7 +161,7 @@ export default function UnitManagement() {
               />
 
               <hr />
-              <div className="font-semibold text-lg text-indigo-600 flex justify-between  ">
+              <div className="font-semibold text-lg text-emerald-600 flex justify-between  ">
                 <span>Total Estimated Rent</span>
                 <span>{rent.total} ETB</span>
               </div>
@@ -189,13 +187,6 @@ export default function UnitManagement() {
     </div>
   );
 }
-
-const Card = ({ title, children }) => (
-  <div className="p-6 bg-white rounded-xl shadow-sm">
-    <h2 className="font-semibold text-gray-800 mb-4">{title}</h2>
-    {children}
-  </div>
-);
 
 const Row = ({ label, value }) => (
   <div className="flex justify-between">

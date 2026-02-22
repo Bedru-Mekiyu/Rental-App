@@ -5,17 +5,18 @@ import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import { useAuthStore } from "../store/authStore";
+import PageHeader from "../components/PageHeader";
 
 const ROLE_OPTIONS = ["ALL", "ADMIN", "PM", "GM", "FS", "TENANT"];
 const STATUS_OPTIONS = ["ALL", "ACTIVE", "SUSPENDED", "INVITED"];
 
 const RoleBadge = ({ role }) => {
   const map = {
-    ADMIN: "bg-primary-100 text-primary-700",
-    PM: "bg-success-100 text-success-700",
-    GM: "bg-warning-100 text-warning-700",
-    FS: "bg-secondary-100 text-secondary-700",
-    TENANT: "bg-neutral-100 text-neutral-700",
+    ADMIN: "bg-emerald-100 text-emerald-700",
+    PM: "bg-teal-100 text-teal-700",
+    GM: "bg-amber-100 text-amber-700",
+    FS: "bg-sky-100 text-sky-700",
+    TENANT: "bg-slate-100 text-slate-700",
   };
 
   return (
@@ -137,33 +138,39 @@ export default function UsersPage() {
   }
 
   return (
-    <DashboardCard
-      title="Users"
-      action={
-        currentUser?.role === "ADMIN" || currentUser?.role === "PM" ? (
-          <Link
-            to="/users/new"
-            className="inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500"
-          >
-            New User
-          </Link>
-        ) : null
-      }
-    >
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Users"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="Users"
+        subtitle="Manage system users, roles, and access status."
+        actions={
+          currentUser?.role === "ADMIN" || currentUser?.role === "PM" ? (
+            <Link
+              to="/users/new"
+              className="btn-primary inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold"
+            >
+              New User
+            </Link>
+          ) : null
+        }
+      />
+
+      <DashboardCard title="User Directory">
       {/* Filters */}
       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-1 gap-2">
           <input
             type="text"
             placeholder="Search by name, email, or phone"
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <div className="flex gap-2">
           <select
-            className="rounded-md border border-gray-300 px-2 py-1 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="rounded-md border border-gray-300 px-2 py-1 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
           >
@@ -174,7 +181,7 @@ export default function UsersPage() {
             ))}
           </select>
           <select
-            className="rounded-md border border-neutral-300 px-2 py-1 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="rounded-md border border-neutral-300 px-2 py-1 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -221,7 +228,7 @@ export default function UsersPage() {
               </tr>
             ) : (
               filteredUsers.map((u) => (
-                <tr key={u._id}>
+                <tr key={u._id} className="stagger-item">
                   <td className="px-4 py-3">
                     <div className="font-medium text-gray-900">
                       {u.fullName || "Unnamed"}
@@ -282,6 +289,7 @@ export default function UsersPage() {
           </tbody>
         </table>
       </div>
-    </DashboardCard>
+      </DashboardCard>
+    </div>
   );
 }

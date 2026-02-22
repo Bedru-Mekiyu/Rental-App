@@ -56,14 +56,12 @@ export default function Sidebar() {
               to={item.to}
               className={({ isActive }) =>
                 [
-                  "group flex items-center gap-3 rounded-2xl px-4 py-3 font-medium transition-all",
-                  isActive
-                    ? "bg-slate-900 text-white shadow-lg"
-                    : "text-slate-700 hover:bg-slate-100",
+                  "nav-item",
+                  isActive ? "nav-item-active" : "nav-item-idle",
                 ].join(" ")
               }
             >
-              <span className="text-lg transition-transform duration-300 group-hover:scale-110">
+              <span className="nav-icon transition-transform duration-300 group-hover:scale-110">
                 {item.icon}
               </span>
               <span className="transition-all duration-300">{item.label}</span>

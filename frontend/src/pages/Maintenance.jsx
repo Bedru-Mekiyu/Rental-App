@@ -7,9 +7,8 @@ import {
   Wrench,
 } from "lucide-react";
 
-import AppHeader from "../components/AppHeader";
-import BottomNav from "../components/BottomNav";
 import Card from "../components/Card";
+import PageHeader from "../components/PageHeader";
 
 export default function Maintenance() {
   const [category, setCategory] = useState("Plumbing");
@@ -110,154 +109,152 @@ export default function Maintenance() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex justify-center p-4">
-      <div className="w-full bg-white rounded-xl shadow-md overflow-hidden my-8">
-        <AppHeader title="Maintenance" />
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Maintenance"
+        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        title="Maintenance Requests"
+        subtitle="Report issues, attach photos, and track request status."
+      />
 
-        {/*  Submit Form */}
-        <Card>
-          <h2 className="font-semibold mb-3 flex items-center gap-2">
-            <Wrench className="w-5 h-5 text-indigo-500" />
-            Submit New Request
-          </h2>
+      {/*  Submit Form */}
+      <Card>
+        <h2 className="font-semibold mb-3 flex items-center gap-2">
+          <Wrench className="w-5 h-5 text-emerald-500" />
+          Submit New Request
+        </h2>
 
-          {error && (
-            <p className="text-sm text-red-500 mb-2">{error}</p>
-          )}
+        {error && (
+          <p className="text-sm text-red-500 mb-2">{error}</p>
+        )}
 
-          <label className="text-sm">Issue Category</label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full mt-1 mb-3 p-2 rounded bg-gray-200 outline-none"
-          >
-            <option>Plumbing</option>
-            <option>Electrical</option>
-            <option>HVAC</option>
-            <option>Other</option>
-          </select>
+        <label className="text-sm">Issue Category</label>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full mt-1 mb-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
+        >
+          <option>Plumbing</option>
+          <option>Electrical</option>
+          <option>HVAC</option>
+          <option>Other</option>
+        </select>
 
-          <label className="text-sm">Description</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full mt-1 mb-3 p-2 rounded bg-gray-200 outline-none"
-            rows="3"
-            placeholder="Describe the issue in detail..."
+        <label className="text-sm">Description</label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full mt-1 mb-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
+          rows="3"
+          placeholder="Describe the issue in detail..."
+        />
+
+        <label className="text-sm">Attach Photo (Optional)</label>
+
+        <div
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            handleImage(e.dataTransfer.files[0]);
+          }}
+          className="border border-dashed rounded-lg p-4 mt-1 text-center cursor-pointer hover:border-emerald-400 transition"
+        >
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            id="upload"
+            onChange={(e) => handleImage(e.target.files[0])}
           />
 
-          <label className="text-sm">Attach Photo (Optional)</label>
+          <label htmlFor="upload" className="block cursor-pointer">
+            {!preview ? (
+              <>
+                <Upload className="mx-auto text-gray-400 mb-2" />
+                <p className="text-sm text-gray-400">
+                  Drag and drop or click to upload
+                </p>
+              </>
+            ) : (
+              <img
+                src={preview}
+                alt="Preview"
+                className="mx-auto h-32 object-contain rounded"
+              />
+            )}
+          </label>
 
-          <div
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              handleImage(e.dataTransfer.files[0]);
-            }}
-            className="border border-dashed rounded-lg p-4 mt-1 text-center cursor-pointer hover:border-indigo-400 transition"
-          >
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              id="upload"
-              onChange={(e) => handleImage(e.target.files[0])}
+          {image && (
+            <div className="flex items-center justify-center mt-3 bg-gray-100 rounded p-2 text-xs gap-2">
+              <FileText className="w-4 h-4" />
+              {image.name}
+            </div>
+          )}
+        </div>
+
+        <button
+          onClick={handleSubmit}
+          disabled={!description.trim() || submitting}
+          className={`w-full mt-4 py-2 rounded-lg text-white ${
+            submitting
+              ? "bg-emerald-400 cursor-not-allowed"
+              : "bg-emerald-600 hover:bg-emerald-700"
+          }`}
+        >
+          {submitting ? "Submitting..." : "Submit Request"}
+        </button>
+      </Card>
+
+      {/* 🔹 Status Tracker */}
+      {currentStatus && (
+        <Card title="Current Request Status">
+          <div className="flex justify-between items-center">
+            <StatusStep label="Received" active />
+            <Line active={currentStatus !== "Received"} />
+            <StatusStep
+              label="In Progress"
+              active={
+                currentStatus === "In Progress" ||
+                currentStatus === "Completed"
+              }
             />
+            <Line active={currentStatus === "Completed"} />
+            <StatusStep
+              label="Completed"
+              active={currentStatus === "Completed"}
+            />
+          </div>
+        </Card>
+      )}
 
-            <label htmlFor="upload" className="block cursor-pointer">
-              {!preview ? (
-                <>
-                  <Upload className="mx-auto text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-400">
-                    Drag and drop or click to upload
-                  </p>
-                </>
-              ) : (
+      {/*  Request History */}
+      {requests.length > 0 && (
+        <Card title="Your Requests">
+          {requests.map((req) => (
+            <div key={req.id} className="stagger-item border-b py-3">
+              <p className="font-medium">{req.category}</p>
+              <p className="text-sm text-gray-600">
+                {req.description}
+              </p>
+              <p className="text-xs text-gray-400">
+                {new Date(req.createdAt).toLocaleString()}
+              </p>
+
+              {req.image && (
                 <img
-                  src={preview}
-                  alt="Preview"
-                  className="mx-auto h-32 object-contain rounded"
+                  src={req.image}
+                  alt="Attached"
+                  className="mt-2 h-20 rounded object-contain"
                 />
               )}
-            </label>
 
-            {image && (
-              <div className="flex items-center justify-center mt-3 bg-gray-100 rounded p-2 text-xs gap-2">
-                <FileText className="w-4 h-4" />
-                {image.name}
-              </div>
-            )}
-          </div>
-
-          <button
-            onClick={handleSubmit}
-            disabled={!description.trim() || submitting}
-            className={`w-full mt-4 py-2 rounded-lg text-white ${
-              submitting
-                ? "bg-indigo-400 cursor-not-allowed"
-                : "bg-indigo-500 hover:bg-indigo-600"
-            }`}
-          >
-            {submitting ? "Submitting..." : "Submit Request"}
-          </button>
-        </Card>
-
-        {/* 🔹 Status Tracker */}
-        {currentStatus && (
-          <Card>
-            <h3 className="font-semibold mb-3">Current Request Status</h3>
-            <div className="flex justify-between items-center">
-              <StatusStep label="Received" active />
-              <Line active={currentStatus !== "Received"} />
-              <StatusStep
-                label="In Progress"
-                active={
-                  currentStatus === "In Progress" ||
-                  currentStatus === "Completed"
-                }
-              />
-              <Line active={currentStatus === "Completed"} />
-              <StatusStep
-                label="Completed"
-                active={currentStatus === "Completed"}
-              />
+              <span className="inline-block mt-2 text-xs bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded">
+                {currentStatus || req.status}
+              </span>
             </div>
-          </Card>
-        )}
-
-        {/*  Request History */}
-        {requests.length > 0 && (
-          <Card>
-            <h3 className="font-semibold mb-3">Your Requests</h3>
-
-            {requests.map((req) => (
-              <div key={req.id} className="border-b py-3">
-                <p className="font-medium">{req.category}</p>
-                <p className="text-sm text-gray-600">
-                  {req.description}
-                </p>
-                <p className="text-xs text-gray-400">
-                  {new Date(req.createdAt).toLocaleString()}
-                </p>
-
-                {req.image && (
-                  <img
-                    src={req.image}
-                    alt="Attached"
-                    className="mt-2 h-20 rounded object-contain"
-                  />
-                )}
-
-                <span className="inline-block mt-2 text-xs bg-indigo-100 text-indigo-500 px-2 py-0.5 rounded">
-                  {currentStatus || req.status}
-                </span>
-              </div>
-            ))}
-          </Card>
-        )}
-
-        <BottomNav />
-      </div>
+          ))}
+        </Card>
+      )}
     </div>
   );
 }
@@ -268,12 +265,12 @@ function StatusStep({ label, active }) {
   return (
     <div
       className={`flex flex-col items-center ${
-        active ? "text-indigo-500" : "text-gray-400"
+        active ? "text-emerald-500" : "text-gray-400"
       }`}
     >
       <div
         className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
-          active ? "border-indigo-500" : "border-gray-300"
+          active ? "border-emerald-500" : "border-gray-300"
         }`}
       >
         {active && <Check className="w-4 h-4" />}
@@ -287,7 +284,7 @@ function Line({ active }) {
   return (
     <div
       className={`h-0.5 w-full mx-2 ${
-        active ? "bg-indigo-500" : "bg-gray-300"
+        active ? "bg-emerald-500" : "bg-gray-300"
       }`}
     />
   );
