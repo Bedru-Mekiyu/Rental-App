@@ -9,6 +9,7 @@ import {
 
 import Card from "../components/Card";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
 
 export default function Dashboard() {
   const [rent] = useState(8500);
@@ -75,8 +76,39 @@ export default function Dashboard() {
   /* LOADING SPINNER */
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="h-10 w-10 animate-spin rounded-full border-b-4 border-emerald-600" />
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Tenant"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="Tenant Dashboard"
+          subtitle="Loading your rent and lease insights..."
+        />
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card>
+            <SkeletonRow className="h-4 w-32" />
+            <div className="mt-3">
+              <SkeletonRow className="h-8 w-40" />
+            </div>
+          </Card>
+          <Card>
+            <SkeletonRow className="h-4 w-32" />
+            <div className="mt-3">
+              <SkeletonRow className="h-8 w-40" />
+            </div>
+          </Card>
+          <Card>
+            <SkeletonRow className="h-4 w-32" />
+            <div className="mt-3">
+              <SkeletonRow className="h-8 w-40" />
+            </div>
+          </Card>
+          <Card>
+            <SkeletonRow className="h-4 w-32" />
+            <div className="mt-3">
+              <SkeletonRow className="h-8 w-40" />
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }

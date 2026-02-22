@@ -6,6 +6,9 @@ import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import { useAuthStore } from "../store/authStore";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
+import SkeletonTable from "../components/SkeletonTable";
+import SkeletonCard from "../components/SkeletonCard";
 
 const ROLE_OPTIONS = ["ALL", "ADMIN", "PM", "GM", "FS", "TENANT"];
 const STATUS_OPTIONS = ["ALL", "ACTIVE", "SUSPENDED", "INVITED"];
@@ -129,11 +132,17 @@ export default function UsersPage() {
 
   if (loading) {
     return (
-      <DashboardCard title="Users">
-        <div className="py-8 text-center text-sm text-gray-500">
-          Loading users...
-        </div>
-      </DashboardCard>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Users"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="Users"
+          subtitle="Manage system users, roles, and access status."
+        />
+        <SkeletonCard title="Users">
+          <SkeletonTable rows={5} columns={5} />
+        </SkeletonCard>
+      </div>
     );
   }
 
@@ -195,39 +204,37 @@ export default function UsersPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-2 text-left font-medium text-gray-500">
-                Name / Contact
-              </th>
-              <th className="px-4 py-2 text-left font-medium text-gray-500">
-                Role
-              </th>
-              <th className="px-4 py-2 text-left font-medium text-gray-500">
-                Status
-              </th>
-              <th className="px-4 py-2 text-left font-medium text-gray-500">
-                Created
-              </th>
-              <th className="px-4 py-2 text-right font-medium text-gray-500">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100 bg-white">
-            {filteredUsers.length === 0 ? (
+      {filteredUsers.length === 0 ? (
+        <div className="space-y-3">
+          <SkeletonTable rows={4} columns={5} />
+          <div className="text-xs text-slate-500">
+            No users match your filters.
+          </div>
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-gray-200">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-50">
               <tr>
-                <td
-                  colSpan={5}
-                  className="px-4 py-6 text-center text-sm text-gray-500"
-                >
-                  No users match your filters.
-                </td>
+                <th className="px-4 py-2 text-left font-medium text-gray-500">
+                  Name / Contact
+                </th>
+                <th className="px-4 py-2 text-left font-medium text-gray-500">
+                  Role
+                </th>
+                <th className="px-4 py-2 text-left font-medium text-gray-500">
+                  Status
+                </th>
+                <th className="px-4 py-2 text-left font-medium text-gray-500">
+                  Created
+                </th>
+                <th className="px-4 py-2 text-right font-medium text-gray-500">
+                  Actions
+                </th>
               </tr>
-            ) : (
-              filteredUsers.map((u) => (
+            </thead>
+            <tbody className="divide-y divide-gray-100 bg-white">
+              {filteredUsers.map((u) => (
                 <tr key={u._id} className="stagger-item">
                   <td className="px-4 py-3">
                     <div className="font-medium text-gray-900">
@@ -284,11 +291,11 @@ export default function UsersPage() {
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       </DashboardCard>
     </div>
   );

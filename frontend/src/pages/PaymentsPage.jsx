@@ -6,6 +6,9 @@ import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import { useAuthStore } from "../store/authStore";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
+import SkeletonTable from "../components/SkeletonTable";
+import SkeletonCard from "../components/SkeletonCard";
 
 const STATUS_FILTERS = ["All", "PENDING", "VERIFIED", "REJECTED"];
 const METHOD_FILTERS = ["All", "CASH", "BANK_TRANSFER", "CARD", "OTHER"];
@@ -157,8 +160,19 @@ export default function PaymentsPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center text-sm text-slate-500">
-        Loading payments...
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Payments"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="Payments"
+          subtitle="Record tenant payments and verify them once confirmed."
+        />
+        <SkeletonCard>
+          <div className="space-y-3">
+            <SkeletonRow className="h-4 w-48" />
+            <SkeletonTable rows={5} columns={7} />
+          </div>
+        </SkeletonCard>
       </div>
     );
   }
@@ -311,8 +325,9 @@ export default function PaymentsPage() {
         )}
 
         {filteredPayments.length === 0 ? (
-          <div className="py-8 text-center text-xs text-slate-500">
-            No payments recorded yet.
+          <div className="space-y-3 py-6 text-center text-xs text-slate-500">
+            <SkeletonTable rows={4} columns={7} />
+            <div className="mt-2">No payments recorded yet.</div>
           </div>
         ) : (
           <div className="overflow-x-auto rounded-xl border border-slate-200 text-xs">

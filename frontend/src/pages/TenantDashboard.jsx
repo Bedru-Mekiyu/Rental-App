@@ -27,6 +27,7 @@ import {
   X,
 } from "lucide-react";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
 
 const maintenanceSchema = z.object({
   description: z
@@ -215,12 +216,20 @@ export default function TenantDashboard() {
   // Don't render anything if user is not available
   if (!user) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-600"></div>
-          <p className="mt-4 text-sm text-gray-500">
-            Loading user data...
-          </p>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Tenant"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="Tenant Dashboard"
+          subtitle="Loading your workspace..."
+        />
+        <div className="surface-panel p-6">
+          <SkeletonRow className="h-8 w-64" />
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            <SkeletonRow className="h-28 w-full" />
+            <SkeletonRow className="h-28 w-full" />
+            <SkeletonRow className="h-28 w-full" />
+          </div>
         </div>
       </div>
     );
@@ -228,12 +237,20 @@ export default function TenantDashboard() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-600"></div>
-          <p className="mt-4 text-sm text-gray-500">
-            Loading your dashboard...
-          </p>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Tenant"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="Tenant Dashboard"
+          subtitle="Loading your dashboard..."
+        />
+        <div className="surface-panel p-6">
+          <SkeletonRow className="h-8 w-72" />
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            <SkeletonRow className="h-28 w-full" />
+            <SkeletonRow className="h-28 w-full" />
+            <SkeletonRow className="h-28 w-full" />
+          </div>
         </div>
       </div>
     );

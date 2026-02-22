@@ -41,7 +41,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-10">
+    <div className="page-transition min-h-screen px-4 py-10">
       <div className="mx-auto grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white/80 shadow-2xl backdrop-blur md:grid-cols-[1.1fr_0.9fr]">
         <div className="relative flex flex-col justify-between bg-gradient-to-br from-slate-900 via-teal-900 to-emerald-950 p-8 text-white">
           <div className="absolute inset-0 opacity-30">

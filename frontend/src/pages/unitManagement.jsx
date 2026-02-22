@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import API from "../services/api";
 import Card from "../components/Card";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
 
 const calculateFloorMultiplier = (floor) => {
   if (floor <= 1) return 1.2; // +20% premium
@@ -67,7 +68,38 @@ export default function UnitManagement() {
   }, [baseRent, selectedUnit]);
 
   if (!selectedUnit || !rent) {
-    return <div className="text-gray-600">Loading pricing rules...</div>;
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Pricing"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="Unit Management - Pricing Rules"
+          subtitle="Configure pricing rules for base rent, floor multipliers, and amenity bonuses."
+        />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-6">
+            <Card title="Base Price Configuration">
+              <SkeletonRow className="h-10 w-full" />
+            </Card>
+            <Card title="Floor-Based Adjustments (Multipliers)">
+              <div className="space-y-2">
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+              </div>
+            </Card>
+          </div>
+          <div>
+            <Card title="Rent Preview Calculator">
+              <div className="space-y-3">
+                <SkeletonRow className="h-8 w-full" />
+                <SkeletonRow className="h-8 w-3/4" />
+              </div>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const floorMultipliers = [

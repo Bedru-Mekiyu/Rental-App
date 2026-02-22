@@ -5,6 +5,9 @@ import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
+import SkeletonTable from "../components/SkeletonTable";
+import SkeletonCard from "../components/SkeletonCard";
 
 const statusFilters = ["All", "VACANT", "OCCUPIED", "UNDER_MAINTENANCE"];
 
@@ -94,7 +97,23 @@ export default function UnitsPage() {
 
   if (loading) {
     return (
-      <div className="text-sm text-slate-500">Loading units...</div>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Inventory"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="Units"
+          subtitle="Manage units, pricing, and availability."
+        />
+        <SkeletonCard>
+          <div className="flex flex-wrap items-center gap-3">
+            <SkeletonRow className="h-10 w-64 rounded-2xl" />
+            <SkeletonRow className="h-8 w-48 rounded-full" />
+          </div>
+        </SkeletonCard>
+        <SkeletonCard title="Unit List">
+          <SkeletonTable rows={5} columns={7} />
+        </SkeletonCard>
+      </div>
     );
   }
 
@@ -154,7 +173,10 @@ export default function UnitsPage() {
       {/* Units table */}
       <DashboardCard title="Unit List">
         {filteredUnits.length === 0 ? (
-          <p className="text-xs text-slate-500">No units found.</p>
+          <div className="space-y-3">
+            <SkeletonTable rows={4} columns={7} />
+            <p className="text-xs text-slate-500">No units found.</p>
+          </div>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
             <table className="min-w-full divide-y divide-slate-200 text-sm">

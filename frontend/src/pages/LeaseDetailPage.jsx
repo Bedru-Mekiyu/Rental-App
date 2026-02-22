@@ -6,6 +6,8 @@ import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import { useAuthStore } from "../store/authStore";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
+import SkeletonTable from "../components/SkeletonTable";
 
 export default function LeaseDetailPage() {
   const { leaseId } = useParams();
@@ -85,7 +87,24 @@ export default function LeaseDetailPage() {
 
   if (loading) {
     return (
-      <div className="text-sm text-slate-500">Loading lease...</div>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Lease"
+          eyebrowClassName="bg-slate-100 text-slate-700"
+          title="Lease Detail"
+          subtitle="Loading lease details..."
+        />
+        <DashboardCard title="Lease Overview">
+          <div className="grid gap-4 md:grid-cols-3">
+            <SkeletonRow className="h-16 w-full" />
+            <SkeletonRow className="h-16 w-full" />
+            <SkeletonRow className="h-16 w-full" />
+          </div>
+        </DashboardCard>
+        <DashboardCard title="Payment Summary">
+          <SkeletonTable rows={4} columns={4} />
+        </DashboardCard>
+      </div>
     );
   }
 

@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import DashboardCard from "../components/DashboardCard";
 import { FileText, AlertCircle } from "lucide-react";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
 
 export default function MyLeasePage() {
   const { user } = useAuthStore();
@@ -57,8 +58,10 @@ export default function MyLeasePage() {
           subtitle="View your current lease details and status."
         />
         <DashboardCard>
-          <div className="py-8 text-center text-sm text-gray-500">
-            Loading lease information...
+          <div className="space-y-3">
+            <SkeletonRow />
+            <SkeletonRow className="h-6 w-3/4" />
+            <SkeletonRow className="h-6 w-2/3" />
           </div>
         </DashboardCard>
       </div>

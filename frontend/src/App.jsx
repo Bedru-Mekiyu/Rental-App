@@ -24,6 +24,7 @@ import UnitDetailPage from "./pages/UnitDetailPage";
 import LeaseDetailPage from "./pages/LeaseDetailPage";
 import TenantsPage from "./pages/TenantsPage";
 import MyLeasePage from "./pages/MyLeasePage";
+import SkeletonRow from "./components/SkeletonRow";
 
 function App() {
   //    <Routes>
@@ -36,8 +37,14 @@ function App() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-sm text-gray-500">
-        Loading...
+      <div className="page-transition flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="surface-panel w-full max-w-md p-6">
+          <SkeletonRow className="h-4 w-28" />
+          <div className="mt-4 space-y-3">
+            <SkeletonRow className="h-5 w-full" />
+            <SkeletonRow className="h-5 w-3/4" />
+          </div>
+        </div>
       </div>
     );
   }

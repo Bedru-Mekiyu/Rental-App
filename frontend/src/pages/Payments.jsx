@@ -240,6 +240,16 @@ export default function Payments() {
           ))}
         </Card>
       )}
+
+      {loading && history.length === 0 && (
+        <Card title="Payment History">
+          <div className="space-y-3">
+            <div className="skeleton h-4 w-40" />
+            <div className="skeleton h-4 w-64" />
+            <div className="skeleton h-4 w-52" />
+          </div>
+        </Card>
+      )}
     </div>
   );
 }

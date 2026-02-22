@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
 
 const Avatar = ({ name }) => {
   const initials = (name || "")
@@ -98,7 +99,47 @@ export default function FinancialStaffDashboard() {
 
   if (loading) {
     return (
-      <div className="text-sm text-slate-500">Loading dashboard...</div>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Finance"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="Financial Staff Dashboard"
+          subtitle="View invoices, payment status, and financial reports."
+        />
+        <div className="grid gap-4 md:grid-cols-4">
+          <DashboardCard>
+            <SkeletonRow className="h-3 w-24" />
+            <div className="mt-3">
+              <SkeletonRow className="h-8 w-28" />
+            </div>
+          </DashboardCard>
+          <DashboardCard>
+            <SkeletonRow className="h-3 w-24" />
+            <div className="mt-3">
+              <SkeletonRow className="h-8 w-16" />
+            </div>
+          </DashboardCard>
+          <DashboardCard>
+            <SkeletonRow className="h-3 w-28" />
+            <div className="mt-3">
+              <SkeletonRow className="h-8 w-24" />
+            </div>
+          </DashboardCard>
+          <DashboardCard>
+            <SkeletonRow className="h-3 w-28" />
+            <div className="mt-3">
+              <SkeletonRow className="h-8 w-20" />
+            </div>
+          </DashboardCard>
+        </div>
+        <DashboardCard>
+          <div className="space-y-3">
+            <SkeletonRow />
+            <SkeletonRow />
+            <SkeletonRow />
+          </div>
+        </DashboardCard>
+      </div>
     );
   }
 
@@ -172,9 +213,11 @@ export default function FinancialStaffDashboard() {
         description="Pending manual payments that await manager decision."
       >
         {queue.length === 0 ? (
-          <p className="text-xs text-slate-500">
-            No pending manual payments.
-          </p>
+          <div className="space-y-2">
+            <SkeletonRow className="h-4 w-2/3" />
+            <SkeletonRow className="h-4 w-1/2" />
+            <p className="text-xs text-slate-500">No pending manual payments.</p>
+          </div>
         ) : (
           <ul className="space-y-2 text-xs">
             {queue.map((item) => (

@@ -6,6 +6,7 @@ import DashboardCard from "../components/DashboardCard";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { DollarSign, AlertTriangle, CheckCircle, Calendar } from "lucide-react";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
 
 export default function FinancePage() {
   const [leases, setLeases] = useState([]);
@@ -90,23 +91,25 @@ export default function FinancePage() {
             <label className="text-xs font-medium text-slate-600">
               Lease
             </label>
-            <select
-              value={selectedLeaseId}
-              onChange={(e) => setSelectedLeaseId(e.target.value)}
-              disabled={loadingLeases || leases.length === 0}
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:opacity-60 transition-all"
-            >
-              <option value="ALL">
-                {loadingLeases ? "Loading leases..." : "All Leases (Aggregate)"}
-              </option>
-              {leases.map((lease) => (
-                <option key={lease._id} value={lease._id}>
-                  {lease.unitId?.unitNumber || "Unit"} ·{" "}
-                  {lease.tenantId?.fullName || "Tenant"} ·{" "}
-                  {lease.status}
-                </option>
-              ))}
-            </select>
+            {loadingLeases ? (
+              <SkeletonRow className="h-12 w-full" />
+            ) : (
+              <select
+                value={selectedLeaseId}
+                onChange={(e) => setSelectedLeaseId(e.target.value)}
+                disabled={leases.length === 0}
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:opacity-60 transition-all"
+              >
+                <option value="ALL">All Leases (Aggregate)</option>
+                {leases.map((lease) => (
+                  <option key={lease._id} value={lease._id}>
+                    {lease.unitId?.unitNumber || "Unit"} ·{" "}
+                    {lease.tenantId?.fullName || "Tenant"} ·{" "}
+                    {lease.status}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
           <div className="text-xs text-slate-500">
             Choose a lease to fetch its financial summary from the backend
@@ -115,9 +118,31 @@ export default function FinancePage() {
         </div>
 
         {loadingSummary && (
-          <p className="text-xs text-slate-500">
-            Loading financial summary...
-          </p>
+          <div className="space-y-4">
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="stagger-item rounded-xl border border-slate-200 bg-white p-6">
+                <SkeletonRow className="h-3 w-28" />
+                <div className="mt-3">
+                  <SkeletonRow className="h-8 w-32" />
+                </div>
+              </div>
+              <div className="stagger-item rounded-xl border border-slate-200 bg-white p-6">
+                <SkeletonRow className="h-3 w-32" />
+                <div className="mt-3">
+                  <SkeletonRow className="h-8 w-32" />
+                </div>
+              </div>
+              <div className="stagger-item rounded-xl border border-slate-200 bg-white p-6">
+                <SkeletonRow className="h-3 w-32" />
+                <div className="mt-3">
+                  <SkeletonRow className="h-8 w-24" />
+                </div>
+              </div>
+            </div>
+            <div className="analytics-panel rounded-xl border border-slate-200 bg-white p-4">
+              <SkeletonRow className="h-48 w-full" />
+            </div>
+          </div>
         )}
 
         {!loadingSummary && summary && selectedLeaseId === "ALL" && (
@@ -160,18 +185,26 @@ export default function FinancePage() {
 
         {!loadingSummary && summary && selectedLeaseId !== "ALL" && (
           <>
-            <div className="mb-4">
+            <div className="analytics-panel mb-4 rounded-xl bg-white/80 p-3">
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={[
                   { name: 'Billed', amount: summary.totalBilledEtb },
                   { name: 'Paid', amount: summary.totalPaidEtb },
                   { name: 'Outstanding', amount: summary.outstandingBalanceEtb },
                 ]}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis tickFormatter={(value) => formatCurrency(value)} />
-                  <Tooltip formatter={(value) => formatCurrency(value)} />
-                  <Bar dataKey="amount" fill="#14b8a6" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                  <XAxis dataKey="name" stroke="var(--chart-axis)" />
+                  <YAxis tickFormatter={(value) => formatCurrency(value)} stroke="var(--chart-axis)" />
+                  <Tooltip
+                    formatter={(value) => formatCurrency(value)}
+                    contentStyle={{
+                      backgroundColor: 'var(--chart-tooltip-bg)',
+                      border: 'none',
+                      borderRadius: '0.5rem',
+                      boxShadow: 'var(--chart-tooltip-shadow)'
+                    }}
+                  />
+                  <Bar dataKey="amount" fill="var(--chart-secondary)" activeBar={{ className: 'chart-active-dot' }} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

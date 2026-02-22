@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import API from "../services/api";
 import { Home, Users, Wrench, Plus, Eye } from "lucide-react";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
 
 const Avatar = ({ name = "Tenant" }) => {
   const initials = name
@@ -134,10 +135,57 @@ export default function PropertyManagerDashboard() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <p className="text-sm text-gray-500">
-          Loading property manager dashboard...
-        </p>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Property Ops"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="Property Manager Dashboard"
+          subtitle="Overview of your property management operations."
+        />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="surface-panel p-5">
+            <SkeletonRow className="h-3 w-24" />
+            <div className="mt-3">
+              <SkeletonRow className="h-8 w-16" />
+            </div>
+          </div>
+          <div className="surface-panel p-5">
+            <SkeletonRow className="h-3 w-24" />
+            <div className="mt-3">
+              <SkeletonRow className="h-8 w-16" />
+            </div>
+          </div>
+          <div className="surface-panel p-5">
+            <SkeletonRow className="h-3 w-24" />
+            <div className="mt-3">
+              <SkeletonRow className="h-8 w-16" />
+            </div>
+          </div>
+          <div className="surface-panel p-5">
+            <SkeletonRow className="h-3 w-24" />
+            <div className="mt-3">
+              <SkeletonRow className="h-8 w-16" />
+            </div>
+          </div>
+        </div>
+        <div className="grid gap-6 lg:grid-cols-3">
+          <section className="lg:col-span-2 surface-panel p-5">
+            <SkeletonRow className="h-8 w-64" />
+            <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              <SkeletonRow className="h-28 w-full" />
+              <SkeletonRow className="h-28 w-full" />
+              <SkeletonRow className="h-28 w-full" />
+            </div>
+          </section>
+          <section className="surface-panel p-5">
+            <SkeletonRow className="h-6 w-32" />
+            <div className="mt-4 space-y-3">
+              <SkeletonRow className="h-12 w-full" />
+              <SkeletonRow className="h-12 w-full" />
+              <SkeletonRow className="h-12 w-full" />
+            </div>
+          </section>
+        </div>
       </div>
     );
   }
@@ -208,9 +256,11 @@ export default function PropertyManagerDashboard() {
           </div>
 
           {filteredUnits.length === 0 ? (
-            <p className="mt-4 text-sm text-gray-500">
-              No units found.
-            </p>
+            <div className="mt-4 space-y-2">
+              <SkeletonRow className="h-4 w-1/2" />
+              <SkeletonRow className="h-4 w-2/3" />
+              <p className="text-sm text-gray-500">No units found.</p>
+            </div>
           ) : (
             <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {filteredUnits.map((unit) => {
@@ -292,9 +342,11 @@ export default function PropertyManagerDashboard() {
           </div>
 
           {leases.length === 0 ? (
-            <p className="mt-4 text-sm text-gray-500">
-              No active tenants yet.
-            </p>
+            <div className="mt-4 space-y-2">
+              <SkeletonRow className="h-4 w-2/3" />
+              <SkeletonRow className="h-4 w-1/2" />
+              <p className="text-sm text-gray-500">No active tenants yet.</p>
+            </div>
           ) : (
             <ul className="mt-4 space-y-3 text-xs">
               {leases.slice(0, 5).map((lease) => (
@@ -350,13 +402,16 @@ export default function PropertyManagerDashboard() {
         </div>
 
         {maintenanceLoading ? (
-          <p className="mt-4 text-sm text-gray-500">
-            Loading maintenance requests...
-          </p>
+          <div className="mt-4 space-y-2">
+            <SkeletonRow className="h-4 w-2/3" />
+            <SkeletonRow className="h-4 w-1/2" />
+          </div>
         ) : maintenanceRequests.length === 0 ? (
-          <p className="mt-4 text-sm text-gray-500">
-            No maintenance requests yet.
-          </p>
+          <div className="mt-4 space-y-2">
+            <SkeletonRow className="h-4 w-2/3" />
+            <SkeletonRow className="h-4 w-1/2" />
+            <p className="text-sm text-gray-500">No maintenance requests yet.</p>
+          </div>
         ) : (
           <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
             <table className="min-w-full divide-y divide-slate-200 text-xs">

@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
+import SkeletonTable from "../components/SkeletonTable";
 
 export default function UnitDetailPage() {
   const { unitId } = useParams();
@@ -57,7 +59,24 @@ export default function UnitDetailPage() {
 
   if (loading) {
     return (
-      <div className="text-sm text-slate-500">Loading unit...</div>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Unit"
+          eyebrowClassName="bg-slate-100 text-slate-700"
+          title="Unit Detail"
+          subtitle="Loading unit details..."
+        />
+        <DashboardCard title="Unit Information">
+          <div className="grid gap-4 md:grid-cols-3">
+            <SkeletonRow className="h-16 w-full" />
+            <SkeletonRow className="h-16 w-full" />
+            <SkeletonRow className="h-16 w-full" />
+          </div>
+        </DashboardCard>
+        <DashboardCard title="Lease History">
+          <SkeletonTable rows={4} columns={5} />
+        </DashboardCard>
+      </div>
     );
   }
 

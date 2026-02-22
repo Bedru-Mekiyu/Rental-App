@@ -1,9 +1,11 @@
 // src/components/Layout.jsx
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
 export default function Layout() {
+  const location = useLocation();
+
   return (
     <div className="relative min-h-screen text-slate-900">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -17,7 +19,7 @@ export default function Layout() {
         <Sidebar />
         <main className="flex-1 overflow-y-auto px-6 pb-12 pt-10">
           <div className="mx-auto w-full max-w-6xl">
-            <div className="fade-in">
+            <div key={location.pathname} className="page-transition">
               <Outlet />
             </div>
           </div>

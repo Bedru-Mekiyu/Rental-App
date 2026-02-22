@@ -184,8 +184,23 @@ export default function GeneralManagerDashboard() {
 
   if (loading) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent" />
+      <div className="space-y-6">
+        <div className="surface-panel p-6">
+          <div className="skeleton h-4 w-24" />
+          <div className="mt-3 space-y-2">
+            <div className="skeleton h-8 w-72" />
+            <div className="skeleton h-3 w-96" />
+          </div>
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          <KpiSkeleton />
+          <KpiSkeleton />
+          <KpiSkeleton />
+        </div>
+        <div className="card-enhanced p-6">
+          <div className="skeleton h-5 w-48" />
+          <div className="mt-6 skeleton h-56 w-full" />
+        </div>
       </div>
     );
   }
@@ -223,7 +238,7 @@ export default function GeneralManagerDashboard() {
       </div>
 
       {/* Revenue analytics */}
-      <section className="card-enhanced p-6">
+      <section className="card-enhanced analytics-panel p-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
             <span className="text-lg">💰</span>
@@ -241,16 +256,16 @@ export default function GeneralManagerDashboard() {
           <div className="lg:col-span-3 h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={revenueTrend}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="month" stroke="#64748b" />
-                <YAxis tickFormatter={(v) => `${v / 1000}k`} stroke="#64748b" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
+                <XAxis dataKey="month" stroke="var(--chart-axis)" />
+                <YAxis tickFormatter={(v) => `${v / 1000}k`} stroke="var(--chart-axis)" />
                 <Tooltip
                   formatter={(v) => formatCurrency(v)}
                   contentStyle={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    backgroundColor: 'var(--chart-tooltip-bg)',
                     border: 'none',
                     borderRadius: '0.5rem',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                    boxShadow: 'var(--chart-tooltip-shadow)'
                   }}
                 />
                 <Line
@@ -258,13 +273,13 @@ export default function GeneralManagerDashboard() {
                   dataKey="revenue"
                   stroke="url(#revenueGradient)"
                   strokeWidth={3}
-                  dot={{ fill: '#0f766e', strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, stroke: '#0f766e', strokeWidth: 2 }}
+                  dot={{ fill: 'var(--chart-primary)', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: 'var(--chart-primary)', strokeWidth: 2, className: 'chart-active-dot' }}
                 />
                 <defs>
                   <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0f766e" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#0f766e" stopOpacity={0.1}/>
+                    <stop offset="5%" stopColor="var(--chart-primary)" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="var(--chart-primary)" stopOpacity={0.1}/>
                   </linearGradient>
                 </defs>
               </LineChart>
@@ -297,7 +312,7 @@ export default function GeneralManagerDashboard() {
       </section>
 
       {/* Occupancy analytics */}
-      <section className="rounded-xl bg-white p-4 shadow-sm">
+      <section className="analytics-panel rounded-xl bg-white p-4 shadow-sm">
         <h2 className="text-sm font-semibold text-slate-800">
           Occupancy Analytics
         </h2>
@@ -308,11 +323,11 @@ export default function GeneralManagerDashboard() {
           <div className="lg:col-span-3 h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={occupancyByType}>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis dataKey="type" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="occupancy" fill="#14b8a6" />
+                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                <XAxis dataKey="type" stroke="var(--chart-axis)" />
+                <YAxis stroke="var(--chart-axis)" />
+                <Tooltip contentStyle={{ backgroundColor: 'var(--chart-tooltip-bg)', border: 'none', borderRadius: '0.5rem', boxShadow: 'var(--chart-tooltip-shadow)' }} />
+                <Bar dataKey="occupancy" fill="var(--chart-secondary)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -384,6 +399,20 @@ function KpiCard({ label, value, icon, gradient }) {
         <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} shadow-lg`}>
           <span className="text-xl">{icon}</span>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function KpiSkeleton() {
+  return (
+    <div className="card-enhanced p-6">
+      <div className="flex items-center justify-between">
+        <div className="space-y-3">
+          <div className="skeleton h-3 w-24" />
+          <div className="skeleton h-8 w-28" />
+        </div>
+        <div className="skeleton h-12 w-12 rounded-2xl" />
       </div>
     </div>
   );

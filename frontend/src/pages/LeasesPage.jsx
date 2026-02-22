@@ -5,6 +5,9 @@ import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
+import SkeletonTable from "../components/SkeletonTable";
+import SkeletonCard from "../components/SkeletonCard";
 
 const STATUS_FILTERS = ["All", "ACTIVE", "ENDED"];
 const PAGE_SIZE = 20;
@@ -59,7 +62,23 @@ export default function LeasesPage() {
 
   if (loading) {
     return (
-      <div className="text-sm text-slate-500">Loading leases...</div>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Leases"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="Leases"
+          subtitle="View and manage active and past leases."
+        />
+        <SkeletonCard>
+          <div className="flex flex-wrap items-center gap-3">
+            <SkeletonRow className="h-10 w-64 rounded-2xl" />
+            <SkeletonRow className="h-8 w-48 rounded-full" />
+          </div>
+        </SkeletonCard>
+        <SkeletonCard title="Lease List">
+          <SkeletonTable rows={5} columns={6} />
+        </SkeletonCard>
+      </div>
     );
   }
 
@@ -121,6 +140,13 @@ export default function LeasesPage() {
               <svg className="h-8 w-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
+            </div>
+            <div className="mx-auto max-w-xs space-y-2">
+              <SkeletonRow className="h-4 w-3/4" />
+              <SkeletonRow className="h-4 w-2/3" />
+            </div>
+            <div className="mt-4">
+              <SkeletonTable rows={4} columns={6} />
             </div>
             <p className="text-slate-500 font-medium">No leases found matching your criteria.</p>
             <p className="text-sm text-slate-400 mt-1">Try adjusting your search or filters.</p>

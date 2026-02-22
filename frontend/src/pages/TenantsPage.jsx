@@ -7,6 +7,9 @@ import DashboardCard from "../components/DashboardCard";
 import { useAuthStore } from "../store/authStore";
 import { Users, Search, Filter, UserPlus, Eye, UserX, UserCheck } from "lucide-react";
 import PageHeader from "../components/PageHeader";
+import SkeletonRow from "../components/SkeletonRow";
+import SkeletonTable from "../components/SkeletonTable";
+import SkeletonCard from "../components/SkeletonCard";
 
 const STATUS_OPTIONS = ["ALL", "ACTIVE", "SUSPENDED", "INVITED"];
 
@@ -108,11 +111,17 @@ export default function TenantsPage() {
 
   if (loading) {
     return (
-      <DashboardCard title="Tenant Management">
-        <div className="py-8 text-center text-sm text-gray-500">
-          Loading tenants...
-        </div>
-      </DashboardCard>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Tenants"
+          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          title="Tenant Management"
+          subtitle="Manage tenant accounts, access status, and profiles."
+        />
+        <SkeletonCard title="Tenant Management">
+          <SkeletonTable rows={5} columns={4} />
+        </SkeletonCard>
+      </div>
     );
   }
 
@@ -168,37 +177,34 @@ export default function TenantsPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
-          <thead className="bg-gradient-to-r from-emerald-50 to-teal-50">
-            <tr>
-              <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                Name / Contact
-              </th>
-              <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                Status
-              </th>
-              <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                Created
-              </th>
-              <th className="px-6 py-4 text-right font-semibold text-gray-700">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100 bg-white">
-            {filteredTenants.length === 0 ? (
+      {filteredTenants.length === 0 ? (
+        <div className="space-y-3">
+          <SkeletonTable rows={4} columns={4} />
+          <div className="text-xs text-slate-500">
+            No tenants match your filters.
+          </div>
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-2xl border border-gray-200 shadow-sm">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gradient-to-r from-emerald-50 to-teal-50">
               <tr>
-                <td
-                  colSpan={4}
-                  className="px-6 py-8 text-center text-sm text-gray-500"
-                >
-                  <Users className="mx-auto h-8 w-8 text-gray-300 mb-2" />
-                  No tenants match your filters.
-                </td>
+                <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                  Name / Contact
+                </th>
+                <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                  Created
+                </th>
+                <th className="px-6 py-4 text-right font-semibold text-gray-700">
+                  Actions
+                </th>
               </tr>
-            ) : (
-              filteredTenants.map((t) => (
+            </thead>
+            <tbody className="divide-y divide-gray-100 bg-white">
+              {filteredTenants.map((t) => (
                 <tr key={t._id} className="stagger-item hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="font-medium text-gray-900">
@@ -251,11 +257,11 @@ export default function TenantsPage() {
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       </DashboardCard>
     </div>
   );
