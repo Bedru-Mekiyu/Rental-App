@@ -27,6 +27,17 @@ const paymentSchema = new mongoose.Schema(
       enum: ["PENDING", "VERIFIED", "REJECTED"],
       default: "PENDING",
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    verifiedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    verifiedAt: {
+      type: Date,
+    },
     externalTransactionId: {
       type: String,
       trim: true,

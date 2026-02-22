@@ -4,19 +4,17 @@ import axios from "axios";
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("user");
-
-    if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  const [loading, setLoading] = useState(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
-    setLoading(false);
-  }, []);
+    return false;
+  });
 
   const login = async (email, password) => {
     try {

@@ -38,10 +38,10 @@ router.patch(
 );
 
 // ADMIN can deactivate user (set status = SUSPENDED)
-router.delete("/:id", auth(["ADMIN"]), deactivateUser);
+router.delete("/:id", auth(["ADMIN", "PM"]), deactivateUser);
 
 // ADMIN can reactivate user (set status = ACTIVE)
-router.post("/:id/reactivate", auth(["ADMIN"]), async (req, res) => {
+router.post("/:id/reactivate", auth(["ADMIN", "PM"]), async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });

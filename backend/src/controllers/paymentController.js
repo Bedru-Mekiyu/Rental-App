@@ -1,13 +1,14 @@
 // src/controllers/paymentController.js (ESM)
 
+import mongoose from "mongoose";
 import Payment from "../models/Payment.js";
 import Lease from "../models/Lease.js";
 import { logAction } from "../utils/auditLogger.js";
 
 /**
  * POST /api/payments
- * Roles: FS, PM, ADMIN
- * Create a manual payment record (initially PENDING or VERIFIED)
+ * Roles: TENANT, ADMIN (and optionally PM if route allows)
+ * Create a payment record (tenant-initiated, starts as PENDING)
  */
 export async function createPayment(req, res) {
   try {
@@ -25,6 +26,11 @@ export async function createPayment(req, res) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
+    // Validate leaseId format
+    if (!mongoose.Types.ObjectId.isValid(leaseId)) {
+      return res.status(400).json({ message: "Invalid lease ID format" });
+    }
+
     const lease = await Lease.findById(leaseId);
     if (!lease) {
       return res.status(404).json({ message: "Lease not found" });
@@ -37,7 +43,9 @@ export async function createPayment(req, res) {
       paymentMethod,
       externalTransactionId,
       receiptUrl,
+      // always start as PENDING; verification is done by PM/ADMIN
       status: status || "PENDING",
+      createdBy: req.user.id,
     });
 
     await logAction({
@@ -62,8 +70,8 @@ export async function createPayment(req, res) {
 
 /**
  * PATCH /api/payments/:id/status
- * Roles: FS, PM, ADMIN
- * Update payment status (PENDING, VERIFIED, REJECTED)
+ * Roles: PM, ADMIN
+ * Update payment status (PENDING -> VERIFIED/REJECTED)
  */
 export async function updatePaymentStatus(req, res) {
   try {
@@ -79,6 +87,10 @@ export async function updatePaymentStatus(req, res) {
     }
 
     payment.status = status;
+    payment.verifiedBy = req.user.id;
+    payment.verifiedAt = new Date();
+    await payment.save();
+
     await payment.save();
 
     await logAction({
@@ -99,9 +111,46 @@ export async function updatePaymentStatus(req, res) {
 }
 
 /**
+ * GET /api/payments
+ * Roles: PM, ADMIN
+ * Optional query: status, method, q (search)
+ */
+export async function listPayments(req, res) {
+  try {
+    const { status, method, q } = req.query;
+
+    const filter = {};
+
+    if (status && status !== "All") {
+      filter.status = status;
+    }
+
+    if (method && method !== "All") {
+      filter.paymentMethod = method;
+    }
+
+    if (q) {
+      const regex = new RegExp(q, "i");
+      filter.$or = [
+        { externalTransactionId: regex },
+        { paymentMethod: regex },
+      ];
+    }
+
+    const payments = await Payment.find(filter)
+      .sort({ transactionDate: -1 })
+      .limit(200);
+
+    return res.json(payments);
+  } catch (err) {
+    console.error("listPayments error:", err);
+    return res.status(500).json({ message: "Failed to fetch payments" });
+  }
+}
+
+/**
  * GET /api/payments/by-lease/:leaseId
- * Roles: FS, PM, ADMIN
- * List payments for a specific lease
+ * Roles: PM, ADMIN
  */
 export async function listByLease(req, res) {
   try {
@@ -122,8 +171,7 @@ export async function listByLease(req, res) {
 
 /**
  * GET /api/payments/by-tenant/:tenantId
- * Roles: FS, PM, ADMIN
- * List payments for all leases of a specific tenant
+ * Roles: TENANT, PM, ADMIN (TENANT should see only own leases)
  */
 export async function listByTenant(req, res) {
   try {

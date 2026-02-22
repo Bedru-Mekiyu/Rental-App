@@ -2,24 +2,18 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import { useAuthStore } from "../store/authStore";
 
 export default function Layout() {
-  const { user } = useAuthStore();
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Fixed Navbar */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 text-slate-900">
       <Navbar />
-
-      <div className="flex flex-1">
-        {/* Sidebar - only show when logged in */}
-        {user && <Sidebar />}
-
-        {/* Main Content Area */}
-        <main className={`flex-1 transition-all duration-300 ${user ? "ml-64" : "ml-0"}`}>
-          <div className="p-6 pt-20"> {/* pt-20 = space below fixed navbar (top-16 in Sidebar) */}
-            <Outlet />
+      <div className="flex h-[calc(100vh-64px)]">
+        <Sidebar />
+        <main className="flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-7xl px-6 py-8">
+            <div className="fade-in">
+              <Outlet />
+            </div>
           </div>
         </main>
       </div>

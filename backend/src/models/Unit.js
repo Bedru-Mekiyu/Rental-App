@@ -12,7 +12,7 @@ const unitSchema = new mongoose.Schema(
     propertyId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Property",
-      required: true,
+      // required: true, // made optional for now
     },
     floor: {
       type: Number,

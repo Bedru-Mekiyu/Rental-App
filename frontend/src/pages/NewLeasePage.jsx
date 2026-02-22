@@ -1,0 +1,222 @@
+// src/pages/NewLeasePage.jsx
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import API from "../services/api";
+import DashboardCard from "../components/DashboardCard";
+import { Home, User, Calendar, DollarSign, FileText, Save, ArrowLeft } from "lucide-react";
+
+export default function NewLeasePage() {
+  const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
+  const [units, setUnits] = useState([]);
+  const [tenants, setTenants] = useState([]);
+
+  const [form, setForm] = useState({
+    unitId: "",
+    tenantId: "",
+    startDate: "",
+    endDate: "",
+    monthlyRentEtb: "",
+    securityDepositEtb: "",
+    notes: "",
+  });
+
+  useEffect(() => {
+    loadUnits();
+    loadTenants();
+  }, []);
+
+  const loadUnits = async () => {
+    try {
+      const res = await API.get("/units");
+      setUnits(res.data.data || []);
+    } catch {
+      toast.error("Failed to load units");
+    }
+  };
+
+  const loadTenants = async () => {
+    try {
+      const res = await API.get("/users?role=TENANT");
+      setTenants(res.data || []);
+    } catch {
+      toast.error("Failed to load tenants");
+    }
+  };
+
+  const handleChange = (field) => (e) => {
+    setForm((f) => ({ ...f, [field]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setSubmitting(true);
+      await API.post("/leases", {
+        unitId: form.unitId,
+        tenantId: form.tenantId,
+        startDate: form.startDate,
+        endDate: form.endDate,
+        monthlyRentEtb: Number(form.monthlyRentEtb),
+        securityDepositEtb: Number(form.securityDepositEtb),
+        notes: form.notes,
+      });
+      toast.success("Lease created");
+      navigate("/leases");
+    } catch (err) {
+      const message = err.response?.data?.message || "Failed to create lease";
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <header className="bg-gradient-to-r from-green-600 to-teal-600 text-white p-6 rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold">New Lease</h1>
+        <p className="mt-2 text-green-100">
+          Create a new lease agreement for a tenant and unit.
+        </p>
+      </header>
+
+      <DashboardCard title="Lease Details">
+        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <label className="flex items-center space-x-2 text-sm font-medium text-slate-700">
+              <Home className="h-4 w-4" />
+              <span>Unit</span>
+            </label>
+            <select
+              required
+              value={form.unitId}
+              onChange={handleChange("unitId")}
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+            >
+              <option value="">Select Unit</option>
+              {units
+                .filter((u) => u.status === "VACANT")
+                .map((u) => (
+                  <option key={u._id} value={u._id}>
+                    {u.unitNumber} - {u.type}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <label className="flex items-center space-x-2 text-sm font-medium text-slate-700">
+              <User className="h-4 w-4" />
+              <span>Tenant</span>
+            </label>
+            <select
+              required
+              value={form.tenantId}
+              onChange={handleChange("tenantId")}
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+            >
+              <option value="">Select Tenant</option>
+              {tenants.map((t) => (
+                <option key={t._id} value={t._id}>
+                  {t.fullName} - {t.email}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <label className="flex items-center space-x-2 text-sm font-medium text-slate-700">
+              <Calendar className="h-4 w-4" />
+              <span>Start Date</span>
+            </label>
+            <input
+              type="date"
+              required
+              value={form.startDate}
+              onChange={handleChange("startDate")}
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="flex items-center space-x-2 text-sm font-medium text-slate-700">
+              <Calendar className="h-4 w-4" />
+              <span>End Date</span>
+            </label>
+            <input
+              type="date"
+              required
+              value={form.endDate}
+              onChange={handleChange("endDate")}
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="flex items-center space-x-2 text-sm font-medium text-slate-700">
+              <DollarSign className="h-4 w-4" />
+              <span>Monthly Rent (ETB)</span>
+            </label>
+            <input
+              type="number"
+              required
+              value={form.monthlyRentEtb}
+              onChange={handleChange("monthlyRentEtb")}
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              placeholder="5000"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="flex items-center space-x-2 text-sm font-medium text-slate-700">
+              <DollarSign className="h-4 w-4" />
+              <span>Security Deposit (ETB)</span>
+            </label>
+            <input
+              type="number"
+              required
+              value={form.securityDepositEtb}
+              onChange={handleChange("securityDepositEtb")}
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              placeholder="5000"
+            />
+          </div>
+
+          <div className="md:col-span-2 space-y-2">
+            <label className="flex items-center space-x-2 text-sm font-medium text-slate-700">
+              <FileText className="h-4 w-4" />
+              <span>Notes</span>
+            </label>
+            <textarea
+              value={form.notes}
+              onChange={handleChange("notes")}
+              rows={3}
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              placeholder="Additional notes..."
+            />
+          </div>
+
+          <div className="md:col-span-2 flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="inline-flex items-center space-x-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Cancel</span>
+            </button>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="inline-flex items-center space-x-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60 transition-colors"
+            >
+              <Save className="h-4 w-4" />
+              <span>{submitting ? "Creating..." : "Create Lease"}</span>
+            </button>
+          </div>
+        </form>
+      </DashboardCard>
+    </div>
+  );
+}

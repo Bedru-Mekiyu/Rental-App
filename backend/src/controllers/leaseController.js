@@ -1,5 +1,6 @@
 // src/controllers/leaseController.js (ESM)
 
+import mongoose from "mongoose";
 import Lease from "../models/Lease.js";
 import Unit from "../models/Unit.js";
 import { logAction } from "../utils/auditLogger.js";
@@ -86,6 +87,10 @@ export async function listAllLeases(req, res) {
  */
 export async function getLeaseById(req, res) {
   try {
+    if (!req.params.id || req.params.id === 'undefined' || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid lease ID" });
+    }
+
     const lease = await Lease.findById(req.params.id)
       .populate("unitId")
       .populate("tenantId", "fullName email");

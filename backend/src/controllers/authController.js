@@ -21,7 +21,7 @@ export async function registerAdmin(req, res) {
       fullName,
       email,
       passwordHash,
-      role: "ADMIN",
+      role: "TENANT",
       status: "ACTIVE",
     });
 

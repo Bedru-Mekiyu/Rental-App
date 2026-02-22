@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+// src/pages/PropertyManagerDashboard.jsx
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
+import API from "../services/api";
+import { Home, Users, Wrench, Plus, Eye } from "lucide-react";
 
-// Avatar fallback component (simple initials circle)
-const Avatar = ({ name }) => {
+const Avatar = ({ name = "Tenant" }) => {
   const initials = name
     .split(" ")
     .map((n) => n[0])
@@ -13,360 +15,459 @@ const Avatar = ({ name }) => {
     .slice(0, 2);
 
   return (
-    <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
       {initials}
     </div>
   );
 };
 
+const statusColors = {
+  available:
+    "inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700",
+  occupied:
+    "inline-flex rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700",
+  "under maintenance":
+    "inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700",
+};
+
 export default function PropertyManagerDashboard() {
   const { user } = useAuthStore();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("All");
+  const [units, setUnits] = useState([]);
+  const [leases, setLeases] = useState([]);
+  const [search, setSearch] = useState("");
+  const [maintenanceRequests, setMaintenanceRequests] = useState([]);
+  const [maintenanceLoading, setMaintenanceLoading] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Hardcoded mock data - works 100% without any backend or API
-  const units = [
-    {
-      _id: "1",
-      address: "123 Main St, Apt 101",
-      unitNumber: "101",
-      bedrooms: 2,
-      bathrooms: 1,
-      areaSqFt: 950,
-      status: "Occupied",
-      monthlyRent: 1900,
-    },
-    {
-      _id: "2",
-      address: "456 Oak Ave, Unit 5",
-      unitNumber: "5",
-      bedrooms: 2,
-      bathrooms: 2,
-      areaSqFt: 1100,
-      status: "Available",
-      monthlyRent: 2200,
-    },
-    {
-      _id: "3",
-      address: "789 Pine Ln, Studio",
-      unitNumber: "Studio",
-      bedrooms: 1,
-      bathrooms: 1,
-      areaSqFt: 500,
-      status: "Under Maintenance",
-      monthlyRent: 1200,
-    },
-    {
-      _id: "4",
-      address: "101 Elm Dr, Penthouse",
-      unitNumber: "Penthouse",
-      bedrooms: 4,
-      bathrooms: 3,
-      areaSqFt: 2500,
-      status: "Occupied",
-      monthlyRent: 3500,
-    },
-  ];
-
-  const activeTenants = [
-    { _id: "t1", fullName: "Alice Smith" },
-    { _id: "t2", fullName: "Bob Johnson" },
-    { _id: "t3", fullName: "Charlie Brown" },
-  ];
-
-  const notifications = [
-    {
-      _id: "n1",
-      title: "New maintenance request for Unit 105",
-      message: "Tenant reported leaking faucet.",
-    },
-    {
-      _id: "n2",
-      title: "Lease renewal pending for Unit 8",
-      message: "Tenant B. Tenant contract expires in 30 days.",
-    },
-    {
-      _id: "n3",
-      title: "Payment received from Alice Smith",
-      message: "February rent paid in full.",
-    },
-  ];
-
   useEffect(() => {
-    // Simulate loading delay for realism
-    const timer = setTimeout(() => {
+    if (!user) {
       setLoading(false);
-      toast.success("Dashboard loaded successfully");
-    }, 800);
+      return;
+    }
+    loadData();
+    loadMaintenance();
+  }, [user]);
 
-    return () => clearTimeout(timer);
-  }, []);
-
-  const filteredUnits = units.filter((unit) => {
-    const matchesSearch =
-      (unit.address?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-      (unit.unitNumber?.toLowerCase() || "").includes(searchTerm.toLowerCase());
-
-    const matchesFilter =
-      filterStatus === "All" ||
-      unit.status.toLowerCase() === filterStatus.toLowerCase().replace(" ", "");
-
-    return matchesSearch && matchesFilter;
-  });
-
-  const statusColors = {
-    occupied: "bg-green-100 text-green-800",
-    available: "bg-blue-100 text-blue-800",
-    "under maintenance": "bg-orange-100 text-orange-800",
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [unitsRes, leasesRes] = await Promise.all([
+        API.get("/units"),
+        API.get("/leases"),
+      ]);
+      setUnits(unitsRes.data?.data || unitsRes.data || []);
+      setLeases(leasesRes.data?.data || leasesRes.data || []);
+    } catch (err) {
+      console.error("PropertyManagerDashboard loadData error", err);
+      toast.error(
+        err?.response?.data?.message ||
+          "Failed to load property manager dashboard"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const loadMaintenance = async () => {
+    try {
+      setMaintenanceLoading(true);
+      const res = await API.get("/maintenance");
+      setMaintenanceRequests(res.data?.data || []);
+    } catch (err) {
+      console.error("PropertyManagerDashboard loadMaintenance error", err);
+      toast.error(
+        err?.response?.data?.message ||
+          "Failed to load maintenance requests"
+      );
+    } finally {
+      setMaintenanceLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      const res = await API.patch(`/maintenance/${id}/status`, {
+        status: newStatus,
+      });
+      const updated = res.data?.data;
+      setMaintenanceRequests((prev) =>
+        prev.map((r) => (r._id === id ? updated : r))
+      );
+      toast.success("Status updated");
+    } catch (err) {
+      console.error("updateMaintenanceStatus error", err);
+      toast.error(
+        err?.response?.data?.message ||
+          "Failed to update maintenance status"
+      );
+    }
+  };
+
+  const filteredUnits = useMemo(() => {
+    if (!search.trim()) return units;
+    const q = search.toLowerCase();
+    return units.filter((unit) => {
+      const num = String(unit.unitNumber || "").toLowerCase();
+      const floor = String(unit.floor || "").toLowerCase();
+      const status = String(unit.status || "").toLowerCase();
+      return (
+        num.includes(q) || floor.includes(q) || status.includes(q)
+      );
+    });
+  }, [search, units]);
+
+  const occupancyStats = useMemo(() => {
+    const total = units.length;
+    const occupied = units.filter(
+      (u) => (u.status || "").toUpperCase() === "OCCUPIED"
+    ).length;
+    const vacant = units.filter(
+      (u) => (u.status || "").toUpperCase() === "VACANT"
+    ).length;
+    const maintenance = units.filter(
+      (u) => (u.status || "").toUpperCase() === "UNDER_MAINTENANCE"
+    ).length;
+    return { total, occupied, vacant, maintenance };
+  }, [units]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <p className="text-sm text-gray-500">
+          Loading property manager dashboard...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
-      {/* Welcome Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">
-          Welcome, {user?.fullName || "Sarah Davis"}!
-        </h1>
-        <p className="text-gray-600 mt-2">
-          Overview of your property management operations.
-        </p>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-lg shadow-lg">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Home className="h-8 w-8" />
+            <div>
+              <h1 className="text-3xl font-bold">
+                Property Manager Dashboard
+              </h1>
+              <p className="mt-1 text-blue-100">
+                Overview of your property management operations.
+              </p>
+            </div>
+          </div>
+          <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium">
+            Logged in as {user?.fullName || user?.email}
+          </div>
+        </div>
       </div>
 
-      {/* Top Section: Units + Lease Management */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Unit Management */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-            <div className="p-6 border-b border-gray-200">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h2 className="text-xl font-semibold">Unit Management</h2>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <input
-                    type="text"
-                    placeholder="Search units..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                  <div className="flex gap-2 flex-wrap">
-                    {["All", "Available", "Occupied", "Under Maintenance"].map(
-                      (status) => (
-                        <button
-                          key={status}
-                          onClick={() => setFilterStatus(status)}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                            filterStatus === status
-                              ? "bg-indigo-600 text-white"
-                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                          }`}
-                        >
-                          {status}
-                        </button>
-                      )
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+      {/* Top stats */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Total Units" value={occupancyStats.total} icon={Home} />
+        <StatCard label="Occupied" value={occupancyStats.occupied} icon={Users} />
+        <StatCard label="Vacant" value={occupancyStats.vacant} icon={Plus} />
+        <StatCard
+          label="Under Maintenance"
+          value={occupancyStats.maintenance}
+          icon={Wrench}
+        />
+      </div>
 
-            <div className="p-6 space-y-4">
-              {loading ? (
-                <div className="flex justify-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-indigo-600"></div>
-                </div>
-              ) : filteredUnits.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">No units found</p>
-              ) : (
-                filteredUnits.map((unit) => (
-                  <div
+      {/* Units + leases */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Units list */}
+        <section className="lg:col-span-2 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="flex justify-end">
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Search by unit, floor, or status"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full sm:w-64 rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              />
+              <Link
+                to="/units"
+                className="inline-flex items-center space-x-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 transition-colors"
+              >
+                <Eye className="h-4 w-4" />
+                <span>Units</span>
+              </Link>
+              <Link
+                to="/users"
+                className="inline-flex items-center space-x-2 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 transition-colors"
+              >
+                <Users className="h-4 w-4" />
+                <span>Users</span>
+              </Link>
+              {user?.role === "ADMIN" || user?.role === "PM" ? (
+                <Link
+                  to="/users/new"
+                  className="inline-flex items-center space-x-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Create</span>
+                </Link>
+              ) : null}
+            </div>
+          </div>
+
+          {filteredUnits.length === 0 ? (
+            <p className="mt-4 text-sm text-gray-500">
+              No units found.
+            </p>
+          ) : (
+            <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {filteredUnits.map((unit) => {
+                const normalizedStatus = (
+                  unit.status || ""
+                ).toUpperCase();
+                const labelStatus =
+                  normalizedStatus === "VACANT"
+                    ? "Available"
+                    : normalizedStatus === "OCCUPIED"
+                    ? "Occupied"
+                    : "Under Maintenance";
+                const badgeClass =
+                  normalizedStatus === "OCCUPIED"
+                    ? statusColors["occupied"]
+                    : normalizedStatus === "VACANT"
+                    ? statusColors["available"]
+                    : statusColors["under maintenance"];
+
+                return (
+                  <article
                     key={unit._id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                    className="flex flex-col justify-between rounded-md border border-gray-200 bg-white p-3 text-xs shadow-sm"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-20 h-20 bg-gray-200 border-2 border-dashed rounded-lg flex items-center justify-center text-gray-400 text-xs">
-                        Photo
-                      </div>
+                    <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="font-semibold text-gray-900">
-                          {unit.address}
-                          {unit.unitNumber && `, Unit ${unit.unitNumber}`}
+                        <h3 className="text-sm font-semibold text-gray-900">
+                          Unit {unit.unitNumber ?? "N/A"}
                         </h3>
-                        <p className="text-sm text-gray-600">
-                          {unit.bedrooms} Beds • {unit.bathrooms} Baths •{" "}
-                          {unit.areaSqFt} sqft
+                        <p className="mt-1 text-[11px] text-gray-500">
+                          Floor {unit.floor ?? "N/A"} •{" "}
+                          {unit.areaSqm
+                            ? `${unit.areaSqm} sqm`
+                            : "Area N/A"}
                         </p>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <span
-                        className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${
-                          statusColors[unit.status.toLowerCase()] ||
-                          "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {unit.status}
+                      <span className={badgeClass}>
+                        {labelStatus}
                       </span>
-                      <p className="text-lg font-bold text-gray-900 mt-2">
-                        ${unit.monthlyRent} / month
+                    </div>
+                    <div className="mt-2 flex items-center justify-between">
+                      <p className="text-xs font-medium text-gray-900">
+                        {unit.basePriceEtb
+                          ? `${unit.basePriceEtb} ETB / month`
+                          : "Price N/A"}
+                      </p>
+                      <Link
+                        to="/leases"
+                        className="text-[11px] font-medium text-indigo-600 hover:underline"
+                      >
+                        View details
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
+        {/* Recent leases */}
+        <section className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-sm font-semibold text-gray-900">
+                Recent Leases
+              </h2>
+              <p className="mt-1 text-xs text-gray-500">
+                Create new leases and review existing ones for your
+                units.
+              </p>
+            </div>
+            <Link
+              to="/leases"
+              className="inline-flex items-center rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-black"
+            >
+              Manage Leases
+            </Link>
+          </div>
+
+          {leases.length === 0 ? (
+            <p className="mt-4 text-sm text-gray-500">
+              No active tenants yet.
+            </p>
+          ) : (
+            <ul className="mt-4 space-y-3 text-xs">
+              {leases.slice(0, 5).map((lease) => (
+                <li
+                  key={lease._id}
+                  className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 p-2.5"
+                >
+                  <div className="flex items-center gap-2">
+                    <Avatar
+                      name={lease.tenantId?.fullName || "Tenant"}
+                    />
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {lease.tenantId?.fullName || "Tenant"}
+                      </p>
+                      <p className="text-[11px] text-gray-500">
+                        Unit {lease.unitId?.unitNumber || "N/A"}
                       </p>
                     </div>
                   </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Lease Management */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-4">Lease Management</h2>
-            <div className="space-y-3">
-              <Link
-                to="/leases/create"
-                className="w-full block text-center bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition"
-              >
-                Create New Lease
-              </Link>
-              <Link
-                to="/leases"
-                className="w-full block text-center bg-white border border-gray-300 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-50 transition"
-              >
-                View All Leases
-              </Link>
-            </div>
-          </div>
-        </div>
+                  <div className="text-right">
+                    <p className="text-xs font-semibold text-gray-900">
+                      {lease.monthlyRentEtb
+                        ? `${lease.monthlyRentEtb} ETB / month`
+                        : "N/A"}
+                    </p>
+                    <p className="text-[11px] text-gray-500">
+                      {lease.startDate
+                        ? new Date(
+                            lease.startDate
+                          ).toLocaleDateString()
+                        : "—"}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
 
-      {/* Middle Row: Detailed Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Rent Calculation Preview */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Rent Calculation Preview
-          </h3>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Base Rent (B)</span>
-              <span className="font-medium">$1,500</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Market Adjustment (+5%)</span>
-              <span className="font-medium">$75</span>
-            </div>
-            <hr className="border-gray-200" />
-            <div className="flex justify-between pt-2">
-              <span className="text-gray-900 font-semibold">Estimated Rent:</span>
-              <span className="text-2xl font-bold text-purple-600">$1,575.00</span>
-            </div>
+      {/* Maintenance requests */}
+      <section className="mt-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-gray-900">
+              Maintenance Requests
+            </h2>
+            <p className="mt-1 text-xs text-gray-500">
+              Track and update maintenance issues reported by tenants.
+            </p>
           </div>
         </div>
 
-        {/* Maintenance Summary (highlighted) */}
-        <div className="bg-white rounded-xl shadow-sm border-2 border-purple-500 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Maintenance Summary
-          </h3>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Open Requests:</span>
-              <span className="font-bold text-gray-900">3</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">In Progress:</span>
-              <span className="font-bold text-gray-900">2</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Resolved This Month:</span>
-              <span className="font-bold text-gray-900">15</span>
-            </div>
-            <Link
-              to="/maintenance"
-              className="mt-4 block text-center bg-purple-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-purple-700 transition"
-            >
-              View All Requests
-            </Link>
-          </div>
-        </div>
-
-        {/* Active Tenants */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Tenants</h3>
-          <div className="space-y-4">
-            {activeTenants.map((tenant) => (
-              <div key={tenant._id} className="flex items-center gap-3">
-                <Avatar name={tenant.fullName} />
-                <p className="font-medium text-gray-900">{tenant.fullName}</p>
-              </div>
-            ))}
-            <Link
-              to="/tenants"
-              className="block text-center text-indigo-600 text-sm font-medium hover:underline mt-4"
-            >
-              View All Tenants →
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Notifications Center */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Notifications Center
-          </h3>
-          <div className="space-y-4">
-            {notifications.map((notif) => (
-              <div key={notif._id} className="text-sm">
-                <p className="text-gray-800 font-medium">{notif.title}</p>
-                <p className="text-gray-600">{notif.message}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Pricing Rules */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Pricing Rules</h3>
-          <p className="text-sm text-gray-600 mb-4">
-            Configure dynamic pricing rules, seasonal adjustments, and market-based
-            recommendations for your properties.
+        {maintenanceLoading ? (
+          <p className="mt-4 text-sm text-gray-500">
+            Loading maintenance requests...
           </p>
-          <Link
-            to="/pricing-rules"
-            className="block text-center bg-gray-100 text-gray-700 py-2 px-4 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
-          >
-            Configure Pricing Rules
-          </Link>
-        </div>
-
-        {/* Operational Reports */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Operational Reports
-          </h3>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <Link to="/reports/occupancy" className="text-indigo-600 hover:underline">
-              Occupancy Rate Report
-            </Link>
-            <Link to="/reports/vacancy" className="text-indigo-600 hover:underline">
-              Vacancy Report
-            </Link>
-            <Link to="/reports/expenses" className="text-indigo-600 hover:underline">
-              Monthly Expense Report
-            </Link>
-            <Link
-              to="/reports/lease-expiration"
-              className="text-indigo-600 hover:underline"
-            >
-              Lease Expiration Forecast
-            </Link>
+        ) : maintenanceRequests.length === 0 ? (
+          <p className="mt-4 text-sm text-gray-500">
+            No maintenance requests yet.
+          </p>
+        ) : (
+          <div className="mt-4 overflow-hidden rounded-lg border border-gray-200">
+            <table className="min-w-full divide-y divide-gray-200 text-xs">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-3 py-2 text-left font-medium text-gray-700">
+                    Tenant
+                  </th>
+                  <th className="px-3 py-2 text-left font-medium text-gray-700">
+                    Unit
+                  </th>
+                  <th className="px-3 py-2 text-left font-medium text-gray-700">
+                    Description
+                  </th>
+                  <th className="px-3 py-2 text-left font-medium text-gray-700">
+                    Urgency
+                  </th>
+                  <th className="px-3 py-2 text-left font-medium text-gray-700">
+                    Status
+                  </th>
+                  <th className="px-3 py-2 text-right font-medium text-gray-700">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {maintenanceRequests.map((r) => (
+                  <tr key={r._id}>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-2">
+                        <Avatar
+                          name={r.tenantId?.fullName || "Tenant"}
+                        />
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {r.tenantId?.fullName || "Tenant"}
+                          </p>
+                          <p className="text-[11px] text-gray-500">
+                            {r.tenantId?.email || ""}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 text-gray-700">
+                      Unit {r.unitId?.unitNumber || "N/A"}
+                    </td>
+                    <td className="px-3 py-2 text-gray-700 max-w-xs">
+                      <p className="line-clamp-2">
+                        {r.description}
+                      </p>
+                    </td>
+                    <td className="px-3 py-2">
+                      <span className="inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700">
+                        {r.urgency}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2">
+                      <span className="inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700">
+                        {r.status.replace("_", " ")}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-right">
+                      <select
+                        value={r.status}
+                        onChange={(e) =>
+                          handleStatusChange(
+                            r._id,
+                            e.target.value
+                          )
+                        }
+                        className="rounded-md border border-gray-300 px-2 py-1 text-[11px] text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      >
+                        <option value="open">Open</option>
+                        <option value="in_progress">
+                          In progress
+                        </option>
+                        <option value="resolved">
+                          Resolved
+                        </option>
+                        <option value="closed">Closed</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function StatCard({ label, value, icon: Icon }) {
+  return (
+    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-600">{label}</p>
+          <p className="mt-2 text-3xl font-bold text-gray-900">
+            {value}
+          </p>
         </div>
+        {Icon && <Icon className="h-8 w-8 text-indigo-600" />}
       </div>
     </div>
   );

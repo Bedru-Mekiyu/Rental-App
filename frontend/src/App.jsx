@@ -1,120 +1,129 @@
 // src/App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/authStore";
+import { Toaster } from "react-hot-toast";
 
-// Layout & Components
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// Pages
 import Login from "./pages/Login";
 import PropertyManagerDashboard from "./pages/PropertyManagerDashboard";
 import GeneralManagerDashboard from "./pages/GeneralManagerDashboard";
 import FinancialStaffDashboard from "./pages/FinancialStaffDashboard";
 import TenantDashboard from "./pages/TenantDashboard";
+
 import UnitsPage from "./pages/UnitsPage";
+import LeasesPage from "./pages/LeasesPage";
+import PaymentsPage from "./pages/PaymentsPage";
+import FinancePage from "./pages/FinancePage";
+
+import NewLeasePage from "./pages/NewLeasePage";
+import UsersPage from "./pages/UsersPage";
+import NewUserPage from "./pages/NewUserPage";
+import UnitDetailPage from "./pages/UnitDetailPage";
+import LeaseDetailPage from "./pages/LeaseDetailPage";
+import TenantsPage from "./pages/TenantsPage";
+import MyLeasePage from "./pages/MyLeasePage";
 
 function App() {
   const { user, loading } = useAuthStore();
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-indigo-600 mx-auto"></div>
-          <p className="mt-8 text-lg text-gray-600">Loading RMS...</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center text-sm text-gray-500">
+        Loading...
       </div>
     );
   }
 
   return (
+    <>
+    <Toaster />
     <Routes>
-      {/* Public Route */}
-      <Route
-        path="/login"
-        element={!user ? <Login /> : <Navigate to={getDefaultRoute(user.role)} replace />}
-      />
+      {/* Public route */}
+      <Route path="/login" element={<Login />} />
 
-      {/* Protected Routes with Layout */}
+      {/* Protected app shell */}
       <Route
+        path="/"
         element={
           <ProtectedRoute>
             <Layout />
           </ProtectedRoute>
         }
       >
-        {/* Role-Based Dashboard */}
-        <Route path="/dashboard" element={<RoleBasedDashboard />} />
+        {/* Index route - redirect to dashboard */}
+        <Route index element={<Navigate to="/dashboard" replace />} />
 
-        {/* Functional Pages */}
-        <Route path="/units" element={<UnitsPage />} />
-        <Route path="/my-lease" element={<TenantDashboard />} />
-        <Route path="/finance" element={<FinancialStaffDashboard />} />
-
-        {/* Future Pages (Safe Fallbacks) */}
-        <Route path="/leases" element={<ComingSoonPage title="Lease Management" />} />
-        <Route path="/payments" element={<ComingSoonPage title="Payments Overview" />} />
-
-        {/* Root Redirect */}
+        {/* Role-based dashboard */}
         <Route
-          path="/"
-          element={<Navigate to={user ? getDefaultRoute(user.role) : "/login"} replace />}
+          path="dashboard"
+          element={
+            user?.role === "ADMIN" ? (
+              // You can swap this to a dedicated Admin dashboard if you add one
+              <PropertyManagerDashboard />
+            ) : user?.role === "PM" ? (
+              <PropertyManagerDashboard />
+            ) : user?.role === "GM" ? (
+              <GeneralManagerDashboard />
+            ) : user?.role === "FS" ? (
+              <FinancialStaffDashboard />
+            ) : user?.role === "TENANT" ? (
+              <TenantDashboard />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* Common pages */}
+        <Route path="units" element={<UnitsPage />} />
+        <Route path="units/:id" element={<UnitDetailPage />} />
+
+        <Route path="leases" element={<LeasesPage />} />
+        <Route path="leases/new" element={<NewLeasePage />} />
+        <Route path="leases/:id" element={<LeaseDetailPage />} />
+
+        <Route path="payments" element={<PaymentsPage />} />
+        <Route path="finance" element={<FinancePage />} />
+
+        <Route path="users" element={<UsersPage />} />
+        <Route path="users/new" element={<NewUserPage />} />
+
+        {/* My Lease - TENANT only */}
+        <Route
+          path="my-lease"
+          element={
+            user?.role === "TENANT" ? (
+              <MyLeasePage />
+            ) : (
+              <Navigate to="/dashboard" replace />
+            )
+          }
+        />
+
+        {/* Tenant management – ADMIN and PM only */}
+        <Route
+          path="tenants"
+          element={
+            user?.role === "ADMIN" || user?.role === "PM" ? (
+              <TenantsPage />
+            ) : (
+              <Navigate to="/dashboard" replace />
+            )
+          }
         />
       </Route>
 
-      {/* 404 */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Fallback */}
+      <Route
+        path="*"
+        element={
+          <Navigate to={user ? "/dashboard" : "/login"} replace />
+        }
+      />
     </Routes>
-  );
-}
-
-// Helper: Default route per role
-function getDefaultRoute(role) {
-  switch (role) {
-    case "ADMIN":
-    case "PM":
-      return "/dashboard"; // PropertyManagerDashboard
-    case "GM":
-      return "/dashboard"; // GeneralManagerDashboard
-    case "FS":
-      return "/finance";
-    case "TENANT":
-      return "/my-lease";
-    default:
-      return "/dashboard";
-  }
-}
-
-// Role-Based Dashboard Switch
-function RoleBasedDashboard() {
-  const { user } = useAuthStore();
-
-  switch (user?.role) {
-    case "ADMIN":
-    case "PM":
-      return <PropertyManagerDashboard />;
-    case "GM":
-      return <GeneralManagerDashboard />;
-    case "FS":
-      return <FinancialStaffDashboard />;
-    case "TENANT":
-      return <TenantDashboard />;
-    default:
-      return <PropertyManagerDashboard />;
-  }
-}
-
-// Placeholder for upcoming pages
-function ComingSoonPage({ title }) {
-  return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">{title}</h1>
-      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-dashed border-indigo-300 rounded-2xl p-16 text-center">
-        <p className="text-2xl text-indigo-700 font-medium">Page under development</p>
-        <p className="text-lg text-gray-600 mt-4">Coming soon — stay tuned!</p>
-      </div>
-    </div>
+    </>
   );
 }
 

@@ -8,8 +8,15 @@ export const useAuthStore = create((set) => ({
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
     if (token && storedUser) {
-      set({ user: JSON.parse(storedUser), loading: false });
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      try {
+        set({ user: JSON.parse(storedUser), loading: false });
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      } catch {
+        // Invalid stored user data, clear it
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        set({ loading: false });
+      }
     } else {
       set({ loading: false });
     }
