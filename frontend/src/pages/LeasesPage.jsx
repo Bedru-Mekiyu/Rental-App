@@ -21,7 +21,7 @@ export default function LeasesPage() {
   const loadLeases = async () => {
     try {
       setLoading(true);
-      const res = await API.get("/leases"); // GET /api/leases[listAllLeases][file:10][file:17]
+      const res = await API.get("/leases"); // GET /api/leases[listAllLeases]
       setLeases(res.data || []);
     } catch {
       toast.error("Failed to load leases");

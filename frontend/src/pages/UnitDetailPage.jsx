@@ -25,7 +25,7 @@ export default function UnitDetailPage() {
         API.get(`/units/${unitId}`),
         API.get("/leases", { params: { unitId } }),
       ]);
-      setUnit(unitRes.data?.data || null); // backend returns { success, data }[file:9]
+      setUnit(unitRes.data?.data || null); // backend returns { success, data }
       setLeases(leasesRes.data || []);
     } catch {
       toast.error("Failed to load unit details");
@@ -37,7 +37,7 @@ export default function UnitDetailPage() {
   const handleChangeStatus = async (status) => {
     try {
       setUpdatingStatus(true);
-      await API.put(`/units/${unitId}`, { status }); // uses updateUnit (PUT)[file:14][file:9]
+      await API.put(`/units/${unitId}`, { status }); // uses updateUnit (PUT)
       toast.success(`Unit marked as ${status}`);
       loadUnit();
     } catch {

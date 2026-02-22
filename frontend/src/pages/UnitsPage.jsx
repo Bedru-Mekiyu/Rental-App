@@ -32,7 +32,7 @@ export default function UnitsPage() {
     try {
       setLoading(true);
       const res = await API.get("/units");
-      setUnits(res.data.data || []); // { success, data }[file:9]
+      setUnits(res.data.data || []); // { success, data }
     } catch {
       toast.error("Failed to load units");
     } finally {

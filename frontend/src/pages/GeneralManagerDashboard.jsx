@@ -55,7 +55,7 @@ export default function GeneralManagerDashboard() {
       const [unitsRes, leasesRes] = await Promise.all([
         API.get("/units"),
         API.get("/leases"),
-      ]); // /api/units + /api/leases[file:9][file:10][file:14][file:17]
+      ]); // /api/units + /api/leases
 
       const units = unitsRes.data?.data || [];
       const leases = leasesRes.data || [];

@@ -34,7 +34,7 @@ export default function LeaseDetailPage() {
         API.get(`/leases/${leaseId}`), // you can add this route or reuse list + filter
         API.get(`/finance/lease/${leaseId}/summary`).catch(() => ({
           data: null,
-        })), // finance summary[file:11][file:15]
+        })), // finance summary
       ]);
       const leaseData = leaseRes.data;
       setLease(leaseData);
@@ -43,7 +43,7 @@ export default function LeaseDetailPage() {
       if (leaseData?.tenantId?._id) {
         const payRes = await API.get(
           `/payments/by-tenant/${leaseData.tenantId._id}`
-        ); // list tenant payments[file:12][file:16]
+        ); // list tenant payments
         // filter only this lease's payments if leaseId field exists
         const allPayments = payRes.data || [];
         const filtered = allPayments.filter(
@@ -62,7 +62,7 @@ export default function LeaseDetailPage() {
     if (!window.confirm("End this lease and mark unit as VACANT?")) return;
     try {
       setEnding(true);
-      await API.patch(`/leases/${leaseId}/end`); // controller updates status + unit[file:10][file:17]
+      await API.patch(`/leases/${leaseId}/end`); // controller updates status + unit
       toast.success("Lease ended");
       await loadLease();
     } catch {
