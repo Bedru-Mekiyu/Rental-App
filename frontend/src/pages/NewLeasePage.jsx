@@ -77,7 +77,7 @@ export default function NewLeasePage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Leases"
-        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="New Lease"
         subtitle="Create a new lease agreement for a tenant and unit."
       />
@@ -85,7 +85,7 @@ export default function NewLeasePage() {
       <DashboardCard title="Lease Details">
         <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
               <Home className="h-4 w-4" />
               <span>Unit</span>
             </label>
@@ -107,7 +107,7 @@ export default function NewLeasePage() {
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
               <User className="h-4 w-4" />
               <span>Tenant</span>
             </label>
@@ -127,7 +127,7 @@ export default function NewLeasePage() {
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
               <Calendar className="h-4 w-4" />
               <span>Start Date</span>
             </label>
@@ -141,7 +141,7 @@ export default function NewLeasePage() {
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
               <Calendar className="h-4 w-4" />
               <span>End Date</span>
             </label>
@@ -155,7 +155,7 @@ export default function NewLeasePage() {
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
               <DollarSign className="h-4 w-4" />
               <span>Monthly Rent (ETB)</span>
             </label>
@@ -170,7 +170,7 @@ export default function NewLeasePage() {
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
               <DollarSign className="h-4 w-4" />
               <span>Security Deposit (ETB)</span>
             </label>
@@ -185,7 +185,7 @@ export default function NewLeasePage() {
           </div>
 
           <div className="md:col-span-2 space-y-2">
-            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
               <FileText className="h-4 w-4" />
               <span>Notes</span>
             </label>
@@ -202,7 +202,7 @@ export default function NewLeasePage() {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="inline-flex items-center space-x-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 hover:bg-slate-50 transition-colors"
+              className="btn-outline-neutral inline-flex items-center space-x-2 text-xs font-semibold"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Cancel</span>

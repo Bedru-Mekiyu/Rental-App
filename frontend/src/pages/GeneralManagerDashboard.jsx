@@ -212,7 +212,7 @@ export default function GeneralManagerDashboard() {
       {/* Header */}
       <PageHeader
         eyebrow="Portfolio"
-        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="General Manager Dashboard"
         subtitle={`Welcome back, ${user?.fullName || "General Manager"}. Here's your portfolio overview.`}
         actions={
@@ -244,10 +244,10 @@ export default function GeneralManagerDashboard() {
           </div>
         </div>
         <div className="insight-actions">
-          <button className="btn-pill btn-outline btn-outline-teal" onClick={exportPDF}>
+          <button className="btn-pill btn-outline btn-outline-primary" onClick={exportPDF}>
             Export Snapshot
           </button>
-          <button className="btn-pill btn-outline btn-outline-emerald" onClick={exportCSV}>
+          <button className="btn-pill btn-outline btn-outline-success" onClick={exportCSV}>
             Download CSV
           </button>
         </div>
@@ -259,26 +259,26 @@ export default function GeneralManagerDashboard() {
           label="Total Properties"
           value={kpis.totalProperties}
           icon="🏢"
-          gradient="from-emerald-500 to-teal-500"
+          gradient="from-primary-500 to-success-500"
         />
         <KpiCard
           label="Active Leases"
           value={kpis.activeLeases}
           icon="📄"
-          gradient="from-amber-500 to-orange-500"
+          gradient="from-warning-500 to-warning-400"
         />
         <KpiCard
           label="Overall Occupancy"
           value={`${kpis.occupancyRate}%`}
           icon="📊"
-          gradient="from-teal-600 to-emerald-500"
+          gradient="from-primary-600 to-success-500"
         />
       </div>
 
       {/* Revenue analytics */}
       <section className="surface-panel analytics-panel card-reveal p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600">
             <span className="text-lg">💰</span>
           </div>
           <div>
@@ -392,9 +392,9 @@ export default function GeneralManagerDashboard() {
             </p>
           </div>
         </div>
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white/90">
+        <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white/90">
           <table className="w-full text-xs">
-            <thead className="bg-slate-50/80 text-left text-slate-500">
+            <thead className="bg-neutral-50/80 text-left text-neutral-500">
               <tr>
                 <th className="px-3 py-2">Report ID</th>
                 <th className="px-3 py-2">Report Name</th>
@@ -402,7 +402,7 @@ export default function GeneralManagerDashboard() {
                 <th className="px-3 py-2">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white">
+            <tbody className="divide-y divide-neutral-100 bg-white">
               {reports.map((r) => (
                 <tr key={r.id}>
                   <td className="px-3 py-2">{r.id}</td>
@@ -429,7 +429,7 @@ function KpiCard({ label, value, icon, gradient }) {
             {value}
           </p>
         </div>
-        <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${gradient} shadow-lg`}>
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-600">
           <span className="text-xl">{icon}</span>
         </div>
       </div>

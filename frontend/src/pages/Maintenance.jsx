@@ -111,22 +111,22 @@ export default function Maintenance() {
   const getRequestStatusClass = (status) => {
     const normalized = status?.toLowerCase() || "";
     if (normalized.includes("completed") || normalized.includes("resolved")) {
-      return "status-emerald";
+      return "status-success";
     }
     if (normalized.includes("progress")) {
-      return "status-amber";
+      return "status-warning";
     }
     if (normalized.includes("received") || normalized.includes("pending")) {
-      return "status-slate";
+      return "status-neutral";
     }
-    return "status-slate";
+    return "status-neutral";
   };
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Maintenance"
-        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Maintenance Requests"
         subtitle="Report issues, attach photos, and track request status."
       />
@@ -134,15 +134,15 @@ export default function Maintenance() {
       {/*  Submit Form */}
       <Card>
         <h2 className="panel-title mb-3 flex items-center gap-2">
-          <Wrench className="w-5 h-5 text-emerald-500" />
+          <Wrench className="w-5 h-5 text-success-500" />
           Submit New Request
         </h2>
 
         {error && (
-          <p className="text-sm text-red-500 mb-2">{error}</p>
+          <p className="text-sm text-danger-500 mb-2">{error}</p>
         )}
 
-        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Issue Category</label>
+        <label className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Issue Category</label>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
@@ -154,7 +154,7 @@ export default function Maintenance() {
           <option>Other</option>
         </select>
 
-        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Description</label>
+        <label className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Description</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -163,7 +163,7 @@ export default function Maintenance() {
           placeholder="Describe the issue in detail..."
         />
 
-        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Attach Photo (Optional)</label>
+        <label className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Attach Photo (Optional)</label>
 
         <div
           onDragOver={(e) => e.preventDefault()}
@@ -171,7 +171,7 @@ export default function Maintenance() {
             e.preventDefault();
             handleImage(e.dataTransfer.files[0]);
           }}
-          className="border border-dashed rounded-2xl border-slate-200 p-4 mt-1 text-center cursor-pointer hover:border-emerald-400 transition"
+          className="border border-dashed rounded-2xl border-neutral-200 p-4 mt-1 text-center cursor-pointer hover:border-primary-400 transition"
         >
           <input
             type="file"
@@ -184,8 +184,8 @@ export default function Maintenance() {
           <label htmlFor="upload" className="block cursor-pointer">
             {!preview ? (
               <>
-                <Upload className="mx-auto text-gray-400 mb-2" />
-                <p className="text-sm text-gray-400">
+                <Upload className="mx-auto text-neutral-400 mb-2" />
+                <p className="text-sm text-neutral-400">
                   Drag and drop or click to upload
                 </p>
               </>
@@ -199,7 +199,7 @@ export default function Maintenance() {
           </label>
 
           {image && (
-            <div className="flex items-center justify-center mt-3 bg-slate-100/80 rounded-full px-3 py-2 text-xs gap-2">
+            <div className="flex items-center justify-center mt-3 bg-neutral-100/80 rounded-full px-3 py-2 text-xs gap-2">
               <FileText className="w-4 h-4" />
               {image.name}
             </div>
@@ -211,8 +211,8 @@ export default function Maintenance() {
           disabled={!description.trim() || submitting}
           className={`w-full mt-4 rounded-full py-2 text-[11px] font-semibold uppercase tracking-wide text-white ${
             submitting
-              ? "bg-emerald-400 cursor-not-allowed"
-              : "bg-emerald-600 hover:bg-emerald-700"
+              ? "bg-success-400 cursor-not-allowed"
+              : "bg-success-600 hover:bg-success-700"
           }`}
         >
           {submitting ? "Submitting..." : "Submit Request"}
@@ -245,12 +245,12 @@ export default function Maintenance() {
       {requests.length > 0 && (
         <Card title="Your Requests">
           {requests.map((req) => (
-            <div key={req.id} className="stagger-item border-b border-slate-100 py-3">
+            <div key={req.id} className="stagger-item border-b border-neutral-100 py-3">
               <p className="font-medium">{req.category}</p>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-neutral-600">
                 {req.description}
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-neutral-400">
                 {new Date(req.createdAt).toLocaleString()}
               </p>
 
@@ -281,12 +281,12 @@ function StatusStep({ label, active }) {
   return (
     <div
       className={`flex flex-col items-center ${
-        active ? "text-emerald-500" : "text-gray-400"
+        active ? "text-success-500" : "text-neutral-400"
       }`}
     >
       <div
         className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
-          active ? "border-emerald-500" : "border-slate-300"
+          active ? "border-success-500" : "border-neutral-300"
         }`}
       >
         {active && <Check className="w-4 h-4" />}
@@ -300,7 +300,7 @@ function Line({ active }) {
   return (
     <div
       className={`h-0.5 w-full mx-2 ${
-        active ? "bg-emerald-500" : "bg-slate-300"
+        active ? "bg-success-500" : "bg-neutral-300"
       }`}
     />
   );

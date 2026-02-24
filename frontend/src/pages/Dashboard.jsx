@@ -71,23 +71,23 @@ export default function Dashboard() {
 
   /*ICON STYLE*/
 
-  const iconStyle = "w-5 h-5 text-emerald-500";
+  const iconStyle = "w-5 h-5 text-success-500";
 
   const paymentStatusClass =
     paymentStatus === "Overdue"
-      ? "status-rose"
+      ? "status-danger"
       : paymentStatus === "Due Soon"
-      ? "status-amber"
+      ? "status-warning"
       : paymentStatus === "Paid"
-      ? "status-emerald"
-      : "status-slate";
+      ? "status-success"
+      : "status-neutral";
 
   const maintenanceStatusClass =
     maintenanceStatus === "Resolved" || maintenanceStatus === "Completed"
-      ? "status-emerald"
+      ? "status-success"
       : maintenanceStatus === "In Progress" || maintenanceStatus === "Pending"
-      ? "status-amber"
-      : "status-slate";
+      ? "status-warning"
+      : "status-neutral";
 
   /* LOADING SPINNER */
   if (loading) {
@@ -95,7 +95,7 @@ export default function Dashboard() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Tenant"
-          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="Tenant Dashboard"
           subtitle="Loading your rent and lease insights..."
         />
@@ -134,7 +134,7 @@ export default function Dashboard() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Tenant"
-        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Tenant Dashboard"
         subtitle="Review your rent, lease status, and recent maintenance activity."
       />
@@ -142,16 +142,16 @@ export default function Dashboard() {
       {/*MONTHLY RENT*/}
       <Card title="Monthly Rent" actions={<Mail className={iconStyle} />}>
         <div>
-          <h2 className="kpi-value text-emerald-600">
+          <h2 className="kpi-value text-success-600">
             ETB {rent.toLocaleString()}.00
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-neutral-400 mt-1">
             Due by {dueDate}
           </p>
 
           <button
             onClick={handleViewDetails}
-            className="link-action link-action-caps link-action-emerald mt-3"
+            className="link-action link-action-caps link-action-primary mt-3"
           >
             View Details
           </button>
@@ -167,7 +167,7 @@ export default function Dashboard() {
 
           <button
             onClick={handleManagePayments}
-            className="link-action link-action-caps link-action-emerald mt-3"
+            className="link-action link-action-caps link-action-primary mt-3"
           >
             Manage Payments
           </button>
@@ -177,7 +177,7 @@ export default function Dashboard() {
       {/*LEASE EXPIRATION*/}
       <Card title="Lease Expiration" actions={<CalendarDays className={iconStyle} />}>
         <div>
-          <p className="text-emerald-600 text-sm">
+          <p className="text-success-600 text-sm">
             {daysRemaining > 0
               ? `${daysRemaining} days remaining`
               : "Lease expired"}
@@ -185,7 +185,7 @@ export default function Dashboard() {
 
           <button
             onClick={handleRenewLease}
-            className="btn-pill btn-outline btn-outline-emerald mt-3"
+            className="btn-pill btn-outline btn-outline-success mt-3"
           >
             Renew Lease
           </button>
@@ -202,7 +202,7 @@ export default function Dashboard() {
               {maintenanceStatus}
             </span>
 
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-neutral-400">
               Last updated: October 15, 2024
             </span>
           </div>

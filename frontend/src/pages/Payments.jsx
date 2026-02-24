@@ -114,33 +114,33 @@ export default function Payments() {
 
   const statusClass =
     paymentStatus === "Overdue"
-      ? "status-rose"
+      ? "status-danger"
       : paymentStatus === "Due Soon"
-      ? "status-amber"
+      ? "status-warning"
       : paymentStatus === "Paid"
-      ? "status-emerald"
-      : "status-slate";
+      ? "status-success"
+      : "status-neutral";
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Payments"
-        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Payments"
         subtitle="Track your monthly rent, make payments, and upload receipts."
       />
 
       {/* 🔹 Rent Overview */}
-      <Card title="Rent Overview" actions={<CalendarDays className="text-emerald-500" />}>
+      <Card title="Rent Overview" actions={<CalendarDays className="text-success-500" />}>
         <div>
-          <h2 className="text-emerald-600 text-3xl font-bold">
+          <h2 className="text-success-600 text-3xl font-bold">
             ETB {rent.toLocaleString()}
           </h2>
 
-          <p className="text-sm text-slate-400 mt-1">Due: {dueDate}</p>
+          <p className="text-sm text-neutral-400 mt-1">Due: {dueDate}</p>
 
           <div className="flex items-center gap-2 mt-3">
-            <Clock className="w-4 h-4 text-slate-500" />
+            <Clock className="w-4 h-4 text-neutral-500" />
             <span className={`status-pill ${statusClass}`}>
               {paymentStatus}
             </span>
@@ -152,22 +152,22 @@ export default function Payments() {
       <Card title="Digital Payment Options">
         <div
           onClick={() => handleDigitalPayment("Telebirr")}
-          className="flex justify-between items-center py-2 border-b border-slate-100 cursor-pointer hover:bg-slate-50"
+          className="flex justify-between items-center py-2 border-b border-neutral-100 cursor-pointer hover:bg-neutral-50"
         >
           <div>
-            <p className="font-medium text-slate-900">Telebirr</p>
-            <p className="text-sm text-slate-400">Linked account: +251-912-345-678</p>
+            <p className="font-medium text-neutral-900">Telebirr</p>
+            <p className="text-sm text-neutral-400">Linked account: +251-912-345-678</p>
           </div>
           <span>›</span>
         </div>
 
         <div
           onClick={() => handleDigitalPayment("CBE Birr")}
-          className="flex justify-between items-center py-2 cursor-pointer hover:bg-slate-50"
+          className="flex justify-between items-center py-2 cursor-pointer hover:bg-neutral-50"
         >
           <div>
-            <p className="font-medium text-slate-900">CBE Birr</p>
-            <p className="text-sm text-slate-400">Linked account: 1000012345678</p>
+            <p className="font-medium text-neutral-900">CBE Birr</p>
+            <p className="text-sm text-neutral-400">Linked account: 1000012345678</p>
           </div>
           <span>›</span>
         </div>
@@ -178,9 +178,9 @@ export default function Payments() {
         title="Upload Manual Payment Receipt"
         description="Attach image or PDF of payment proof."
       >
-        {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
+        {error && <p className="text-sm text-danger-500 mt-2">{error}</p>}
 
-        <label className="mt-3 flex items-center justify-center gap-2 rounded-full border border-slate-200 py-2 text-xs font-semibold uppercase tracking-wide text-slate-600 cursor-pointer hover:bg-slate-50">
+        <label className="mt-3 flex items-center justify-center gap-2 rounded-full border border-neutral-200 py-2 text-xs font-semibold uppercase tracking-wide text-neutral-600 cursor-pointer hover:bg-neutral-50">
           <Upload className="w-4 h-4" />
           Choose File
           <input
@@ -192,7 +192,7 @@ export default function Payments() {
         </label>
 
         {receipt && (
-          <div className="flex items-center gap-2 mt-2 text-xs text-slate-500">
+          <div className="flex items-center gap-2 mt-2 text-xs text-neutral-500">
             <FileText className="w-4 h-4" />
             {receipt.name}
           </div>
@@ -202,7 +202,7 @@ export default function Payments() {
           onClick={handleSubmitReceipt}
           disabled={!receipt || loading}
           className={`w-full mt-4 rounded-full py-2 text-[11px] font-semibold uppercase tracking-wide text-white ${
-            loading ? "bg-emerald-400 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-700"
+            loading ? "bg-success-400 cursor-not-allowed" : "bg-success-600 hover:bg-success-700"
           }`}
         >
           {loading ? "Verifying..." : "Submit Receipt"}
@@ -213,23 +213,23 @@ export default function Payments() {
       {history.length > 0 && (
         <Card title="Payment History">
           {history.map((item) => (
-            <div key={item.id} className="stagger-item border-b border-slate-100 py-3">
+            <div key={item.id} className="stagger-item border-b border-neutral-100 py-3">
               <div className="flex justify-between items-center">
                 <p className="font-medium">
                   ETB {item.amount.toLocaleString()} - {item.method}
                 </p>
-                <span className="status-pill status-emerald">
+                <span className="status-pill status-success">
                   <CheckCircle className="h-3 w-3" />
                   {item.status}
                 </span>
               </div>
 
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-neutral-400">
                 {new Date(item.date).toLocaleString()}
               </p>
 
               {item.fileName && (
-                <p className="text-xs text-slate-500">File: {item.fileName}</p>
+                <p className="text-xs text-neutral-500">File: {item.fileName}</p>
               )}
             </div>
           ))}

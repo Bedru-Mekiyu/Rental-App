@@ -77,7 +77,7 @@ export default function FinancePage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Finance"
-        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Finance & Lease Analytics"
         subtitle="View financial KPIs and per-lease payment summaries."
       />
@@ -87,9 +87,9 @@ export default function FinancePage() {
         title="Financial Summary"
         description="Select a lease to see its financial summary, or view aggregate for all leases."
       >
-        <div className="mb-4 grid gap-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+        <div className="mb-4 grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-600">
+            <label className="text-xs font-medium text-neutral-600">
               Lease
             </label>
             {loadingLeases ? (
@@ -112,7 +112,7 @@ export default function FinancePage() {
               </select>
             )}
           </div>
-          <div className="text-xs text-slate-500">
+          <div className="text-xs text-neutral-500">
             Choose a lease to fetch its financial summary from the backend
             service. Aggregate shows portfolio-level data for all leases.
           </div>
@@ -120,7 +120,7 @@ export default function FinancePage() {
 
         {loadingSummary && (
           <div className="space-y-4">
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               <SkeletonCard>
                 <SkeletonRow className="h-3 w-28" />
                 <div className="mt-3">
@@ -140,45 +140,45 @@ export default function FinancePage() {
                 </div>
               </SkeletonCard>
             </div>
-            <div className="surface-panel analytics-panel p-5">
+            <div className="surface-panel analytics-panel p-4 sm:p-5">
               <SkeletonRow className="h-48 w-full" />
             </div>
           </div>
         )}
 
         {!loadingSummary && summary && selectedLeaseId === "ALL" && (
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="surface-panel card-reveal hover-lift stagger-item p-6">
-              <div className="flex items-center justify-between">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="surface-panel card-reveal hover-lift stagger-item p-4 sm:p-6">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Total Revenue (YTD)</p>
-                  <p className="text-2xl font-semibold text-emerald-900 mt-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-success-700">Total Revenue (YTD)</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-success-900 mt-2">
                     {formatCurrency(summary.totalRevenueYTD)}
                   </p>
                 </div>
-                <DollarSign className="h-8 w-8 text-emerald-600" />
+                <DollarSign className="h-8 w-8 text-success-600" />
               </div>
             </div>
-            <div className="surface-panel card-reveal hover-lift stagger-item p-6">
-              <div className="flex items-center justify-between">
+            <div className="surface-panel card-reveal hover-lift stagger-item p-4 sm:p-6">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-red-700">Outstanding Balance</p>
-                  <p className="text-2xl font-semibold text-red-900 mt-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-danger-700">Outstanding Balance</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-danger-900 mt-2">
                     {formatCurrency(summary.outstandingBalance)}
                   </p>
                 </div>
-                <AlertTriangle className="h-8 w-8 text-red-600" />
+                <AlertTriangle className="h-8 w-8 text-danger-600" />
               </div>
             </div>
-            <div className="surface-panel card-reveal hover-lift stagger-item p-6">
-              <div className="flex items-center justify-between">
+            <div className="surface-panel card-reveal hover-lift stagger-item p-4 sm:p-6">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">On-time Payment Rate</p>
-                  <p className="text-2xl font-semibold text-teal-900 mt-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-secondary-700">On-time Payment Rate</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-secondary-900 mt-2">
                     {summary.onTimePaymentRate}%
                   </p>
                 </div>
-                <CheckCircle className="h-8 w-8 text-teal-600" />
+                <CheckCircle className="h-8 w-8 text-secondary-600" />
               </div>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default function FinancePage() {
 
         {!loadingSummary && summary && selectedLeaseId !== "ALL" && (
           <>
-            <div className="surface-panel analytics-panel mb-4 p-5">
+            <div className="surface-panel analytics-panel mb-4 p-4 sm:p-5">
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={[
                   { name: 'Billed', amount: summary.totalBilledEtb },
@@ -209,52 +209,52 @@ export default function FinancePage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div className="grid gap-6 md:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               <div className="surface-panel card-reveal hover-lift stagger-item p-4">
-                <div className="flex items-center space-x-2">
-                  <DollarSign className="h-5 w-5 text-slate-600" />
+                <div className="flex items-start gap-2">
+                  <DollarSign className="h-5 w-5 text-neutral-600" />
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Total Billed</p>
-                    <p className="text-lg font-semibold text-slate-900">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Total Billed</p>
+                    <p className="text-lg font-semibold text-neutral-900">
                       {formatCurrency(summary.totalBilledEtb)}
                     </p>
                   </div>
                 </div>
               </div>
               <div className="surface-panel card-reveal hover-lift stagger-item p-4">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="h-5 w-5 text-emerald-600" />
+                <div className="flex items-start gap-2">
+                  <CheckCircle className="h-5 w-5 text-success-600" />
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-600">Total Paid</p>
-                    <p className="text-lg font-semibold text-emerald-900">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-success-600">Total Paid</p>
+                    <p className="text-lg font-semibold text-success-900">
                       {formatCurrency(summary.totalPaidEtb)}
                     </p>
                   </div>
                 </div>
               </div>
               <div className="surface-panel card-reveal hover-lift stagger-item p-4">
-                <div className="flex items-center space-x-2">
-                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="h-5 w-5 text-danger-600" />
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-red-600">Outstanding Balance</p>
-                    <p className="text-lg font-semibold text-red-900">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-danger-600">Outstanding Balance</p>
+                    <p className="text-lg font-semibold text-danger-900">
                       {formatCurrency(summary.outstandingBalanceEtb)}
                     </p>
                   </div>
                 </div>
               </div>
               <div className="surface-panel card-reveal hover-lift stagger-item p-4">
-                <div className="flex items-center space-x-2">
-                  <Calendar className="h-5 w-5 text-teal-600" />
+                <div className="flex items-start gap-2">
+                  <Calendar className="h-5 w-5 text-secondary-600" />
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-teal-600">Next Due Date</p>
-                    <p className="text-sm font-semibold text-teal-900">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-secondary-600">Next Due Date</p>
+                    <p className="text-sm font-semibold text-secondary-900">
                       {summary.nextDueDate
                         ? new Date(summary.nextDueDate).toLocaleDateString()
                         : "No upcoming due date"}
                     </p>
                     {summary.daysOverdue > 0 && (
-                      <p className="text-xs text-red-600 mt-1">
+                      <p className="text-xs text-danger-600 mt-1">
                         {summary.daysOverdue} days overdue
                       </p>
                     )}
@@ -266,7 +266,7 @@ export default function FinancePage() {
         )}
 
         {!loadingSummary && !summary && selectedLeaseId !== "ALL" && (
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-neutral-500">
             No financial summary available for this lease.
           </p>
         )}

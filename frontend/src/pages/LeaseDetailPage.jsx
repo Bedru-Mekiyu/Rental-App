@@ -3,12 +3,13 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../services/api";
-import DashboardCard from "../components/DashboardCard";
+import ResponsiveSection from "../components/ResponsiveSection";
 import { useAuthStore } from "../store/authStore";
 import PageHeader from "../components/PageHeader";
 import SkeletonRow from "../components/SkeletonRow";
 import SkeletonTable from "../components/SkeletonTable";
 import SkeletonCard from "../components/SkeletonCard";
+import MobileBackBar from "../components/MobileBackBar";
 
 export default function LeaseDetailPage() {
   const { id: leaseId } = useParams();
@@ -16,6 +17,8 @@ export default function LeaseDetailPage() {
   const { user } = useAuthStore();
 
   const canEndLease = user?.role === "ADMIN" || user?.role === "PM";
+  const backTarget = user?.role === "TENANT" ? "/dashboard" : "/leases";
+  const backLabel = user?.role === "TENANT" ? "Back to Dashboard" : "Back to Leases";
 
   const [lease, setLease] = useState(null);
   const [summary, setSummary] = useState(null);
@@ -91,7 +94,7 @@ export default function LeaseDetailPage() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Lease"
-          eyebrowClassName="bg-slate-100 text-slate-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="Lease Detail"
           subtitle="Loading lease details..."
         />
@@ -112,12 +115,12 @@ export default function LeaseDetailPage() {
   if (!lease) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-red-600">Lease not found.</p>
+        <p className="text-sm text-danger-600">Lease not found.</p>
         <button
-          onClick={() => navigate(user?.role === "TENANT" ? "/dashboard" : "/leases")}
-          className="rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700"
+          onClick={() => navigate(backTarget)}
+          className="btn-pill btn-outline btn-outline-neutral"
         >
-          Back to {user?.role === "TENANT" ? "Dashboard" : "Leases"}
+          {backLabel}
         </button>
       </div>
     );
@@ -125,20 +128,22 @@ export default function LeaseDetailPage() {
 
   const statusClass =
     lease.status === "ACTIVE"
-      ? "bg-emerald-100 text-emerald-700"
+      ? "status-success"
       : lease.status === "PENDING"
-      ? "bg-amber-100 text-amber-700"
+      ? "status-warning"
       : ["ENDED", "TERMINATED", "CANCELLED"].includes(lease.status)
-      ? "bg-rose-100 text-rose-700"
-      : "bg-slate-100 text-slate-700";
+      ? "status-danger"
+      : "status-neutral";
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Lease"
-        eyebrowClassName="bg-indigo-100 text-indigo-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Lease Detail"
         subtitle={`${lease.unitId?.name || "Unit"} · ${lease.tenantId?.fullName || "Tenant"}`}
+        backTo={backTarget}
+        backLabel={backLabel}
         actions={
           <div className="flex gap-2">
             <button
@@ -148,7 +153,7 @@ export default function LeaseDetailPage() {
                   lease.unitId?._id ? `/units/${lease.unitId._id}` : "/units"
                 )
               }
-              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
+              className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700"
             >
               View Unit
             </button>
@@ -157,7 +162,7 @@ export default function LeaseDetailPage() {
                 type="button"
                 disabled={ending}
                 onClick={handleEndLease}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+                className="rounded-md bg-danger-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
               >
                 {ending ? "Ending..." : "End Lease"}
               </button>
@@ -167,131 +172,131 @@ export default function LeaseDetailPage() {
       />
 
       {/* Lease info */}
-      <DashboardCard title="Lease Information">
-        <div className="grid gap-4 md:grid-cols-3 text-sm">
+      <ResponsiveSection title="Lease Information">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 text-sm">
           <div>
-            <p className="text-xs text-slate-500">Status</p>
+            <p className="text-xs text-neutral-500">Status</p>
             <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusClass}`}>
               {lease.status}
             </span>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Monthly Rent</p>
-            <p className="mt-1 text-sm font-semibold text-slate-900">
+            <p className="text-xs text-neutral-500">Monthly Rent</p>
+            <p className="mt-1 text-sm font-semibold text-neutral-900">
               {formatCurrency(lease.monthlyRentEtb)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Tax Rate</p>
-            <p className="mt-1 text-sm font-semibold text-slate-900">
+            <p className="text-xs text-neutral-500">Tax Rate</p>
+            <p className="mt-1 text-sm font-semibold text-neutral-900">
               {lease.taxRate ?? 0}%
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Start Date</p>
+            <p className="text-xs text-neutral-500">Start Date</p>
             <p className="mt-1 text-sm">{formatDate(lease.startDate)}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">End Date</p>
+            <p className="text-xs text-neutral-500">End Date</p>
             <p className="mt-1 text-sm">{formatDate(lease.endDate)}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Created</p>
+            <p className="text-xs text-neutral-500">Created</p>
             <p className="mt-1 text-sm">
               {formatDate(lease.createdAt)}
             </p>
           </div>
         </div>
-      </DashboardCard>
+      </ResponsiveSection>
 
       {/* Finance summary */}
-      <DashboardCard
+      <ResponsiveSection
         title="Financial Summary"
         description="Aggregate billing and payments for this lease."
       >
         {summary ? (
-          <div className="grid gap-4 md:grid-cols-4 text-sm">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-sm">
             <div>
-              <p className="text-xs text-slate-500">Total Billed</p>
-              <p className="mt-2 text-lg font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Total Billed</p>
+              <p className="mt-2 text-lg font-semibold text-neutral-900">
                 {formatCurrency(summary.totalBilledEtb)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-slate-500">Total Paid</p>
-              <p className="mt-2 text-lg font-semibold text-emerald-600">
+              <p className="text-xs text-neutral-500">Total Paid</p>
+              <p className="mt-2 text-lg font-semibold text-success-600">
                 {formatCurrency(summary.totalPaidEtb)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-neutral-500">
                 Outstanding Balance
               </p>
-              <p className="mt-2 text-lg font-semibold text-red-600">
+              <p className="mt-2 text-lg font-semibold text-danger-600">
                 {formatCurrency(summary.outstandingBalanceEtb)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-slate-500">Next Due Date</p>
-              <p className="mt-2 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Next Due Date</p>
+              <p className="mt-2 text-sm font-semibold text-neutral-900">
                 {summary.nextDueDate
                   ? formatDate(summary.nextDueDate)
                   : "No upcoming due date"}
               </p>
               {summary.daysOverdue > 0 && (
-                <p className="text-xs text-red-600">
+                <p className="text-xs text-danger-600">
                   {summary.daysOverdue} days overdue
                 </p>
               )}
             </div>
           </div>
         ) : (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-neutral-500">
             No financial summary available.
           </p>
         )}
-      </DashboardCard>
+      </ResponsiveSection>
 
       {/* Payments */}
-      <DashboardCard
+      <ResponsiveSection
         title="Payments for this Lease"
         description="Shows manual and digital payments linked to this tenant (filtered by lease when possible)."
       >
         {payments.length === 0 ? (
           <div className="space-y-3">
             <SkeletonTable rows={3} columns={5} />
-            <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-6 py-6 text-center">
-              <div className="text-sm font-medium text-slate-700">No payments yet</div>
-              <div className="mt-1 text-xs text-slate-500">
+            <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-6 py-6 text-center">
+              <div className="text-sm font-medium text-neutral-700">No payments yet</div>
+              <div className="mt-1 text-xs text-neutral-500">
                 Payments will appear once recorded.
               </div>
             </div>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-slate-200">
-            <table className="min-w-full divide-y divide-slate-200 text-xs">
-              <thead className="bg-slate-50">
+          <div className="overflow-x-auto rounded-xl border border-neutral-200">
+            <table className="min-w-full divide-y divide-neutral-200 text-xs">
+              <thead className="bg-neutral-50">
                 <tr>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Date
                   </th>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Amount
                   </th>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Method
                   </th>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Status
                   </th>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Transaction ID
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+              <tbody className="divide-y divide-neutral-100 bg-white">
                 {payments.map((p) => (
-                  <tr key={p._id} className="hover:bg-slate-50">
+                  <tr key={p._id} className="hover:bg-neutral-50">
                     <td className="px-4 py-2">
                       {formatDate(p.transactionDate)}
                     </td>
@@ -303,10 +308,10 @@ export default function LeaseDetailPage() {
                       <span
                         className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${
                           p.status === "VERIFIED"
-                            ? "bg-emerald-100 text-emerald-700"
+                            ? "status-success"
                             : p.status === "PENDING"
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-rose-100 text-rose-700"
+                            ? "status-warning"
+                            : "status-danger"
                         }`}
                       >
                         {p.status}
@@ -321,7 +326,8 @@ export default function LeaseDetailPage() {
             </table>
           </div>
         )}
-      </DashboardCard>
+      </ResponsiveSection>
+      <MobileBackBar to={backTarget} label={backLabel} />
     </div>
   );
 }

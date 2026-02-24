@@ -1,8 +1,9 @@
 // src/pages/ReportDetailPage.jsx
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import DashboardCard from "../components/DashboardCard";
+import ResponsiveSection from "../components/ResponsiveSection";
 import PageHeader from "../components/PageHeader";
+import MobileBackBar from "../components/MobileBackBar";
 
 const REPORTS = {
   "monthly-revenue": {
@@ -58,10 +59,10 @@ export default function ReportDetailPage() {
   if (!report) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-red-600">Report not found.</p>
+        <p className="text-sm text-danger-600">Report not found.</p>
         <button
           onClick={() => navigate("/dashboard")}
-          className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
+          className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700"
         >
           Back to Dashboard
         </button>
@@ -73,41 +74,35 @@ export default function ReportDetailPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Reports"
-        eyebrowClassName="bg-indigo-100 text-indigo-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title={report.title}
         subtitle={report.subtitle}
-        actions={
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
-          >
-            Back
-          </button>
-        }
+        backTo={-1}
+        backLabel="Back"
       />
 
-      <DashboardCard title="Report Summary">
-        <p className="text-sm text-slate-600">{report.summary}</p>
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
+      <ResponsiveSection title="Report Summary">
+        <p className="text-sm text-neutral-600">{report.summary}</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {report.metrics.map((metric) => (
             <div key={metric.label} className="surface-panel p-4">
-              <p className="text-xs font-medium text-slate-500">{metric.label}</p>
-              <p className="mt-2 text-lg font-semibold text-slate-900">{metric.value}</p>
+              <p className="text-xs font-medium text-neutral-500">{metric.label}</p>
+              <p className="mt-2 text-lg font-semibold text-neutral-900">{metric.value}</p>
             </div>
           ))}
         </div>
-      </DashboardCard>
+      </ResponsiveSection>
 
-      <DashboardCard title="Highlights">
-        <ul className="space-y-2 text-sm text-slate-600">
+      <ResponsiveSection title="Highlights">
+        <ul className="space-y-2 text-sm text-neutral-600">
           {report.highlights.map((item) => (
             <li key={item} className="surface-panel p-4">
               {item}
             </li>
           ))}
         </ul>
-      </DashboardCard>
+      </ResponsiveSection>
+      <MobileBackBar to={-1} label="Back" />
     </div>
   );
 }

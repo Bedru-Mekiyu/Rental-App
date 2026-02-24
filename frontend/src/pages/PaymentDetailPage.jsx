@@ -3,12 +3,13 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../services/api";
-import DashboardCard from "../components/DashboardCard";
+import ResponsiveSection from "../components/ResponsiveSection";
 import PageHeader from "../components/PageHeader";
 import SkeletonRow from "../components/SkeletonRow";
 import SkeletonTable from "../components/SkeletonTable";
 import SkeletonCard from "../components/SkeletonCard";
 import { useAuthStore } from "../store/authStore";
+import MobileBackBar from "../components/MobileBackBar";
 
 export default function PaymentDetailPage() {
   const { id } = useParams();
@@ -66,17 +67,17 @@ export default function PaymentDetailPage() {
 
   const statusClass =
     payment?.status === "VERIFIED"
-      ? "bg-emerald-100 text-emerald-700"
+      ? "bg-success-100 text-success-700"
       : payment?.status === "REJECTED"
-      ? "bg-rose-100 text-rose-700"
-      : "bg-amber-100 text-amber-700";
+      ? "bg-danger-100 text-danger-700"
+      : "bg-warning-100 text-warning-700";
 
   if (loading) {
     return (
       <div className="space-y-6">
         <PageHeader
           eyebrow="Payments"
-          eyebrowClassName="bg-indigo-100 text-indigo-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="Payment Detail"
           subtitle="Loading payment details..."
         />
@@ -97,10 +98,10 @@ export default function PaymentDetailPage() {
   if (!payment) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-red-600">Payment not found.</p>
+        <p className="text-sm text-danger-600">Payment not found.</p>
         <button
           onClick={() => navigate("/payments")}
-          className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
+          className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700"
         >
           Back to Payments
         </button>
@@ -116,24 +117,19 @@ export default function PaymentDetailPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Payments"
-        eyebrowClassName="bg-indigo-100 text-indigo-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Payment Detail"
         subtitle={`${tenantName} · ${unitName}`}
+        backTo="/payments"
+        backLabel="Back to Payments"
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => navigate("/payments")}
-              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
-            >
-              Back to Payments
-            </button>
             {canVerify && payment.status !== "VERIFIED" && (
               <button
                 type="button"
                 disabled={updating}
                 onClick={() => handleUpdateStatus("VERIFIED")}
-                className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+                className="rounded-md bg-success-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
               >
                 Verify
               </button>
@@ -143,7 +139,7 @@ export default function PaymentDetailPage() {
                 type="button"
                 disabled={updating}
                 onClick={() => handleUpdateStatus("REJECTED")}
-                className="rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+                className="rounded-md bg-danger-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
               >
                 Reject
               </button>
@@ -152,67 +148,67 @@ export default function PaymentDetailPage() {
         }
       />
 
-      <DashboardCard title="Payment Overview">
-        <div className="grid gap-4 md:grid-cols-3 text-sm">
+      <ResponsiveSection title="Payment Overview">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 text-sm">
           <div>
-            <p className="text-xs text-slate-500">Status</p>
+            <p className="text-xs text-neutral-500">Status</p>
             <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusClass} mt-2`}>
               {payment.status}
             </span>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Amount</p>
-            <p className="mt-1 text-sm font-semibold text-slate-900">
+            <p className="text-xs text-neutral-500">Amount</p>
+            <p className="mt-1 text-sm font-semibold text-neutral-900">
               {formatCurrency(payment.amountEtb)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Transaction Date</p>
+            <p className="text-xs text-neutral-500">Transaction Date</p>
             <p className="mt-1 text-sm">{formatDate(payment.transactionDate)}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Payment Method</p>
-            <p className="mt-1 text-sm font-semibold text-slate-900">
+            <p className="text-xs text-neutral-500">Payment Method</p>
+            <p className="mt-1 text-sm font-semibold text-neutral-900">
               {payment.paymentMethod || "—"}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Transaction ID</p>
+            <p className="text-xs text-neutral-500">Transaction ID</p>
             <p className="mt-1 text-sm">
               {payment.externalTransactionId || "—"}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Verified At</p>
+            <p className="text-xs text-neutral-500">Verified At</p>
             <p className="mt-1 text-sm">{formatDate(payment.verifiedAt)}</p>
           </div>
         </div>
-      </DashboardCard>
+      </ResponsiveSection>
 
-      <DashboardCard
+      <ResponsiveSection
         title="References"
         description="Linked lease and tenant details."
       >
-        <div className="overflow-hidden rounded-xl border border-slate-200">
-          <table className="min-w-full divide-y divide-slate-200 text-xs">
-            <thead className="bg-slate-50">
+        <div className="overflow-x-auto rounded-xl border border-neutral-200">
+          <table className="min-w-full divide-y divide-neutral-200 text-xs">
+            <thead className="bg-neutral-50">
               <tr>
-                <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                   Lease
                 </th>
-                <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                   Tenant
                 </th>
-                <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                   Unit
                 </th>
-                <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                   Action
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white">
-              <tr className="hover:bg-slate-50">
+            <tbody className="divide-y divide-neutral-100 bg-white">
+              <tr className="hover:bg-neutral-50">
                 <td className="px-4 py-2">{lease?._id || "—"}</td>
                 <td className="px-4 py-2">{tenantName}</td>
                 <td className="px-4 py-2">{unitName}</td>
@@ -220,7 +216,7 @@ export default function PaymentDetailPage() {
                   {lease?._id ? (
                     <Link
                       to={`/leases/${lease._id}`}
-                      className="text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                      className="text-xs font-semibold text-primary-600 hover:text-primary-700"
                     >
                       View lease
                     </Link>
@@ -232,7 +228,8 @@ export default function PaymentDetailPage() {
             </tbody>
           </table>
         </div>
-      </DashboardCard>
+      </ResponsiveSection>
+      <MobileBackBar to="/payments" label="Back to Payments" />
     </div>
   );
 }

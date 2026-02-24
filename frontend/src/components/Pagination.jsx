@@ -32,7 +32,7 @@ export default function Pagination({
       <div className="pagination-controls">
         <button
           type="button"
-          className="btn-pill btn-outline btn-outline-slate disabled:opacity-50"
+          className="btn-pill btn-outline btn-outline-neutral disabled:opacity-50"
           disabled={page === 1}
           onClick={() => onPageChange(page - 1)}
         >
@@ -43,7 +43,7 @@ export default function Pagination({
           <>
             <button
               type="button"
-              className={`btn-pill btn-outline btn-outline-slate ${
+              className={`btn-pill btn-outline btn-outline-neutral ${
                 page === 1 ? "pagination-active" : ""
               }`}
               onClick={() => onPageChange(1)}
@@ -58,7 +58,7 @@ export default function Pagination({
           <button
             key={p}
             type="button"
-            className={`btn-pill btn-outline btn-outline-slate ${
+            className={`btn-pill btn-outline btn-outline-neutral ${
               page === p ? "pagination-active" : ""
             }`}
             onClick={() => onPageChange(p)}
@@ -72,7 +72,7 @@ export default function Pagination({
             <span className="pagination-ellipsis">…</span>
             <button
               type="button"
-              className={`btn-pill btn-outline btn-outline-slate ${
+              className={`btn-pill btn-outline btn-outline-neutral ${
                 page === totalPages ? "pagination-active" : ""
               }`}
               onClick={() => onPageChange(totalPages)}
@@ -84,7 +84,7 @@ export default function Pagination({
 
         <button
           type="button"
-          className="btn-pill btn-outline btn-outline-slate disabled:opacity-50"
+          className="btn-pill btn-outline btn-outline-neutral disabled:opacity-50"
           disabled={page === totalPages}
           onClick={() => onPageChange(page + 1)}
         >

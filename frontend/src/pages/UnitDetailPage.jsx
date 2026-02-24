@@ -3,11 +3,12 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../services/api";
-import DashboardCard from "../components/DashboardCard";
+import ResponsiveSection from "../components/ResponsiveSection";
 import PageHeader from "../components/PageHeader";
 import SkeletonRow from "../components/SkeletonRow";
 import SkeletonTable from "../components/SkeletonTable";
 import SkeletonCard from "../components/SkeletonCard";
+import MobileBackBar from "../components/MobileBackBar";
 
 export default function UnitDetailPage() {
   const { id: unitId } = useParams();
@@ -67,7 +68,7 @@ export default function UnitDetailPage() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Unit"
-          eyebrowClassName="bg-slate-100 text-slate-700"
+          eyebrowClassName="bg-neutral-100 text-neutral-700"
           title="Unit Detail"
           subtitle="Loading unit details..."
         />
@@ -88,10 +89,10 @@ export default function UnitDetailPage() {
   if (!unit) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-red-600">Unit not found.</p>
+        <p className="text-sm text-danger-600">Unit not found.</p>
         <button
           onClick={() => navigate("/units")}
-          className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
+          className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700"
         >
           Back to units
         </button>
@@ -102,66 +103,59 @@ export default function UnitDetailPage() {
   const activeLease = leases.find((l) => l.status === "ACTIVE");
   const unitStatusClass =
     unit.status === "VACANT"
-      ? "bg-emerald-100 text-emerald-700"
+      ? "bg-success-100 text-success-700"
       : unit.status === "MAINTENANCE"
-      ? "bg-amber-100 text-amber-700"
-      : "bg-slate-100 text-slate-700";
+      ? "bg-warning-100 text-warning-700"
+      : "bg-neutral-100 text-neutral-700";
   const leaseStatusClass = (value) =>
     value === "ACTIVE"
-      ? "bg-emerald-100 text-emerald-700"
+      ? "bg-success-100 text-success-700"
       : value === "ENDED"
-      ? "bg-slate-100 text-slate-700"
-      : "bg-amber-100 text-amber-700";
+      ? "bg-neutral-100 text-neutral-700"
+      : "bg-warning-100 text-warning-700";
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Unit"
-        eyebrowClassName="bg-indigo-100 text-indigo-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title={unit.name || "Unit Detail"}
         subtitle={`${unit.address || "No address"} · Floor ${unit.floor ?? "N/A"} · ${unit.status}`}
-        actions={
-          <button
-            type="button"
-            onClick={() => navigate("/units")}
-            className="rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700"
-          >
-            Back to Units
-          </button>
-        }
+        backTo="/units"
+        backLabel="Back to Units"
       />
 
       {/* Unit info */}
-      <DashboardCard title="Unit Information">
-        <div className="grid gap-4 md:grid-cols-3 text-sm">
+      <ResponsiveSection title="Unit Information">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 text-sm">
           <div>
-            <p className="text-xs text-slate-500">Status</p>
+            <p className="text-xs text-neutral-500">Status</p>
             <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${unitStatusClass} mt-2`}>
               {unit.status}
             </span>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Base Price</p>
-            <p className="mt-1 text-sm font-semibold text-slate-900">
+            <p className="text-xs text-neutral-500">Base Price</p>
+            <p className="mt-1 text-sm font-semibold text-neutral-900">
               {formatCurrency(unit.basePriceEtb)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Type</p>
-            <p className="mt-1 text-sm font-semibold text-slate-900">
+            <p className="text-xs text-neutral-500">Type</p>
+            <p className="mt-1 text-sm font-semibold text-neutral-900">
               {unit.unitType || "N/A"}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Bedrooms</p>
+            <p className="text-xs text-neutral-500">Bedrooms</p>
             <p className="mt-1 text-sm">{unit.bedrooms ?? "N/A"}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Bathrooms</p>
+            <p className="text-xs text-neutral-500">Bathrooms</p>
             <p className="mt-1 text-sm">{unit.bathrooms ?? "N/A"}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Created</p>
+            <p className="text-xs text-neutral-500">Created</p>
             <p className="mt-1 text-sm">
               {unit.createdAt
                 ? new Date(unit.createdAt).toLocaleDateString()
@@ -175,7 +169,7 @@ export default function UnitDetailPage() {
             type="button"
             disabled={updatingStatus}
             onClick={() => handleChangeStatus("VACANT")}
-            className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 disabled:opacity-60"
+            className="rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-medium text-neutral-700 disabled:opacity-60"
           >
             Mark as VACANT
           </button>
@@ -183,53 +177,53 @@ export default function UnitDetailPage() {
             type="button"
             disabled={updatingStatus}
             onClick={() => handleChangeStatus("MAINTENANCE")}
-            className="rounded-md border border-amber-300 px-3 py-1.5 text-xs font-medium text-amber-700 disabled:opacity-60"
+            className="rounded-md border border-warning-300 px-3 py-1.5 text-xs font-medium text-warning-700 disabled:opacity-60"
           >
             Mark as MAINTENANCE
           </button>
         </div>
-      </DashboardCard>
+      </ResponsiveSection>
 
       {/* Lease history */}
-      <DashboardCard
+      <ResponsiveSection
         title="Lease History"
         description="Current and past leases associated with this unit."
       >
         {leases.length === 0 ? (
           <div className="space-y-3">
             <SkeletonTable rows={3} columns={5} />
-            <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-6 py-6 text-center">
-              <div className="text-sm font-medium text-slate-700">No leases found</div>
-              <div className="mt-1 text-xs text-slate-500">
+            <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-6 py-6 text-center">
+              <div className="text-sm font-medium text-neutral-700">No leases found</div>
+              <div className="mt-1 text-xs text-neutral-500">
                 This unit has no lease history yet.
               </div>
             </div>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-slate-200">
-            <table className="min-w-full divide-y divide-slate-200 text-xs">
-              <thead className="bg-slate-50">
+          <div className="overflow-x-auto rounded-xl border border-neutral-200">
+            <table className="min-w-full divide-y divide-neutral-200 text-xs">
+              <thead className="bg-neutral-50">
                 <tr>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Tenant
                   </th>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Status
                   </th>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Term
                   </th>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Rent (ETB)
                   </th>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+              <tbody className="divide-y divide-neutral-100 bg-white">
                 {leases.map((lease) => (
-                  <tr key={lease._id} className="hover:bg-slate-50">
+                  <tr key={lease._id} className="hover:bg-neutral-50">
                     <td className="px-4 py-2">
                       {lease.tenantId?.fullName || "Tenant"}
                     </td>
@@ -259,7 +253,7 @@ export default function UnitDetailPage() {
                     <td className="px-4 py-2">
                       <Link
                         to={`/leases/${lease._id}`}
-                        className="text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                        className="text-xs font-semibold text-primary-600 hover:text-primary-700"
                       >
                         View lease
                       </Link>
@@ -272,18 +266,19 @@ export default function UnitDetailPage() {
         )}
 
         {activeLease && (
-          <p className="mt-3 text-xs text-slate-500">
+          <p className="mt-3 text-xs text-neutral-500">
             Active lease:{" "}
             <Link
               to={`/leases/${activeLease._id}`}
-              className="text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+              className="text-xs font-semibold text-primary-600 hover:text-primary-700"
             >
               {activeLease.tenantId?.fullName || "Tenant"}
             </Link>
             .
           </p>
         )}
-      </DashboardCard>
+      </ResponsiveSection>
+      <MobileBackBar to="/units" label="Back to Units" />
     </div>
   );
 }

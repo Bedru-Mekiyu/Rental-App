@@ -59,14 +59,14 @@ export default function NewUserPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Users"
-        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Add New User"
         subtitle="Create a new account and assign an appropriate role."
         actions={
           <button
             type="button"
             onClick={() => navigate("/users")}
-            className="rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700"
+            className="rounded-full border border-neutral-300 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-neutral-700"
           >
             Back to Users
           </button>
@@ -79,7 +79,7 @@ export default function NewUserPage() {
           className="grid gap-4 md:grid-cols-2 text-sm"
         >
           <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
               Full Name
             </label>
             <input
@@ -93,7 +93,7 @@ export default function NewUserPage() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
               Email
             </label>
             <input
@@ -107,7 +107,7 @@ export default function NewUserPage() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
               Phone
             </label>
             <input
@@ -120,7 +120,7 @@ export default function NewUserPage() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
               Password
             </label>
             <input
@@ -134,7 +134,7 @@ export default function NewUserPage() {
           </div>
 
           <div className="space-y-1 md:max-w-xs">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
               Role
             </label>
             <select

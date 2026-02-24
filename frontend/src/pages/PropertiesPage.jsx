@@ -55,7 +55,7 @@ export default function PropertiesPage() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Property"
-          eyebrowClassName="bg-slate-100 text-slate-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="Property"
           subtitle="Configure your main building/property details."
         />
@@ -83,7 +83,7 @@ export default function PropertiesPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Property"
-        eyebrowClassName="bg-slate-100 text-slate-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Property"
         subtitle="Configure your main building/property details."
       />
@@ -91,21 +91,21 @@ export default function PropertiesPage() {
       <DashboardCard title="Current Property">
         {property ? (
           <div className="space-y-2 text-sm">
-            <p className="font-semibold text-slate-900">
+            <p className="font-semibold text-neutral-900">
               {property.name}
             </p>
-            <p className="text-slate-600">{property.address}</p>
+            <p className="text-neutral-600">{property.address}</p>
             {property.description && (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-neutral-500">
                 {property.description}
               </p>
             )}
-            <p className="mt-2 text-xs text-slate-400">
+            <p className="mt-2 text-xs text-neutral-400">
               ID: {property._id}
             </p>
           </div>
         ) : (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-neutral-500">
             No property configured yet. Use the form below to create
             one.
           </p>
@@ -118,10 +118,10 @@ export default function PropertiesPage() {
       >
         <form
           onSubmit={handleCreate}
-          className="grid gap-4 md:grid-cols-4 text-sm"
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-sm"
         >
           <div className="space-y-1 md:col-span-2">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Name</label>
+            <label className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Name</label>
             <input
               type="text"
               required
@@ -134,7 +134,7 @@ export default function PropertiesPage() {
             />
           </div>
           <div className="space-y-1 md:col-span-2">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Address</label>
+            <label className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Address</label>
             <input
               type="text"
               required
@@ -147,7 +147,7 @@ export default function PropertiesPage() {
             />
           </div>
           <div className="space-y-1 md:col-span-4">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
               Description (optional)
             </label>
             <textarea

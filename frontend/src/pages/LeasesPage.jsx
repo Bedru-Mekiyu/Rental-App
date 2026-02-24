@@ -72,9 +72,9 @@ export default function LeasesPage() {
     d ? new Date(d).toLocaleDateString() : "—";
 
   const getLeaseStatusClass = (value) => {
-    if (value === "ACTIVE") return "bg-emerald-100 text-emerald-700";
-    if (value === "ENDED") return "bg-slate-100 text-slate-700";
-    return "bg-amber-100 text-amber-700";
+    if (value === "ACTIVE") return "bg-success-100 text-success-700";
+    if (value === "ENDED") return "bg-neutral-100 text-neutral-700";
+    return "bg-warning-100 text-warning-700";
   };
 
   if (loading) {
@@ -82,7 +82,7 @@ export default function LeasesPage() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Leases"
-          eyebrowClassName="bg-cyan-100 text-cyan-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="Leases"
           subtitle="View and manage active and past leases."
         />
@@ -103,13 +103,13 @@ export default function LeasesPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Leases"
-        eyebrowClassName="bg-cyan-100 text-cyan-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Leases"
         subtitle="View and manage active and past leases."
         actions={
           <Link
             to="/leases/new"
-            className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
+            className="btn-primary text-sm font-semibold"
           >
             + New Lease
           </Link>
@@ -125,7 +125,7 @@ export default function LeasesPage() {
               placeholder="Search by unit or tenant..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+              className="w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-2 text-sm outline-none transition focus:border-primary-500 focus:bg-white focus:ring-2 focus:ring-primary-200"
             />
           </div>
           <div className="filter-shell">
@@ -141,7 +141,7 @@ export default function LeasesPage() {
               </button>
             ))}
           </div>
-          <div className="text-xs text-slate-500">
+          <div className="text-xs text-neutral-500">
             {filteredLeases.length} of {leases.length} leases shown
           </div>
         </div>
@@ -151,8 +151,8 @@ export default function LeasesPage() {
       <DashboardCard title="Lease List">
         {filteredLeases.length === 0 ? (
           <div className="text-center py-12">
-            <div className="mx-auto h-16 w-16 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center mb-4">
-              <svg className="h-8 w-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="mx-auto h-16 w-16 rounded-full bg-neutral-100 flex items-center justify-center mb-4">
+              <svg className="h-8 w-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
@@ -170,43 +170,43 @@ export default function LeasesPage() {
           </div>
         ) : (
           <div className="table-shell list-shell">
-            <table className="min-w-full divide-y divide-slate-200 text-sm">
+            <table className="min-w-full divide-y divide-neutral-200 text-sm">
               <thead className="table-head">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider">
                     Unit Details
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider">
                     Tenant Information
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider">
                     Lease Term
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider">
                     Monthly Rent
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+              <tbody className="divide-y divide-neutral-100 bg-white">
                 {pagedLeases.map((l, index) => (
-                  <tr key={l._id} className={`table-row stagger-item ${index % 2 === 0 ? "bg-white" : "bg-slate-50/30"}`}>
+                  <tr key={l._id} className={`table-row stagger-item ${index % 2 === 0 ? "bg-white" : "bg-neutral-50/30"}`}>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 text-white font-bold shadow-sm">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600 text-white font-bold">
                           {l.unitId?.unitNumber || "U"}
                         </div>
                         <div>
-                          <div className="font-semibold text-slate-900">
+                          <div className="font-semibold text-neutral-900">
                             Unit {l.unitId?.unitNumber || "N/A"}
                           </div>
                           {l.unitId?.type && (
-                            <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 bg-slate-100/80 rounded-full px-2 py-0.5 inline-block mt-1">
+                            <div className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500 bg-neutral-100/80 rounded-full px-2 py-0.5 inline-block mt-1">
                               {l.unitId.type}
                             </div>
                           )}
@@ -215,15 +215,15 @@ export default function LeasesPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-emerald-500 text-white font-bold shadow-sm">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-600 text-white font-bold">
                           {(l.tenantId?.fullName || "T").charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <div className="font-semibold text-slate-900">
+                          <div className="font-semibold text-neutral-900">
                             {l.tenantId?.fullName || "Tenant"}
                           </div>
                           {l.tenantId?.email && (
-                            <div className="text-xs text-slate-500">
+                            <div className="text-xs text-neutral-500">
                               {l.tenantId.email}
                             </div>
                           )}
@@ -232,17 +232,17 @@ export default function LeasesPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm">
-                        <div className="font-medium text-slate-900">
+                        <div className="font-medium text-neutral-900">
                           {formatDate(l.startDate)}
                         </div>
-                        <div className="text-slate-500">to</div>
-                        <div className="font-medium text-slate-900">
+                        <div className="text-neutral-500">to</div>
+                        <div className="font-medium text-neutral-900">
                           {formatDate(l.endDate)}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-lg font-bold text-slate-900">
+                      <div className="text-lg font-bold text-neutral-900">
                         {formatCurrency(l.monthlyRentEtb)}
                       </div>
                     </td>
@@ -258,7 +258,7 @@ export default function LeasesPage() {
                       <div className="flex gap-3">
                         <Link
                           to={`/leases/${l._id}`}
-                          className="btn-pill btn-soft btn-soft-emerald"
+                          className="btn-pill btn-soft btn-soft-success"
                         >
                           <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -269,7 +269,7 @@ export default function LeasesPage() {
                         {l.unitId?._id && (
                           <Link
                             to={`/units/${l.unitId._id}`}
-                            className="btn-pill btn-soft btn-soft-slate"
+                            className="btn-pill btn-soft btn-soft-neutral"
                           >
                             <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />

@@ -16,15 +16,15 @@ const STATUS_OPTIONS = ["ALL", "ACTIVE", "SUSPENDED", "INVITED"];
 
 const StatusBadge = ({ status }) => {
   const map = {
-    ACTIVE: "bg-emerald-100 text-emerald-700",
-    SUSPENDED: "bg-rose-100 text-rose-700",
-    INVITED: "bg-amber-100 text-amber-700",
+    ACTIVE: "bg-success-100 text-success-700",
+    SUSPENDED: "bg-danger-100 text-danger-700",
+    INVITED: "bg-warning-100 text-warning-700",
   };
 
   return (
     <span
       className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-        map[status] || "bg-slate-100 text-slate-700"
+        map[status] || "bg-neutral-100 text-neutral-700"
       }`}
     >
       {status}
@@ -127,7 +127,7 @@ export default function TenantsPage() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Tenants"
-          eyebrowClassName="bg-indigo-100 text-indigo-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="Tenant Management"
           subtitle="Manage tenant accounts, access status, and profiles."
         />
@@ -142,14 +142,14 @@ export default function TenantsPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Tenants"
-        eyebrowClassName="bg-indigo-100 text-indigo-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Tenant Management"
         subtitle="Manage tenant accounts, access status, and profiles."
         actions={
           currentUser?.role === "ADMIN" || currentUser?.role === "PM" ? (
             <Link
               to="/users/new?role=TENANT"
-              className="inline-flex items-center space-x-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition-colors"
+              className="inline-flex items-center space-x-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700 transition-colors"
             >
               <UserPlus className="h-4 w-4" />
               <span>New Tenant</span>
@@ -163,20 +163,20 @@ export default function TenantsPage() {
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-1 items-center gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
             <input
               type="text"
               placeholder="Search by name, email, or phone"
-              className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              className="w-full rounded-lg border border-neutral-300 py-3 pl-10 pr-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Filter className="h-4 w-4 text-gray-500" />
+          <Filter className="h-4 w-4 text-neutral-500" />
           <select
-            className="rounded-lg border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+            className="rounded-lg border border-neutral-300 px-4 py-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -200,34 +200,34 @@ export default function TenantsPage() {
         </div>
       ) : (
         <div className="table-shell list-shell overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 text-sm">
+          <table className="min-w-full divide-y divide-neutral-200 text-sm">
             <thead className="table-head">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-neutral-500">
                   Name / Contact
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-neutral-500">
                   Status
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-neutral-500">
                   Created
                 </th>
-                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500">
+                <th className="px-6 py-4 text-right text-xs font-semibold text-neutral-500">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white">
+            <tbody className="divide-y divide-neutral-100 bg-white">
               {pagedTenants.map((t) => (
                 <tr key={t._id} className="table-row stagger-item">
                   <td className="px-6 py-4">
-                    <div className="font-medium text-slate-900">
+                    <div className="font-medium text-neutral-900">
                       {t.fullName || "Unnamed"}
                     </div>
-                    <div className="text-xs text-slate-500">
+                    <div className="text-xs text-neutral-500">
                       {t.email}
                       {t.phone && (
-                        <span className="ml-2 text-slate-400">
+                        <span className="ml-2 text-neutral-400">
                           • {t.phone}
                         </span>
                       )}
@@ -236,7 +236,7 @@ export default function TenantsPage() {
                   <td className="px-6 py-4">
                     <StatusBadge status={t.status} />
                   </td>
-                  <td className="px-6 py-4 text-slate-500">
+                  <td className="px-6 py-4 text-neutral-500">
                     {t.createdAt
                       ? new Date(t.createdAt).toLocaleDateString()
                       : "—"}
@@ -246,7 +246,7 @@ export default function TenantsPage() {
                       {canDeactivate && t.status !== "SUSPENDED" && (
                         <button
                           onClick={() => handleDeactivate(t._id)}
-                          className="btn-pill btn-outline btn-outline-rose"
+                          className="btn-pill btn-outline btn-outline-danger"
                         >
                           <UserX className="h-3 w-3" />
                           <span>Deactivate</span>
@@ -255,7 +255,7 @@ export default function TenantsPage() {
                       {canReactivate && t.status === "SUSPENDED" && (
                         <button
                           onClick={() => handleReactivate(t._id)}
-                          className="btn-pill btn-outline btn-outline-emerald"
+                          className="btn-pill btn-outline btn-outline-success"
                         >
                           <UserCheck className="h-3 w-3" />
                           <span>Reactivate</span>
@@ -263,7 +263,7 @@ export default function TenantsPage() {
                       )}
                       <Link
                         to={`/tenants/${t._id}`}
-                        className="btn-pill btn-outline btn-outline-slate"
+                        className="btn-pill btn-outline btn-outline-neutral"
                       >
                         <Eye className="h-3 w-3" />
                         <span>View</span>

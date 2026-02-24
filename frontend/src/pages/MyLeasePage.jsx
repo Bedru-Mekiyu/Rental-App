@@ -53,7 +53,7 @@ export default function MyLeasePage() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Lease"
-          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="My Lease"
           subtitle="View your current lease details and status."
         />
@@ -73,17 +73,17 @@ export default function MyLeasePage() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Lease"
-          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="My Lease"
           subtitle="View your current lease details and status."
         />
         <DashboardCard>
           <div className="py-12 text-center">
-            <AlertCircle className="mx-auto mb-4 h-12 w-12 text-slate-400" />
+            <AlertCircle className="mx-auto mb-4 h-12 w-12 text-neutral-400" />
             <h3 className="panel-title mb-2">
               No Active Lease Found
             </h3>
-            <p className="text-sm text-slate-500 mb-6">
+            <p className="text-sm text-neutral-500 mb-6">
               You don't have an active lease at this time. Please contact your property manager for assistance.
             </p>
             <button

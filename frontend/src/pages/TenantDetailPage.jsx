@@ -3,17 +3,18 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../services/api";
-import DashboardCard from "../components/DashboardCard";
+import ResponsiveSection from "../components/ResponsiveSection";
 import PageHeader from "../components/PageHeader";
 import SkeletonRow from "../components/SkeletonRow";
 import SkeletonTable from "../components/SkeletonTable";
 import SkeletonCard from "../components/SkeletonCard";
 import { useAuthStore } from "../store/authStore";
+import MobileBackBar from "../components/MobileBackBar";
 
 const statusClassMap = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
-  SUSPENDED: "bg-rose-100 text-rose-700",
-  INVITED: "bg-amber-100 text-amber-700",
+  ACTIVE: "bg-success-100 text-success-700",
+  SUSPENDED: "bg-danger-100 text-danger-700",
+  INVITED: "bg-warning-100 text-warning-700",
 };
 
 export default function TenantDetailPage() {
@@ -92,7 +93,7 @@ export default function TenantDetailPage() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Tenants"
-          eyebrowClassName="bg-indigo-100 text-indigo-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="Tenant Detail"
           subtitle="Loading tenant profile..."
         />
@@ -113,10 +114,10 @@ export default function TenantDetailPage() {
   if (!profile) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-red-600">Tenant not found.</p>
+        <p className="text-sm text-danger-600">Tenant not found.</p>
         <button
           onClick={() => navigate("/tenants")}
-          className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
+          className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700"
         >
           Back to Tenants
         </button>
@@ -124,30 +125,25 @@ export default function TenantDetailPage() {
     );
   }
 
-  const statusClass = statusClassMap[profile.status] || "status-slate";
+  const statusClass = statusClassMap[profile.status] || "status-neutral";
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Tenants"
-        eyebrowClassName="bg-indigo-100 text-indigo-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title={profile.fullName || "Tenant Detail"}
         subtitle={`${profile.email || "No email"} · Tenant`}
+        backTo="/tenants"
+        backLabel="Back to Tenants"
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => navigate("/tenants")}
-              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
-            >
-              Back to Tenants
-            </button>
             {canManage && profile.status !== "SUSPENDED" && (
               <button
                 type="button"
                 disabled={updating}
                 onClick={handleDeactivate}
-                className="rounded-md border border-rose-200 px-4 py-2 text-sm font-medium text-rose-600 disabled:opacity-60"
+                className="rounded-md border border-danger-200 px-4 py-2 text-sm font-medium text-danger-600 disabled:opacity-60"
               >
                 Deactivate
               </button>
@@ -157,7 +153,7 @@ export default function TenantDetailPage() {
                 type="button"
                 disabled={updating}
                 onClick={handleReactivate}
-                className="rounded-md border border-emerald-200 px-4 py-2 text-sm font-medium text-emerald-600 disabled:opacity-60"
+                className="rounded-md border border-success-200 px-4 py-2 text-sm font-medium text-success-600 disabled:opacity-60"
               >
                 Reactivate
               </button>
@@ -166,58 +162,58 @@ export default function TenantDetailPage() {
         }
       />
 
-      <DashboardCard title="Tenant Overview">
-        <div className="grid gap-4 md:grid-cols-3 text-sm">
+      <ResponsiveSection title="Tenant Overview">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 text-sm">
           <div>
-            <p className="text-xs text-slate-500">Status</p>
+            <p className="text-xs text-neutral-500">Status</p>
             <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusClass} mt-2`}>
               {profile.status || "ACTIVE"}
             </span>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Joined</p>
+            <p className="text-xs text-neutral-500">Joined</p>
             <p className="mt-1 text-sm">{formatDate(profile.createdAt)}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Phone</p>
+            <p className="text-xs text-neutral-500">Phone</p>
             <p className="mt-1 text-sm">{profile.phone || "—"}</p>
           </div>
         </div>
-      </DashboardCard>
+      </ResponsiveSection>
 
-      <DashboardCard
+      <ResponsiveSection
         title="Lease History"
         description="Current and past leases for this tenant."
       >
         {leases.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-6 py-8 text-center">
-            <div className="text-sm font-medium text-slate-700">No leases found</div>
-            <div className="mt-1 text-xs text-slate-500">
+          <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-6 py-8 text-center">
+            <div className="text-sm font-medium text-neutral-700">No leases found</div>
+            <div className="mt-1 text-xs text-neutral-500">
               This tenant has no lease history yet.
             </div>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-slate-200">
-            <table className="min-w-full divide-y divide-slate-200 text-xs">
-              <thead className="bg-slate-50">
+          <div className="overflow-x-auto rounded-xl border border-neutral-200">
+            <table className="min-w-full divide-y divide-neutral-200 text-xs">
+              <thead className="bg-neutral-50">
                 <tr>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Unit
                   </th>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Status
                   </th>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Term
                   </th>
-                  <th className="px-4 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+              <tbody className="divide-y divide-neutral-100 bg-white">
                 {leases.map((lease) => (
-                  <tr key={lease._id} className="hover:bg-slate-50">
+                  <tr key={lease._id} className="hover:bg-neutral-50">
                     <td className="px-4 py-2">
                       {lease.unitId?.name || lease.unitId?.unitNumber || "Unit"}
                     </td>
@@ -225,10 +221,10 @@ export default function TenantDetailPage() {
                       <span
                         className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${
                           lease.status === "ACTIVE"
-                            ? "bg-emerald-100 text-emerald-700"
+                            ? "bg-success-100 text-success-700"
                             : lease.status === "ENDED"
-                            ? "bg-slate-100 text-slate-700"
-                            : "bg-amber-100 text-amber-700"
+                            ? "bg-neutral-100 text-neutral-700"
+                            : "bg-warning-100 text-warning-700"
                         }`}
                       >
                         {lease.status}
@@ -240,7 +236,7 @@ export default function TenantDetailPage() {
                     <td className="px-4 py-2">
                       <Link
                         to={`/leases/${lease._id}`}
-                        className="text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                        className="text-xs font-semibold text-primary-600 hover:text-primary-700"
                       >
                         View lease
                       </Link>
@@ -251,7 +247,8 @@ export default function TenantDetailPage() {
             </table>
           </div>
         )}
-      </DashboardCard>
+      </ResponsiveSection>
+      <MobileBackBar to="/tenants" label="Back to Tenants" />
     </div>
   );
 }

@@ -54,23 +54,23 @@ export default function TenantDashboard() {
   const getMaintenanceStatusClass = (status) => {
     const normalized = status?.toLowerCase() || "";
     if (normalized.includes("completed") || normalized.includes("resolved")) {
-      return "status-emerald";
+      return "status-success";
     }
     if (normalized.includes("in_progress") || normalized.includes("progress")) {
-      return "status-teal";
+      return "status-primary";
     }
     if (normalized.includes("pending") || normalized.includes("received")) {
-      return "status-amber";
+      return "status-warning";
     }
-    return "status-slate";
+    return "status-neutral";
   };
 
   const getUrgencyClass = (urgency) => {
     const normalized = urgency?.toLowerCase() || "";
-    if (normalized === "emergency") return "status-rose";
-    if (normalized === "high") return "status-amber";
-    if (normalized === "medium") return "status-sky";
-    return "status-emerald";
+    if (normalized === "emergency") return "status-danger";
+    if (normalized === "high") return "status-warning";
+    if (normalized === "medium") return "status-primary";
+    return "status-success";
   };
 
   const paymentSchema = z.object({
@@ -261,33 +261,33 @@ export default function TenantDashboard() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Tenant"
-          eyebrowClassName="bg-indigo-100 text-indigo-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="Tenant Dashboard"
           subtitle="Loading your workspace..."
         />
         <section className="surface-panel flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-100 text-primary-600">
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-sm font-semibold text-slate-900">Heads up</div>
-              <div className="text-xs text-slate-500">
+              <div className="text-sm font-semibold text-neutral-900">Heads up</div>
+              <div className="text-xs text-neutral-500">
                 Your next rent payment is due soon. Submit payment early to avoid late fees.
               </div>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <button
               type="button"
-              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 transition hover:bg-slate-50"
+              className="btn-secondary w-full text-xs font-semibold uppercase tracking-wide sm:w-auto"
               onClick={() => setShowPaymentForm(true)}
             >
               Record Payment
             </button>
             <button
               type="button"
-              className="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:-translate-y-0.5"
+              className="btn-primary w-full text-xs font-semibold uppercase tracking-wide sm:w-auto"
               onClick={() => document.getElementById("maintenance-form")?.scrollIntoView({ behavior: "smooth" })}
             >
               New Request
@@ -311,7 +311,7 @@ export default function TenantDashboard() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Tenant"
-          eyebrowClassName="bg-indigo-100 text-indigo-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="Tenant Dashboard"
           subtitle="Loading your dashboard..."
         />
@@ -327,35 +327,31 @@ export default function TenantDashboard() {
     );
   }
 
+  const formattedDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Tenant Portal"
-        eyebrowClassName="bg-indigo-100 text-indigo-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title={`Welcome back, ${user?.fullName?.split(" ")[0] || "Tenant"}!`}
-        subtitle="Manage your lease, payments, and maintenance requests all in one place."
+        subtitle={`Manage your lease, payments, and maintenance requests. ${formattedDate}`}
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <span className="pill bg-slate-900 text-white">
-              {user?.fullName || user?.email}
-            </span>
-            <span className="pill bg-slate-100 text-slate-700">
-              {new Date().toLocaleDateString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </span>
             <Link
               to="/my-lease"
-              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 transition hover:bg-slate-50"
+              className="btn-secondary text-xs font-semibold uppercase tracking-wide"
             >
-              View Lease
+              My Lease
             </Link>
             <Link
               to="/payments"
-              className="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:-translate-y-0.5"
+              className="btn-primary text-xs font-semibold uppercase tracking-wide"
             >
               Payments
             </Link>
@@ -368,8 +364,8 @@ export default function TenantDashboard() {
         {/* Lease summary */}
         <section className="lg:col-span-1 surface-panel p-6 hover-lift fade-in">
           <div className="flex items-center space-x-2 mb-4">
-            <div className="rounded-lg bg-emerald-100 p-2">
-              <Home className="h-5 w-5 text-emerald-600" />
+            <div className="rounded-lg bg-success-100 p-2">
+              <Home className="h-5 w-5 text-success-600" />
             </div>
             <h2 className="panel-title text-lg">
               My Lease
@@ -377,50 +373,50 @@ export default function TenantDashboard() {
           </div>
           {!lease ? (
             <div className="text-center py-8">
-              <AlertCircle className="mx-auto h-12 w-12 text-gray-300 mb-3" />
-              <p className="text-sm text-gray-500">
+              <AlertCircle className="mx-auto h-12 w-12 text-neutral-300 mb-3" />
+              <p className="text-sm text-neutral-500">
                 No active lease found.
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-neutral-400 mt-1">
                 Contact your property manager
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center space-x-3 rounded-2xl border border-slate-100 bg-white/90 p-3">
-                <Building className="h-5 w-5 text-gray-400" />
+              <div className="flex items-center space-x-3 rounded-2xl border border-neutral-100 bg-white/90 p-3">
+                <Building className="h-5 w-5 text-neutral-400" />
                 <div>
-                  <p className="text-xs text-slate-500">Property</p>
-                  <p className="font-medium text-slate-900">
+                  <p className="text-xs text-neutral-500">Property</p>
+                  <p className="font-medium text-neutral-900">
                     {lease?.propertyId?.name || lease?.propertyName || "N/A"}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center space-x-3 rounded-2xl border border-slate-100 bg-white/90 p-3">
-                <MapPin className="h-5 w-5 text-gray-400" />
+              <div className="flex items-center space-x-3 rounded-2xl border border-neutral-100 bg-white/90 p-3">
+                <MapPin className="h-5 w-5 text-neutral-400" />
                 <div>
-                  <p className="text-xs text-slate-500">Unit</p>
-                  <p className="font-medium text-slate-900">
+                  <p className="text-xs text-neutral-500">Unit</p>
+                  <p className="font-medium text-neutral-900">
                     {lease?.unitId?.unitNumber || lease?.unitNumber || "N/A"}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center space-x-3 rounded-2xl border border-slate-100 bg-white/90 p-3">
-                <DollarSign className="h-5 w-5 text-gray-400" />
+              <div className="flex items-center space-x-3 rounded-2xl border border-neutral-100 bg-white/90 p-3">
+                <DollarSign className="h-5 w-5 text-neutral-400" />
                 <div>
-                  <p className="text-xs text-slate-500">Monthly Rent</p>
-                  <p className="font-medium text-slate-900">
+                  <p className="text-xs text-neutral-500">Monthly Rent</p>
+                  <p className="font-medium text-neutral-900">
                     {lease.monthlyRentEtb
                       ? `${lease.monthlyRentEtb.toLocaleString()} ETB`
                       : "N/A"}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center space-x-3 rounded-2xl border border-slate-100 bg-white/90 p-3">
-                <Calendar className="h-5 w-5 text-gray-400" />
+              <div className="flex items-center space-x-3 rounded-2xl border border-neutral-100 bg-white/90 p-3">
+                <Calendar className="h-5 w-5 text-neutral-400" />
                 <div>
-                  <p className="text-xs text-slate-500">Lease Period</p>
-                  <p className="font-medium text-slate-900">
+                  <p className="text-xs text-neutral-500">Lease Period</p>
+                  <p className="font-medium text-neutral-900">
                     {lease.startDate
                       ? new Date(lease.startDate).toLocaleDateString()
                       : "—"} - {lease.endDate
@@ -430,7 +426,7 @@ export default function TenantDashboard() {
                 </div>
               </div>
               <div className="flex items-center justify-center pt-2">
-                <span className="status-pill status-emerald">
+                <span className="status-pill status-success">
                   <CheckCircle className="h-3 w-3" />
                   <span>{lease.status || "ACTIVE"}</span>
                 </span>
@@ -441,21 +437,21 @@ export default function TenantDashboard() {
 
         {/* Payment history */}
         <section className="lg:col-span-2 surface-panel p-6 hover-lift">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
             <div className="flex items-center space-x-2">
-              <div className="rounded-lg bg-emerald-100 p-2">
-                <CreditCard className="h-5 w-5 text-emerald-600" />
+              <div className="rounded-lg bg-success-100 p-2">
+                <CreditCard className="h-5 w-5 text-success-600" />
               </div>
               <div>
                 <h2 className="panel-title text-lg">
                   Payment History
                 </h2>
-                <p className="text-xs text-slate-500">
-                  Track your rent payments and their status.
+                <p className="text-xs text-neutral-500">
+                  Track your rent payments and their status. Receipts coming soon.
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setShowPaymentForm(!showPaymentForm)}
                 className="btn-primary inline-flex items-center space-x-2 text-xs font-semibold"
@@ -463,47 +459,44 @@ export default function TenantDashboard() {
                 <Plus className="h-4 w-4" />
                 <span>Add Payment</span>
               </button>
-              <div className="rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-700">
-                💳 Upload receipt (coming soon)
-              </div>
             </div>
           </div>
 
           {payments.length === 0 ? (
             <div className="space-y-3 py-8 text-center">
               <SkeletonTable rows={4} columns={4} />
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-neutral-500">
                 No payments recorded yet.
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-neutral-400">
                 Your payment history will appear here
               </p>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white/90">
-              <table className="min-w-full divide-y divide-slate-200 text-sm">
-                <thead className="bg-slate-50/80">
+            <div className="table-shell list-shell bg-white/90">
+              <table className="min-w-full divide-y divide-neutral-200 text-sm">
+                <thead className="bg-neutral-50/80">
                   <tr>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                    <th className="px-4 py-3 text-left font-semibold text-neutral-700">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                    <th className="px-4 py-3 text-left font-semibold text-neutral-700">
                       Amount
                     </th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                    <th className="px-4 py-3 text-left font-semibold text-neutral-700">
                       Status
                     </th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                    <th className="px-4 py-3 text-left font-semibold text-neutral-700">
                       Transaction ID
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 bg-white">
+                <tbody className="divide-y divide-neutral-100 bg-white">
                   {payments.map((p) => (
-                    <tr key={p._id} className="transition hover:bg-slate-50">
-                      <td className="px-4 py-3 text-slate-600">
+                    <tr key={p._id} className="transition hover:bg-neutral-50">
+                      <td className="px-4 py-3 text-neutral-600">
                         <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4 text-gray-400" />
+                          <Calendar className="h-4 w-4 text-neutral-400" />
                           <span>
                             {p.transactionDate
                               ? new Date(p.transactionDate).toLocaleDateString()
@@ -511,9 +504,9 @@ export default function TenantDashboard() {
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-slate-700 font-medium">
+                      <td className="px-4 py-3 text-neutral-700 font-medium">
                         <div className="flex items-center space-x-2">
-                          <DollarSign className="h-4 w-4 text-gray-400" />
+                          <DollarSign className="h-4 w-4 text-neutral-400" />
                           <span>
                             {p.amountEtb
                               ? `${p.amountEtb.toLocaleString()} ETB`
@@ -525,16 +518,16 @@ export default function TenantDashboard() {
                         <span
                           className={`status-pill ${
                             p.status === "VERIFIED"
-                              ? "status-emerald"
+                              ? "status-success"
                               : p.status === "PENDING"
-                              ? "status-amber"
-                              : "status-rose"
+                              ? "status-warning"
+                              : "status-danger"
                           }`}
                         >
                           {p.status || "PENDING"}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-slate-500">
+                      <td className="px-4 py-3 text-neutral-500">
                         {p.externalTransactionId || "—"}
                       </td>
                     </tr>
@@ -550,7 +543,7 @@ export default function TenantDashboard() {
                 <h2 className="panel-title text-lg">
                   Record New Payment
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-neutral-500">
                   Log a manual payment and keep your records up to date.
                 </p>
               </div>
@@ -563,12 +556,12 @@ export default function TenantDashboard() {
                   <div>
                     <label
                       htmlFor="amountEtb"
-                      className="block text-sm font-medium text-slate-700 mb-2"
+                      className="block text-sm font-medium text-neutral-700 mb-2"
                     >
                       Payment Amount (ETB)
                     </label>
                     <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                      <DollarSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                       <input
                         id="amountEtb"
                         type="number"
@@ -586,7 +579,7 @@ export default function TenantDashboard() {
                       />
                     </div>
                     {paymentErrors.amountEtb && (
-                      <p className="mt-1 text-xs text-red-500">
+                      <p className="mt-1 text-xs text-danger-500">
                         {paymentErrors.amountEtb.message}
                       </p>
                     )}
@@ -595,7 +588,7 @@ export default function TenantDashboard() {
                   <div>
                     <label
                       htmlFor="paymentMethod"
-                      className="block text-sm font-medium text-slate-700 mb-2"
+                      className="block text-sm font-medium text-neutral-700 mb-2"
                     >
                       Payment Method
                     </label>
@@ -614,7 +607,7 @@ export default function TenantDashboard() {
                       <option value="Other">🔄 Other</option>
                     </select>
                     {paymentErrors.paymentMethod && (
-                      <p className="mt-1 text-xs text-red-500">
+                      <p className="mt-1 text-xs text-danger-500">
                         {paymentErrors.paymentMethod.message}
                       </p>
                     )}
@@ -625,12 +618,12 @@ export default function TenantDashboard() {
                   <div>
                     <label
                       htmlFor="transactionDate"
-                      className="block text-sm font-medium text-slate-700 mb-2"
+                      className="block text-sm font-medium text-neutral-700 mb-2"
                     >
                       Transaction Date
                     </label>
                     <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                      <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                       <input
                         id="transactionDate"
                         type="date"
@@ -641,7 +634,7 @@ export default function TenantDashboard() {
                       />
                     </div>
                     {paymentErrors.transactionDate && (
-                      <p className="mt-1 text-xs text-red-500">
+                      <p className="mt-1 text-xs text-danger-500">
                         {paymentErrors.transactionDate.message}
                       </p>
                     )}
@@ -650,7 +643,7 @@ export default function TenantDashboard() {
                   <div>
                     <label
                       htmlFor="externalTransactionId"
-                      className="block text-sm font-medium text-slate-700 mb-2"
+                      className="block text-sm font-medium text-neutral-700 mb-2"
                     >
                       Transaction ID (Optional)
                     </label>
@@ -667,7 +660,7 @@ export default function TenantDashboard() {
                 <div>
                   <label
                     htmlFor="notes"
-                    className="block text-sm font-medium text-slate-700 mb-2"
+                    className="block text-sm font-medium text-neutral-700 mb-2"
                   >
                     Notes (Optional)
                   </label>
@@ -680,11 +673,11 @@ export default function TenantDashboard() {
                   />
                 </div>
 
-                <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-200">
+                <div className="flex items-center justify-end space-x-3 pt-4 border-t border-neutral-200">
                   <button
                     type="button"
                     onClick={() => setShowPaymentForm(false)}
-                    className="inline-flex items-center space-x-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-all"
+                    className="inline-flex items-center space-x-2 rounded-full border border-neutral-300 bg-white px-4 py-2 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 transition-all"
                   >
                     <X className="h-4 w-4" />
                     <span>Cancel</span>
@@ -708,16 +701,16 @@ export default function TenantDashboard() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Maintenance */}
         <section className="lg:col-span-2 surface-panel p-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center mb-4">
             <div className="flex items-center space-x-2">
-              <div className="rounded-lg bg-orange-100 p-2">
-                <Wrench className="h-5 w-5 text-orange-600" />
+              <div className="rounded-lg bg-warning-100 p-2">
+                <Wrench className="h-5 w-5 text-warning-600" />
               </div>
               <div>
                 <h2 className="panel-title text-lg">
                   Maintenance Requests
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-neutral-500">
                   Submit new requests and track their status.
                 </p>
               </div>
@@ -728,12 +721,12 @@ export default function TenantDashboard() {
           <form
             id="maintenance-form"
             onSubmit={handleSubmit(onMaintenanceSubmit)}
-            className="mb-6 space-y-4 rounded-2xl border border-slate-200 bg-white/90 p-4"
+            className="mb-6 space-y-4 rounded-2xl border border-neutral-200 bg-white/90 p-4"
           >
             <div>
               <label
                 htmlFor="description"
-                className="block text-sm font-medium text-slate-700 mb-2"
+                className="block text-sm font-medium text-neutral-700 mb-2"
               >
                 Describe the issue
               </label>
@@ -745,17 +738,17 @@ export default function TenantDashboard() {
                 {...register("description")}
               />
               {errors.description && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-danger-500">
                   {errors.description.message}
                 </p>
               )}
             </div>
 
-            <div className="flex items-end justify-between gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex-1">
                 <label
                   htmlFor="urgency"
-                  className="block text-sm font-medium text-slate-700 mb-2"
+                  className="block text-sm font-medium text-neutral-700 mb-2"
                 >
                   Urgency Level
                 </label>
@@ -769,7 +762,7 @@ export default function TenantDashboard() {
                   <option value="high">🟠 High - Important</option>
                 </select>
                 {errors.urgency && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-danger-500">
                     {errors.urgency.message}
                   </p>
                 )}
@@ -777,7 +770,7 @@ export default function TenantDashboard() {
 
               <button
                 type="submit"
-                className="inline-flex items-center space-x-2 rounded-full bg-orange-600 px-6 py-2 text-xs font-semibold text-white shadow-sm hover:bg-orange-700 transition-all"
+                className="btn-primary w-full inline-flex items-center justify-center space-x-2 text-xs font-semibold sm:w-auto"
               >
                 <Send className="h-4 w-4" />
                 <span>Submit Request</span>
@@ -788,11 +781,11 @@ export default function TenantDashboard() {
           {/* Requests list */}
           {requests.length === 0 ? (
             <div className="text-center py-8">
-              <Wrench className="mx-auto h-12 w-12 text-gray-300 mb-3" />
-              <p className="text-sm text-gray-500">
+              <Wrench className="mx-auto h-12 w-12 text-neutral-300 mb-3" />
+              <p className="text-sm text-neutral-500">
                 No maintenance requests yet.
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-neutral-400 mt-1">
                 Submit your first request above
               </p>
             </div>
@@ -801,13 +794,13 @@ export default function TenantDashboard() {
               {requests.map((r) => (
                 <li
                   key={r._id}
-                  className="flex items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm"
+                  className="flex flex-col gap-3 rounded-2xl border border-neutral-200 bg-white/90 p-4 sm:flex-row sm:items-start sm:justify-between"
                 >
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-slate-800 mb-2">
+                    <p className="text-sm font-medium text-neutral-800 mb-2">
                       {r.description}
                     </p>
-                    <div className="flex items-center space-x-4 text-xs text-slate-500">
+                    <div className="flex items-center space-x-4 text-xs text-neutral-500">
                       <span className="flex items-center space-x-1">
                         <Calendar className="h-3 w-3" />
                         <span>
@@ -822,7 +815,7 @@ export default function TenantDashboard() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
+                  <div className="flex flex-col items-start gap-2 sm:items-end">
                     <span className={`status-pill ${getMaintenanceStatusClass(r.status)} gap-1.5`}>
                       {r.status?.toLowerCase().includes('completed') && <CheckCircle className="h-3 w-3" />}
                       {r.status?.toLowerCase().includes('progress') && <Clock className="h-3 w-3" />}
@@ -843,8 +836,8 @@ export default function TenantDashboard() {
         <div className="space-y-4">
           <section className="surface-panel p-6 hover-lift">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="rounded-lg bg-teal-100 p-2">
-                <FileText className="h-5 w-5 text-teal-600" />
+              <div className="rounded-lg bg-secondary-100 p-2">
+                <FileText className="h-5 w-5 text-secondary-600" />
               </div>
               <h2 className="panel-title text-lg">
                 Documents
@@ -852,8 +845,8 @@ export default function TenantDashboard() {
             </div>
             {documents.length === 0 ? (
               <div className="text-center py-6">
-                <FileText className="mx-auto h-8 w-8 text-gray-300 mb-2" />
-                <p className="text-sm text-gray-500">
+                <FileText className="mx-auto h-8 w-8 text-neutral-300 mb-2" />
+                <p className="text-sm text-neutral-500">
                   No documents available.
                 </p>
               </div>
@@ -862,14 +855,14 @@ export default function TenantDashboard() {
                 {documents.map((doc) => (
                   <li
                     key={doc}
-                    className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white/90 p-3"
+                    className="flex items-center justify-between rounded-2xl border border-neutral-100 bg-white/90 p-3"
                   >
                     <div className="flex items-center space-x-3">
-                      <FileText className="h-4 w-4 text-gray-400" />
-                      <span className="text-sm font-medium text-slate-700">{doc}</span>
+                      <FileText className="h-4 w-4 text-neutral-400" />
+                      <span className="text-sm font-medium text-neutral-700">{doc}</span>
                     </div>
                     <button
-                      className="btn-pill btn-outline btn-outline-teal"
+                      className="btn-pill btn-outline btn-outline-primary"
                       onClick={() => handleDocumentDownload(doc)}
                     >
                       <Download className="h-3 w-3" />
@@ -883,8 +876,8 @@ export default function TenantDashboard() {
 
           <section className="surface-panel p-6 hover-lift">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="rounded-lg bg-amber-100 p-2">
-                <Bell className="h-5 w-5 text-amber-600" />
+              <div className="rounded-lg bg-warning-100 p-2">
+                <Bell className="h-5 w-5 text-warning-600" />
               </div>
               <h2 className="panel-title text-lg">
                 Notifications
@@ -892,11 +885,11 @@ export default function TenantDashboard() {
             </div>
             {notifications.length === 0 ? (
               <div className="text-center py-6">
-                <Bell className="mx-auto h-8 w-8 text-gray-300 mb-2" />
-                <p className="text-sm text-gray-500">
+                <Bell className="mx-auto h-8 w-8 text-neutral-300 mb-2" />
+                <p className="text-sm text-neutral-500">
                   No notifications yet.
                 </p>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-neutral-400 mt-1">
                   You'll see updates here
                 </p>
               </div>
@@ -905,16 +898,16 @@ export default function TenantDashboard() {
                 {notifications.map((n, idx) => (
                   <li
                     key={idx}
-                    className="flex items-start space-x-3 rounded-2xl border border-slate-100 bg-white/90 p-3"
+                    className="flex items-start space-x-3 rounded-2xl border border-neutral-100 bg-white/90 p-3"
                   >
-                    <div className="rounded-full bg-amber-100 p-1.5 mt-0.5">
-                      <Bell className="h-3 w-3 text-amber-600" />
+                    <div className="rounded-full bg-warning-100 p-1.5 mt-0.5">
+                      <Bell className="h-3 w-3 text-warning-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-slate-800 mb-1">
+                      <p className="text-sm font-medium text-neutral-800 mb-1">
                         {n.message}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-neutral-500">
                         {n.date}
                       </p>
                     </div>

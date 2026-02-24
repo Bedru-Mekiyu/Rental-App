@@ -19,7 +19,7 @@ const Avatar = ({ name }) => {
     .slice(0, 2);
 
   return (
-    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 text-xs font-semibold text-white shadow-sm ring-2 ring-white">
+    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-600 text-xs font-semibold text-white ring-2 ring-white">
       {initials || "T"}
     </div>
   );
@@ -104,11 +104,11 @@ export default function FinancialStaffDashboard() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Finance"
-          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="Financial Staff Dashboard"
           subtitle="View invoices, payment status, and financial reports."
         />
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <SkeletonCard>
             <SkeletonRow className="h-3 w-24" />
             <div className="mt-3">
@@ -149,7 +149,7 @@ export default function FinancialStaffDashboard() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Finance"
-        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Financial Staff Dashboard"
         subtitle="View invoices, payment status, and financial reports."
         actions={
@@ -181,34 +181,34 @@ export default function FinancialStaffDashboard() {
           </div>
         </div>
         <div className="insight-actions">
-          <Link to="/payments" className="btn-pill btn-outline btn-outline-emerald">
+          <Link to="/payments" className="btn-pill btn-outline btn-outline-success w-full justify-center sm:w-auto">
             Review Payments
           </Link>
-          <Link to="/finance" className="btn-pill btn-outline btn-outline-teal">
+          <Link to="/finance" className="btn-pill btn-outline btn-outline-primary w-full justify-center sm:w-auto">
             View Summary
           </Link>
         </div>
       </section>
 
       {/* KPI row */}
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <DashboardCard title="Total Revenue (verified)">
           <p className="kpi-value">
             {formatCurrency(summary.totalRevenue)}
           </p>
         </DashboardCard>
         <DashboardCard title="Pending Payments">
-          <p className="kpi-value text-amber-600">
+          <p className="kpi-value text-warning-600">
             {summary.pendingPayments}
           </p>
         </DashboardCard>
         <DashboardCard title="Overdue Amount">
-          <p className="kpi-value text-red-600">
+          <p className="kpi-value text-danger-600">
             {formatCurrency(summary.overdueAmount)}
           </p>
         </DashboardCard>
         <DashboardCard title="Processed Payments">
-          <p className="kpi-value text-emerald-600">
+          <p className="kpi-value text-success-600">
             {summary.processedPayments}
           </p>
         </DashboardCard>
@@ -219,27 +219,27 @@ export default function FinancialStaffDashboard() {
         title="Invoice Details Preview"
         description="Preview invoice fields (creation handled by management)."
       >
-        <div className="grid gap-3 md:grid-cols-3 text-xs">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-xs">
           <div className="space-y-1">
-            <p className="text-slate-600">Tenant Name</p>
-            <p className="rounded-2xl border border-slate-100 bg-slate-50/70 px-3 py-2 text-slate-500">
+            <p className="text-neutral-600">Tenant Name</p>
+            <p className="rounded-2xl border border-neutral-100 bg-neutral-50/70 px-3 py-2 text-neutral-500">
               e.g. Alice Johnson
             </p>
           </div>
           <div className="space-y-1">
-            <p className="text-slate-600">Invoice Amount (ETB)</p>
-            <p className="rounded-2xl border border-slate-100 bg-slate-50/70 px-3 py-2 text-slate-500">
+            <p className="text-neutral-600">Invoice Amount (ETB)</p>
+            <p className="rounded-2xl border border-neutral-100 bg-neutral-50/70 px-3 py-2 text-neutral-500">
               15,000
             </p>
           </div>
           <div className="space-y-1">
-            <p className="text-slate-600">Due Date</p>
-            <p className="rounded-2xl border border-slate-100 bg-slate-50/70 px-3 py-2 text-slate-500">
+            <p className="text-neutral-600">Due Date</p>
+            <p className="rounded-2xl border border-neutral-100 bg-neutral-50/70 px-3 py-2 text-neutral-500">
               2025‑01‑31
             </p>
           </div>
         </div>
-        <p className="mt-3 text-[11px] text-slate-500">
+        <p className="mt-3 text-[11px] text-neutral-500">
           Invoice creation and approval are handled by managers. This section is
           read‑only.
         </p>
@@ -264,20 +264,20 @@ export default function FinancialStaffDashboard() {
             {queue.map((item) => (
               <li
                 key={item._id}
-                className="stagger-item flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/70 px-3 py-2"
+                className="stagger-item flex flex-col gap-2 rounded-2xl border border-neutral-100 bg-neutral-50/70 px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="flex items-center gap-3">
                   <Avatar name={item.tenantName || "Tenant"} />
                   <div>
-                    <p className="font-medium text-slate-900">
+                    <p className="font-medium text-neutral-900">
                       {item.tenantName || "Tenant"}
                     </p>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px] text-neutral-500">
                       {formatCurrency(item.amountEtb)} · {item.paymentMethod}
                     </p>
                   </div>
                 </div>
-                <span className="status-pill status-amber">
+                <span className="status-pill status-warning">
                   Awaiting manager decision
                 </span>
               </li>
@@ -287,55 +287,55 @@ export default function FinancialStaffDashboard() {
       </DashboardCard>
 
       {/* Payment history + reports */}
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <DashboardCard
           title="Payment History"
           description="Recent payment records."
         >
           <div className="table-shell">
-            <table className="min-w-full divide-y divide-slate-200 text-xs">
+            <table className="min-w-full divide-y divide-neutral-200 text-xs">
               <thead className="table-head">
                 <tr>
-                  <th className="px-3 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-3 py-2 text-left font-semibold text-neutral-500">
                     Date
                   </th>
-                  <th className="px-3 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-3 py-2 text-left font-semibold text-neutral-500">
                     Tenant
                   </th>
-                  <th className="px-3 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-3 py-2 text-left font-semibold text-neutral-500">
                     Amount
                   </th>
-                  <th className="px-3 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-3 py-2 text-left font-semibold text-neutral-500">
                     Method
                   </th>
-                  <th className="px-3 py-2 text-left font-semibold text-slate-500">
+                  <th className="px-3 py-2 text-left font-semibold text-neutral-500">
                     Status
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+              <tbody className="divide-y divide-neutral-100 bg-white">
                 {payments.slice(0, 6).map((p) => (
                   <tr key={p._id} className="table-row">
-                    <td className="px-3 py-2 text-slate-600">
+                    <td className="px-3 py-2 text-neutral-600">
                       {p.transactionDate
                         ? new Date(p.transactionDate).toLocaleDateString()
                         : "-"}
                     </td>
-                    <td className="px-3 py-2 text-slate-700">
+                    <td className="px-3 py-2 text-neutral-700">
                       {p.tenantName || "Tenant"}
                     </td>
-                    <td className="px-3 py-2 text-slate-700">
+                    <td className="px-3 py-2 text-neutral-700">
                       {formatCurrency(p.amountEtb || 0)}
                     </td>
-                    <td className="px-3 py-2 text-slate-600">{p.paymentMethod}</td>
+                    <td className="px-3 py-2 text-neutral-600">{p.paymentMethod}</td>
                     <td className="px-3 py-2">
                       <span
                         className={`status-pill ${
                           p.status === "VERIFIED"
-                            ? "status-emerald"
+                            ? "status-success"
                             : p.status === "PENDING"
-                            ? "status-amber"
-                            : "status-rose"
+                            ? "status-warning"
+                            : "status-danger"
                         }`}
                       >
                         {p.status}
@@ -353,35 +353,35 @@ export default function FinancialStaffDashboard() {
           description="Key financial reports (view‑only)."
         >
           <ul className="space-y-2 text-xs">
-            <li className="stagger-item flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/70 px-3 py-2">
+            <li className="stagger-item flex items-center justify-between rounded-2xl border border-neutral-100 bg-neutral-50/70 px-3 py-2">
               <span>Monthly Revenue Report</span>
               <Link
                 to="/reports/monthly-revenue"
-                className="link-action link-action-emerald"
+                className="link-action link-action-primary"
               >
                 View
               </Link>
             </li>
-            <li className="stagger-item flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/70 px-3 py-2">
+            <li className="stagger-item flex items-center justify-between rounded-2xl border border-neutral-100 bg-neutral-50/70 px-3 py-2">
               <span>Delinquency Report</span>
               <Link
                 to="/reports/delinquency"
-                className="link-action link-action-emerald"
+                className="link-action link-action-primary"
               >
                 View
               </Link>
             </li>
-            <li className="stagger-item flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/70 px-3 py-2">
+            <li className="stagger-item flex items-center justify-between rounded-2xl border border-neutral-100 bg-neutral-50/70 px-3 py-2">
               <span>Expense Report</span>
               <Link
                 to="/reports/expense"
-                className="link-action link-action-emerald"
+                className="link-action link-action-primary"
               >
                 View
               </Link>
             </li>
           </ul>
-          <p className="mt-3 text-[11px] text-slate-500">
+          <p className="mt-3 text-[11px] text-neutral-500">
             Export actions are handled by accounting; this section is for
             reference only.
           </p>

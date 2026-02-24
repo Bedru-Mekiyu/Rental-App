@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import loginBg from "../assets/Screenshot.png";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -41,57 +42,60 @@ export default function Login() {
   };
 
   return (
-    <div className="page-transition min-h-screen px-4 py-10">
-      <div className="mx-auto grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white/80 shadow-2xl backdrop-blur md:grid-cols-[1.1fr_0.9fr]">
-        <div className="relative flex flex-col justify-between bg-gradient-to-br from-slate-900 via-teal-900 to-emerald-950 p-8 text-white">
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute -top-16 -left-16 h-56 w-56 rounded-full bg-emerald-400/30 blur-3xl" />
-            <div className="absolute -bottom-10 right-0 h-48 w-48 rounded-full bg-amber-300/30 blur-3xl" />
-          </div>
+    <div
+      className="page-transition relative flex min-h-screen items-center justify-center px-4 py-8 sm:py-10"
+      style={{ backgroundImage: `url(${loginBg})`, backgroundSize: "cover", backgroundPosition: "center" }}
+    >
+      <div className="pointer-events-none absolute inset-0 bg-white/40" />
+      <div className="pointer-events-none absolute inset-0 bg-primary-500/4" />
+      <div className="mx-auto grid w-full max-w-2xl overflow-hidden rounded-2xl bg-slate-900/55 shadow-lg backdrop-blur md:grid-cols-[1fr_1fr]">
+        <div className="relative flex flex-col justify-between overflow-hidden bg-gradient-to-br from-primary-50 via-white to-primary-100/60 p-8 text-neutral-900">
+          <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-1 bg-primary-500/50 md:block" />
+          <div className="pointer-events-none absolute -right-16 top-10 h-48 w-48 rounded-full bg-primary-200/40 blur-3xl" />
           <div className="relative space-y-4">
-            <span className="pill bg-white/20 text-white">Portfolio OS</span>
-            <h1 className="app-title text-3xl font-semibold">
+            <span className="pill bg-primary-600 text-white">Portfolio OS</span>
+            <h1 className="app-title text-lg sm:text-xl font-semibold leading-tight">
               Rental Management System
             </h1>
-            <p className="text-sm text-emerald-100">
+            <p className="text-xs sm:text-sm text-neutral-600">
               Track units, leases, and payments with a single, high-clarity dashboard.
             </p>
           </div>
-          <div className="relative space-y-4 text-sm text-emerald-100">
+          <div className="relative space-y-4 text-xs sm:text-sm text-neutral-600">
             <div className="flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
+              <span className="h-2 w-2 rounded-full bg-primary-500" />
               Real-time occupancy and payment insights
             </div>
             <div className="flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-teal-300" />
+              <span className="h-2 w-2 rounded-full bg-primary-500" />
               Role-based dashboards for each team
             </div>
             <div className="flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-orange-300" />
+              <span className="h-2 w-2 rounded-full bg-primary-500" />
               Unified audit trail and finance summaries
             </div>
           </div>
         </div>
 
-        <div className="p-8 sm:p-10">
-          <div className="mb-8 space-y-2">
-            <h2 className="app-title text-2xl font-semibold text-slate-900">
+        <div className="bg-white/90 p-6 sm:p-10">
+          <div className="mb-5 space-y-2">
+            <h2 className="app-title text-lg sm:text-xl font-semibold text-neutral-900">
               Welcome back
             </h2>
-            <p className="text-sm text-slate-500">
+            <p className="text-[11px] sm:text-xs text-neutral-500">
               Sign in to continue managing your portfolio.
             </p>
           </div>
 
           {error && (
-            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div className="mb-6 rounded-2xl border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <label className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
                 Email address
               </label>
               <input
@@ -100,13 +104,13 @@ export default function Login() {
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="form-input text-sm"
+                className="form-input text-xs sm:text-sm"
                 placeholder="admin@example.com"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <label className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
                 Password
               </label>
               <input
@@ -115,7 +119,7 @@ export default function Login() {
                 value={form.password}
                 onChange={handleChange}
                 required
-                className="form-input text-sm"
+                className="form-input text-xs sm:text-sm"
                 placeholder="••••••••"
               />
             </div>
@@ -123,17 +127,17 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full rounded-2xl px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition ${
+              className={`w-full rounded-2xl px-5 py-2.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wide text-white transition ${
                 loading
-                  ? "cursor-not-allowed bg-slate-400"
-                  : "btn-primary hover:-translate-y-0.5"
+                  ? "cursor-not-allowed bg-neutral-400"
+                  : "btn-primary"
               }`}
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
-          <div className="mt-8 text-xs text-slate-500">
+          <div className="mt-5 text-[10px] sm:text-[11px] text-neutral-500">
             First time? Contact your administrator to create an account.
           </div>
         </div>

@@ -8,7 +8,7 @@ const CreateLease = () => {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Leases"
-        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Create New Lease"
         subtitle="Draft a lease agreement and review the rent calculation summary."
       />
@@ -18,20 +18,20 @@ const CreateLease = () => {
         <DashboardCard title="Tenant & Unit Selection">
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500">Tenant Name</label>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-neutral-500">Tenant Name</label>
               <input type="text" className="form-input mt-1 text-sm" defaultValue="Abebe Kebede" />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500">Unit Number</label>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-neutral-500">Unit Number</label>
               <input type="text" className="form-input mt-1 text-sm" defaultValue="Unit 101-Studio" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500">Start Date</label>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-neutral-500">Start Date</label>
                 <input type="text" className="form-input mt-1 text-sm" defaultValue="Dec 13, 2025" />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500">End Date</label>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-neutral-500">End Date</label>
                 <input type="text" className="form-input mt-1 text-sm" defaultValue="Dec 13, 2026" />
               </div>
             </div>
@@ -46,14 +46,14 @@ const CreateLease = () => {
               <tr className="py-2"><td className="py-2">Floor Adjustment</td><td className="text-right">ETB 500.00</td></tr>
               <tr className="py-2"><td className="py-2">Amenities Fee</td><td className="text-right">ETB 250.00</td></tr>
               <tr className="py-2"><td className="py-2 font-bold">Tax (15%)</td><td className="text-right">ETB 2,362.50</td></tr>
-              <tr className="bg-emerald-50/70">
+              <tr className="bg-success-50/70">
                 <td className="py-3 font-bold">Total Monthly Rent</td>
-                <td className="py-3 text-right font-bold text-emerald-600 text-lg">ETB 18,112.50</td>
+                <td className="py-3 text-right font-bold text-success-600 text-lg">ETB 18,112.50</td>
               </tr>
             </tbody>
           </table>
           <div className="mt-6 flex gap-3">
-            <button className="btn-pill btn-outline btn-outline-slate flex-1 justify-center py-2">Save Draft</button>
+            <button className="btn-pill btn-outline btn-outline-neutral flex-1 justify-center py-2">Save Draft</button>
             <button className="flex-1 btn-primary text-[11px] font-semibold uppercase tracking-wide">Finalize Lease</button>
           </div>
         </DashboardCard>

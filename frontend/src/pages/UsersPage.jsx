@@ -16,16 +16,16 @@ const STATUS_OPTIONS = ["ALL", "ACTIVE", "SUSPENDED", "INVITED"];
 
 const RoleBadge = ({ role }) => {
   const map = {
-    ADMIN: "status-emerald",
-    PM: "status-teal",
-    GM: "status-amber",
-    FS: "status-sky",
-    TENANT: "status-slate",
+    ADMIN: "status-primary",
+    PM: "status-secondary",
+    GM: "status-warning",
+    FS: "status-success",
+    TENANT: "status-neutral",
   };
 
   return (
     <span
-      className={`status-pill ${map[role] || "status-slate"}`}
+      className={`status-pill ${map[role] || "status-neutral"}`}
     >
       {role}
     </span>
@@ -34,14 +34,14 @@ const RoleBadge = ({ role }) => {
 
 const StatusBadge = ({ status }) => {
   const map = {
-    ACTIVE: "status-emerald",
-    SUSPENDED: "status-rose",
-    INVITED: "status-amber",
+    ACTIVE: "status-success",
+    SUSPENDED: "status-danger",
+    INVITED: "status-warning",
   };
 
   return (
     <span
-      className={`status-pill ${map[status] || "status-slate"}`}
+      className={`status-pill ${map[status] || "status-neutral"}`}
     >
       {status}
     </span>
@@ -149,7 +149,7 @@ export default function UsersPage() {
           subtitle="Manage system users, roles, and access status."
         />
         <DashboardCard title="User Directory">
-          <div className="py-8 text-center text-sm text-gray-500">
+          <div className="py-8 text-center text-sm text-neutral-500">
             Loading users...
           </div>
         </DashboardCard>
@@ -161,7 +161,7 @@ export default function UsersPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Users"
-        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Users"
         subtitle="Manage system users, roles, and access status."
         actions={
@@ -225,37 +225,37 @@ export default function UsersPage() {
         </div>
       ) : (
         <div className="table-shell list-shell overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 text-sm">
+          <table className="min-w-full divide-y divide-neutral-200 text-sm">
             <thead className="table-head">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500">
+                <th className="px-4 py-2 text-left text-xs font-semibold text-neutral-500">
                   Name / Contact
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500">
+                <th className="px-4 py-2 text-left text-xs font-semibold text-neutral-500">
                   Role
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500">
+                <th className="px-4 py-2 text-left text-xs font-semibold text-neutral-500">
                   Status
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500">
+                <th className="px-4 py-2 text-left text-xs font-semibold text-neutral-500">
                   Created
                 </th>
-                <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500">
+                <th className="px-4 py-2 text-right text-xs font-semibold text-neutral-500">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white">
+            <tbody className="divide-y divide-neutral-100 bg-white">
               {pagedUsers.map((u) => (
                 <tr key={u._id} className="table-row stagger-item">
                   <td className="px-4 py-3">
-                    <div className="font-medium text-slate-900">
+                    <div className="font-medium text-neutral-900">
                       {u.fullName || "Unnamed"}
                     </div>
-                    <div className="text-xs text-slate-500">
+                    <div className="text-xs text-neutral-500">
                       {u.email}
                       {u.phone && (
-                        <span className="ml-2 text-slate-400">
+                        <span className="ml-2 text-neutral-400">
                           • {u.phone}
                         </span>
                       )}
@@ -267,7 +267,7 @@ export default function UsersPage() {
                   <td className="px-4 py-3">
                     <StatusBadge status={u.status} />
                   </td>
-                  <td className="px-4 py-3 text-slate-500">
+                  <td className="px-4 py-3 text-neutral-500">
                     {u.createdAt
                       ? new Date(u.createdAt).toLocaleDateString()
                       : "—"}
@@ -279,7 +279,7 @@ export default function UsersPage() {
                           {u.status !== "SUSPENDED" && canDeactivate && (
                             <button
                               onClick={() => handleDeactivate(u._id)}
-                              className="btn-pill btn-outline btn-outline-rose"
+                              className="btn-pill btn-outline btn-outline-danger"
                             >
                               Deactivate
                             </button>
@@ -287,7 +287,7 @@ export default function UsersPage() {
                           {u.status === "SUSPENDED" && canReactivate && (
                             <button
                               onClick={() => handleReactivate(u._id)}
-                              className="btn-pill btn-outline btn-outline-emerald"
+                              className="btn-pill btn-outline btn-outline-success"
                             >
                               Reactivate
                             </button>
@@ -296,7 +296,7 @@ export default function UsersPage() {
                       )}
                       <Link
                         to={`/users/${u._id}`}
-                        className="btn-pill btn-outline btn-outline-slate"
+                        className="btn-pill btn-outline btn-outline-neutral"
                       >
                         View
                       </Link>

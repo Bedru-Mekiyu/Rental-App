@@ -174,7 +174,7 @@ export default function PaymentsPage() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Payments"
-          eyebrowClassName="bg-indigo-100 text-indigo-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="Payments"
           subtitle="Record tenant payments and verify them once confirmed."
         />
@@ -192,7 +192,7 @@ export default function PaymentsPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Payments"
-        eyebrowClassName="bg-indigo-100 text-indigo-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Payments"
         subtitle="Record tenant payments and verify them once confirmed."
         actions={
@@ -202,7 +202,7 @@ export default function PaymentsPage() {
                 const el = document.getElementById("payment-create-form");
                 if (el) el.scrollIntoView({ behavior: "smooth" });
               }}
-              className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
+              className="btn-primary text-sm font-semibold"
             >
               Record Payment
             </button>
@@ -212,17 +212,17 @@ export default function PaymentsPage() {
 
       <DashboardCard>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2">
             <input
               type="text"
               placeholder="Search by method or transaction ID"
-              className="w-64 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+              className="w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-2 text-sm outline-none transition focus:border-primary-500 focus:bg-white focus:ring-2 focus:ring-primary-200 sm:w-64"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
 
             <select
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+              className="rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs outline-none transition focus:border-primary-500 focus:bg-white focus:ring-2 focus:ring-primary-200"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
@@ -234,7 +234,7 @@ export default function PaymentsPage() {
             </select>
 
             <select
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200"
+              className="rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs outline-none transition focus:border-primary-500 focus:bg-white focus:ring-2 focus:ring-primary-200"
               value={method}
               onChange={(e) => setMethod(e.target.value)}
             >
@@ -251,14 +251,14 @@ export default function PaymentsPage() {
           <form
             id="payment-create-form"
             onSubmit={handleCreate}
-            className="mb-6 rounded-2xl border border-slate-200 bg-white/90 p-4 text-xs"
+            className="mb-6 rounded-2xl border border-neutral-200 bg-white/90 p-4 text-xs"
           >
-            <div className="mb-3 font-semibold text-slate-700">
+            <div className="mb-3 font-semibold text-neutral-700">
               New Payment
             </div>
-            <div className="grid gap-3 md:grid-cols-5">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
               <div>
-                <label className="mb-1 block text-[11px] font-medium text-slate-600">
+                <label className="mb-1 block text-[11px] font-medium text-neutral-600">
                   Lease ID
                 </label>
                 <input
@@ -267,13 +267,13 @@ export default function PaymentsPage() {
                   value={form.leaseId}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs outline-none focus:border-primary-500 focus:bg-white focus:ring-1 focus:ring-primary-500"
                   placeholder="Lease ID"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-[11px] font-medium text-slate-600">
+                <label className="mb-1 block text-[11px] font-medium text-neutral-600">
                   Amount (ETB)
                 </label>
                 <input
@@ -283,12 +283,12 @@ export default function PaymentsPage() {
                   onChange={handleChange}
                   required
                   min={0}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs outline-none focus:border-primary-500 focus:bg-white focus:ring-1 focus:ring-primary-500"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-[11px] font-medium text-slate-600">
+                <label className="mb-1 block text-[11px] font-medium text-neutral-600">
                   Transaction date
                 </label>
                 <input
@@ -297,19 +297,19 @@ export default function PaymentsPage() {
                   value={form.transactionDate}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs outline-none focus:border-primary-500 focus:bg-white focus:ring-1 focus:ring-primary-500"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-[11px] font-medium text-slate-600">
+                <label className="mb-1 block text-[11px] font-medium text-neutral-600">
                   Method
                 </label>
                 <select
                   name="paymentMethod"
                   value={form.paymentMethod}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs outline-none focus:border-primary-500 focus:bg-white focus:ring-1 focus:ring-primary-500"
                 >
                   {METHOD_FILTERS.filter((m) => m !== "All").map((m) => (
                     <option key={m} value={m}>
@@ -320,7 +320,7 @@ export default function PaymentsPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-[11px] font-medium text-slate-600">
+                <label className="mb-1 block text-[11px] font-medium text-neutral-600">
                   Transaction / Receipt ID
                 </label>
                 <input
@@ -328,7 +328,7 @@ export default function PaymentsPage() {
                   name="externalTransactionId"
                   value={form.externalTransactionId}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs outline-none focus:border-primary-500 focus:bg-white focus:ring-1 focus:ring-primary-500"
                 />
               </div>
             </div>
@@ -337,10 +337,8 @@ export default function PaymentsPage() {
               <button
                 type="submit"
                 disabled={creating}
-                className={`rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-white ${
-                  creating
-                    ? "bg-emerald-400"
-                    : "bg-emerald-600 hover:bg-emerald-700"
+                className={`btn-primary text-[11px] uppercase tracking-wide ${
+                  creating ? "opacity-70" : ""
                 }`}
               >
                 {creating ? "Saving..." : "Record payment"}
@@ -350,46 +348,46 @@ export default function PaymentsPage() {
         )}
 
         {filteredPayments.length === 0 ? (
-          <div className="space-y-3 py-6 text-center text-xs text-slate-500">
+          <div className="space-y-3 py-6 text-center text-xs text-neutral-500">
             <SkeletonTable rows={4} columns={7} />
-            <div className="mt-2 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-6 py-6 text-center">
-              <div className="text-sm font-medium text-slate-700">No payments recorded</div>
-              <div className="mt-1 text-xs text-slate-500">
+            <div className="mt-2 rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-6 py-6 text-center">
+              <div className="text-sm font-medium text-neutral-700">No payments recorded</div>
+              <div className="mt-1 text-xs text-neutral-500">
                 Records will appear once payments are submitted.
               </div>
             </div>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-slate-200 text-xs">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
+          <div className="table-shell list-shell text-xs">
+            <table className="min-w-full divide-y divide-neutral-200">
+              <thead className="bg-neutral-50">
                 <tr>
-                  <th className="px-3 py-2 text-left font-semibold text-slate-600">
+                  <th className="px-3 py-2 text-left font-semibold text-neutral-600">
                     Date
                   </th>
-                  <th className="px-3 py-2 text-left font-semibold text-slate-600">
+                  <th className="px-3 py-2 text-left font-semibold text-neutral-600">
                     Amount
                   </th>
-                  <th className="px-3 py-2 text-left font-semibold text-slate-600">
+                  <th className="px-3 py-2 text-left font-semibold text-neutral-600">
                     Method
                   </th>
-                  <th className="px-3 py-2 text-left font-semibold text-slate-600">
+                  <th className="px-3 py-2 text-left font-semibold text-neutral-600">
                     Status
                   </th>
-                  <th className="px-3 py-2 text-left font-semibold text-slate-600">
+                  <th className="px-3 py-2 text-left font-semibold text-neutral-600">
                     Transaction ID
                   </th>
-                  <th className="px-3 py-2 text-left font-semibold text-slate-600">
+                  <th className="px-3 py-2 text-left font-semibold text-neutral-600">
                     Lease
                   </th>
-                  <th className="px-3 py-2 text-left font-semibold text-slate-600">
+                  <th className="px-3 py-2 text-left font-semibold text-neutral-600">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+              <tbody className="divide-y divide-neutral-100 bg-white">
                 {pagedPayments.map((p) => (
-                  <tr key={p._id} className="hover:bg-slate-50">
+                  <tr key={p._id} className="hover:bg-neutral-50">
                     <td className="px-3 py-2">
                       {formatDate(p.transactionDate)}
                     </td>
@@ -403,10 +401,10 @@ export default function PaymentsPage() {
                       <span
                         className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${
                           p.status === "VERIFIED"
-                            ? "bg-emerald-100 text-emerald-700"
+                            ? "bg-success-100 text-success-700"
                             : p.status === "REJECTED"
-                            ? "bg-rose-100 text-rose-700"
-                            : "bg-amber-100 text-amber-700"
+                            ? "bg-danger-100 text-danger-700"
+                            : "bg-warning-100 text-warning-700"
                         }`}
                       >
                         {p.status}
@@ -419,7 +417,7 @@ export default function PaymentsPage() {
                       {p.leaseId ? (
                         <Link
                           to={`/leases/${p.leaseId}`}
-                          className="text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                          className="text-xs font-semibold text-primary-600 hover:text-primary-700"
                         >
                           View lease
                         </Link>
@@ -431,7 +429,7 @@ export default function PaymentsPage() {
                       <div className="flex flex-wrap items-center gap-2">
                         <Link
                           to={`/payments/${p._id}`}
-                          className="text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                          className="text-xs font-semibold text-primary-600 hover:text-primary-700"
                         >
                           View
                         </Link>
@@ -441,7 +439,7 @@ export default function PaymentsPage() {
                               handleUpdateStatus(p._id, "VERIFIED")
                             }
                             disabled={updatingId === p._id}
-                            className="rounded-md bg-emerald-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-60"
+                            className="rounded-md bg-success-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-60"
                           >
                             {updatingId === p._id ? "Saving..." : "Verify"}
                           </button>
@@ -452,7 +450,7 @@ export default function PaymentsPage() {
                               handleUpdateStatus(p._id, "REJECTED")
                             }
                             disabled={updatingId === p._id}
-                            className="rounded-md bg-rose-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-60"
+                            className="rounded-md bg-danger-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-60"
                           >
                             {updatingId === p._id ? "Saving..." : "Reject"}
                           </button>

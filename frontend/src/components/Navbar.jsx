@@ -8,7 +8,7 @@ export default function Navbar() {
     <header className="nav-shell sticky top-0 z-30">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-400 shadow-lg">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-600">
             <span className="text-base font-bold text-white">RM</span>
           </div>
           <div className="flex flex-col">
@@ -23,7 +23,7 @@ export default function Navbar() {
 
         {user && (
           <div className="flex items-center gap-4 text-sm">
-            <span className="pill bg-emerald-100 text-emerald-700">
+            <span className="pill bg-primary-100 text-primary-700">
               {user.role}
             </span>
             <div className="hidden text-right sm:block">

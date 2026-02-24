@@ -18,16 +18,16 @@ const Avatar = ({ name = "Tenant" }) => {
     .slice(0, 2);
 
   return (
-    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 text-xs font-semibold text-white shadow-sm ring-2 ring-white">
+    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-600 text-xs font-semibold text-white ring-2 ring-white">
       {initials}
     </div>
   );
 };
 
 const statusColors = {
-  available: "status-pill status-emerald",
-  occupied: "status-pill status-sky",
-  "under maintenance": "status-pill status-amber",
+  available: "status-pill status-success",
+  occupied: "status-pill status-primary",
+  "under maintenance": "status-pill status-warning",
 };
 
 export default function PropertyManagerDashboard() {
@@ -142,7 +142,7 @@ export default function PropertyManagerDashboard() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Property Ops"
-          eyebrowClassName="bg-emerald-100 text-emerald-700"
+          eyebrowClassName="bg-primary-100 text-primary-700"
           title="Property Manager Dashboard"
           subtitle="Overview of your property management operations."
         />
@@ -198,7 +198,7 @@ export default function PropertyManagerDashboard() {
     <div className="space-y-8">
       <PageHeader
         eyebrow="Property Ops"
-        eyebrowClassName="bg-emerald-100 text-emerald-700"
+        eyebrowClassName="bg-primary-100 text-primary-700"
         title="Property Manager Dashboard"
         subtitle="Overview of your property management operations."
         actions={
@@ -215,7 +215,7 @@ export default function PropertyManagerDashboard() {
             >
               View Units
             </Link>
-            <span className="pill bg-slate-900 text-white">
+            <span className="pill bg-primary-900 text-white">
               {user?.fullName || user?.email}
             </span>
           </div>
@@ -233,10 +233,10 @@ export default function PropertyManagerDashboard() {
           </div>
         </div>
         <div className="insight-actions">
-          <Link to="/maintenance" className="btn-pill btn-outline btn-outline-teal">
+          <Link to="/maintenance" className="btn-pill btn-outline btn-outline-primary">
             Review Maintenance
           </Link>
-          <Link to="/leases/new" className="btn-pill btn-outline btn-outline-emerald">
+          <Link to="/leases/new" className="btn-pill btn-outline btn-outline-success">
             Create Lease
           </Link>
         </div>
@@ -290,7 +290,7 @@ export default function PropertyManagerDashboard() {
               {user?.role === "ADMIN" || user?.role === "PM" ? (
                 <Link
                   to="/users/new"
-                  className="inline-flex items-center space-x-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-700"
+                  className="inline-flex items-center space-x-2 rounded-full bg-success-600 px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5 hover:bg-success-700"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Create</span>
@@ -303,7 +303,7 @@ export default function PropertyManagerDashboard() {
             <div className="mt-4 space-y-2">
               <SkeletonRow className="h-4 w-1/2" />
               <SkeletonRow className="h-4 w-2/3" />
-              <p className="text-sm text-gray-500">No units found.</p>
+              <p className="text-sm text-neutral-500">No units found.</p>
             </div>
           ) : (
             <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -331,10 +331,10 @@ export default function PropertyManagerDashboard() {
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="text-sm font-semibold text-slate-900">
+                        <h3 className="text-sm font-semibold text-neutral-900">
                           Unit {unit.unitNumber ?? "N/A"}
                         </h3>
-                        <p className="mt-1 text-[11px] text-slate-500">
+                        <p className="mt-1 text-[11px] text-neutral-500">
                           Floor {unit.floor ?? "N/A"} •{" "}
                           {unit.areaSqm
                             ? `${unit.areaSqm} sqm`
@@ -346,14 +346,14 @@ export default function PropertyManagerDashboard() {
                       </span>
                     </div>
                     <div className="mt-2 flex items-center justify-between">
-                      <p className="text-xs font-medium text-slate-900">
+                      <p className="text-xs font-medium text-neutral-900">
                         {unit.basePriceEtb
                           ? `${unit.basePriceEtb} ETB / month`
                           : "Price N/A"}
                       </p>
                       <Link
                         to={`/units/${unit._id}`}
-                        className="link-action link-action-emerald"
+                        className="link-action link-action-primary"
                       >
                         View details
                       </Link>
@@ -377,7 +377,7 @@ export default function PropertyManagerDashboard() {
             </div>
             <Link
               to="/leases"
-              className="inline-flex items-center rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-black"
+              className="inline-flex items-center rounded-full bg-primary-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary-700"
             >
               Manage Leases
             </Link>
@@ -387,35 +387,35 @@ export default function PropertyManagerDashboard() {
             <div className="mt-4 space-y-2">
               <SkeletonRow className="h-4 w-2/3" />
               <SkeletonRow className="h-4 w-1/2" />
-              <p className="text-sm text-gray-500">No active tenants yet.</p>
+              <p className="text-sm text-neutral-500">No active tenants yet.</p>
             </div>
           ) : (
             <ul className="mt-4 space-y-3 text-xs">
               {leases.slice(0, 5).map((lease) => (
                 <li
                   key={lease._id}
-                  className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/70 p-3"
+                  className="flex items-center justify-between rounded-2xl border border-neutral-100 bg-neutral-50/70 p-3"
                 >
                   <div className="flex items-center gap-2">
                     <Avatar
                       name={lease.tenantId?.fullName || "Tenant"}
                     />
                     <div>
-                      <p className="font-medium text-slate-900">
+                      <p className="font-medium text-neutral-900">
                         {lease.tenantId?.fullName || "Tenant"}
                       </p>
-                      <p className="text-[11px] text-slate-500">
+                      <p className="text-[11px] text-neutral-500">
                         Unit {lease.unitId?.unitNumber || "N/A"}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs font-semibold text-slate-900">
+                    <p className="text-xs font-semibold text-neutral-900">
                       {lease.monthlyRentEtb
                         ? `${lease.monthlyRentEtb} ETB / month`
                         : "N/A"}
                     </p>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px] text-neutral-500">
                       {lease.startDate
                         ? new Date(
                             lease.startDate
@@ -450,34 +450,34 @@ export default function PropertyManagerDashboard() {
           <div className="mt-4 space-y-2">
             <SkeletonRow className="h-4 w-2/3" />
             <SkeletonRow className="h-4 w-1/2" />
-            <p className="text-sm text-gray-500">No maintenance requests yet.</p>
+            <p className="text-sm text-neutral-500">No maintenance requests yet.</p>
           </div>
         ) : (
           <div className="mt-4 table-shell">
-            <table className="min-w-full divide-y divide-slate-200 text-xs">
+            <table className="min-w-full divide-y divide-neutral-200 text-xs">
               <thead className="table-head">
                 <tr>
-                  <th className="px-3 py-2 text-left font-medium text-gray-700">
+                  <th className="px-3 py-2 text-left font-medium text-neutral-700">
                     Tenant
                   </th>
-                  <th className="px-3 py-2 text-left font-medium text-gray-700">
+                  <th className="px-3 py-2 text-left font-medium text-neutral-700">
                     Unit
                   </th>
-                  <th className="px-3 py-2 text-left font-medium text-gray-700">
+                  <th className="px-3 py-2 text-left font-medium text-neutral-700">
                     Description
                   </th>
-                  <th className="px-3 py-2 text-left font-medium text-gray-700">
+                  <th className="px-3 py-2 text-left font-medium text-neutral-700">
                     Urgency
                   </th>
-                  <th className="px-3 py-2 text-left font-medium text-gray-700">
+                  <th className="px-3 py-2 text-left font-medium text-neutral-700">
                     Status
                   </th>
-                  <th className="px-3 py-2 text-right font-medium text-gray-700">
+                  <th className="px-3 py-2 text-right font-medium text-neutral-700">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+              <tbody className="divide-y divide-neutral-100 bg-white">
                 {maintenanceRequests.map((r) => (
                   <tr key={r._id} className="table-row">
                     <td className="px-3 py-2">
@@ -486,30 +486,30 @@ export default function PropertyManagerDashboard() {
                           name={r.tenantId?.fullName || "Tenant"}
                         />
                         <div>
-                          <p className="font-medium text-gray-900">
+                          <p className="font-medium text-neutral-900">
                             {r.tenantId?.fullName || "Tenant"}
                           </p>
-                          <p className="text-[11px] text-gray-500">
+                          <p className="text-[11px] text-neutral-500">
                             {r.tenantId?.email || ""}
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-2 text-gray-700">
+                    <td className="px-3 py-2 text-neutral-700">
                       Unit {r.unitId?.unitNumber || "N/A"}
                     </td>
-                    <td className="px-3 py-2 text-gray-700 max-w-xs">
+                    <td className="px-3 py-2 text-neutral-700 max-w-xs">
                       <p className="line-clamp-2">
                         {r.description}
                       </p>
                     </td>
                     <td className="px-3 py-2">
-                      <span className="status-pill status-amber">
+                      <span className="status-pill status-warning">
                         {r.urgency}
                       </span>
                     </td>
                     <td className="px-3 py-2">
-                      <span className="status-pill status-teal">
+                      <span className="status-pill status-primary">
                         {r.status.replace("_", " ")}
                       </span>
                     </td>
@@ -558,7 +558,7 @@ function StatCard({ label, value, icon: Icon }) {
           </p>
         </div>
         {Icon && (
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900/10 text-slate-800">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-900/10 text-primary-800">
             <Icon className="h-6 w-6" />
           </div>
         )}
