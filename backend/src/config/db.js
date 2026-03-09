@@ -3,9 +3,7 @@ import mongoose from 'mongoose';
 
 export async function connectDB() {
   const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGODB_URL;
-  const isProduction = process.env.NODE_ENV === 'production';
-  const fallbackLocalUri = 'mongodb://127.0.0.1:27017/Rental';
-  const mongoUri = MONGODB_URI || (isProduction ? null : fallbackLocalUri);
+  const mongoUri = MONGODB_URI;
 
   if (!mongoUri) {
     console.error('MongoDB URI missing. Set MONGODB_URI (or MONGODB_URL).');
