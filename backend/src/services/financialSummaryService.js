@@ -3,41 +3,258 @@
 import Payment from "../models/Payment.js";
 import Lease from "../models/Lease.js";
 
+const VERIFIED_STATUS = "VERIFIED";
+const ONE_DAY_MS = 1000 * 60 * 60 * 24;
+
+function asDate(value) {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function startOfDay(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function endOfDay(date) {
+  return new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    23,
+    59,
+    59,
+    999
+  );
+}
+
+function minDate(dateA, dateB) {
+  return dateA <= dateB ? dateA : dateB;
+}
+
+function daysInMonth(year, monthIndex) {
+  return new Date(year, monthIndex + 1, 0).getDate();
+}
+
+function addMonthsWithDayClamp(baseDate, monthOffset) {
+  const targetMonthIndex = baseDate.getMonth() + monthOffset;
+  const targetYear =
+    baseDate.getFullYear() + Math.floor(targetMonthIndex / 12);
+  const normalizedMonth = ((targetMonthIndex % 12) + 12) % 12;
+  const day = Math.min(
+    baseDate.getDate(),
+    daysInMonth(targetYear, normalizedMonth)
+  );
+
+  return new Date(targetYear, normalizedMonth, day, 23, 59, 59, 999);
+}
+
+function buildDueDates(leaseStartDate, leaseEndDate, asOfDate) {
+  const startDate = asDate(leaseStartDate);
+  const endDate = asDate(leaseEndDate);
+  const asOf = asDate(asOfDate) || new Date();
+
+  if (!startDate || !endDate) return [];
+
+  const effectiveEnd = minDate(endOfDay(endDate), endOfDay(asOf));
+  if (effectiveEnd < startOfDay(startDate)) return [];
+
+  const dueDates = [];
+  for (let monthOffset = 0; monthOffset < 600; monthOffset += 1) {
+    const dueDate = addMonthsWithDayClamp(startDate, monthOffset);
+    if (dueDate > effectiveEnd) break;
+    dueDates.push(dueDate);
+  }
+
+  return dueDates;
+}
+
+function getNextDueDate(leaseStartDate, leaseEndDate, asOfDate) {
+  const startDate = asDate(leaseStartDate);
+  const endDate = asDate(leaseEndDate);
+  const asOf = asDate(asOfDate) || new Date();
+
+  if (!startDate || !endDate) return null;
+
+  const maxDate = endOfDay(endDate);
+  for (let monthOffset = 0; monthOffset < 600; monthOffset += 1) {
+    const dueDate = addMonthsWithDayClamp(startDate, monthOffset);
+    if (dueDate > maxDate) break;
+    if (dueDate > asOf) return dueDate;
+  }
+
+  return null;
+}
+
+function roundToSingleDecimal(value) {
+  return Math.round(value * 10) / 10;
+}
+
+function analyzeLeaseFinancials(lease, leasePayments = [], asOfDate = new Date()) {
+  const asOf = asDate(asOfDate) || new Date();
+  const monthlyRentEtb = Number(lease?.monthlyRentEtb || 0);
+
+  const dueDates = buildDueDates(lease?.startDate, lease?.endDate, asOf);
+
+  const verifiedPaymentsSorted = leasePayments
+    .map((payment) => ({
+      amountEtb: Number(payment?.amountEtb || 0),
+      transactionDate: asDate(payment?.transactionDate),
+    }))
+    .filter((payment) => payment.transactionDate && payment.transactionDate <= asOf)
+    .sort((a, b) => a.transactionDate - b.transactionDate);
+
+  let cumulativePaidByDueDate = 0;
+  let paymentCursor = 0;
+  let onTimeInstallmentsCount = 0;
+  let firstMissedDueDate = null;
+
+  dueDates.forEach((dueDate, index) => {
+    while (
+      paymentCursor < verifiedPaymentsSorted.length &&
+      verifiedPaymentsSorted[paymentCursor].transactionDate <= dueDate
+    ) {
+      cumulativePaidByDueDate +=
+        verifiedPaymentsSorted[paymentCursor].amountEtb;
+      paymentCursor += 1;
+    }
+
+    const expectedByThisDueDate = monthlyRentEtb * (index + 1);
+    if (cumulativePaidByDueDate + 0.01 >= expectedByThisDueDate) {
+      onTimeInstallmentsCount += 1;
+    } else if (!firstMissedDueDate) {
+      firstMissedDueDate = dueDate;
+    }
+  });
+
+  const totalPaidEtb = verifiedPaymentsSorted.reduce(
+    (sum, payment) => sum + payment.amountEtb,
+    0
+  );
+
+  const totalBilledEtb = monthlyRentEtb * dueDates.length;
+  const outstandingBalanceEtb = Math.max(totalBilledEtb - totalPaidEtb, 0);
+
+  let daysOverdue = 0;
+  if (outstandingBalanceEtb > 0 && firstMissedDueDate) {
+    const diffMs = startOfDay(asOf).getTime() - startOfDay(firstMissedDueDate).getTime();
+    if (diffMs > 0) {
+      daysOverdue = Math.floor(diffMs / ONE_DAY_MS);
+    }
+  }
+
+  const nextDueDate = getNextDueDate(lease?.startDate, lease?.endDate, asOf);
+
+  return {
+    totalBilledEtb,
+    totalPaidEtb,
+    outstandingBalanceEtb,
+    nextDueDate: nextDueDate ? nextDueDate.toISOString() : null,
+    daysOverdue,
+    dueInstallmentsCount: dueDates.length,
+    onTimeInstallmentsCount,
+  };
+}
+
 /**
  * Compute portfolio financial summary
  */
 export async function getPortfolioFinancialSummary() {
-  const leases = await Lease.find({ status: "ACTIVE" });
+  const now = new Date();
+  const yearStart = new Date(now.getFullYear(), 0, 1);
+  const firstTrendMonth = new Date(now.getFullYear(), now.getMonth() - 5, 1);
 
-  const allPayments = await Payment.find({
-    status: "VERIFIED",
+  const [trackedLeases, verifiedPayments, pendingPaymentsCount] = await Promise.all([
+    Lease.find({ status: { $in: ["ACTIVE", "ENDED"] } }).select(
+      "_id startDate endDate monthlyRentEtb status"
+    ),
+    Payment.find({ status: VERIFIED_STATUS }).select(
+      "leaseId amountEtb transactionDate"
+    ),
+    Payment.countDocuments({ status: "PENDING" }),
+  ]);
+
+  const paymentsByLeaseId = new Map();
+  verifiedPayments.forEach((payment) => {
+    const leaseId = String(payment.leaseId);
+    const existing = paymentsByLeaseId.get(leaseId) || [];
+    existing.push(payment);
+    paymentsByLeaseId.set(leaseId, existing);
   });
 
-  const totalRevenueYTD = allPayments.reduce(
-    (sum, p) => sum + p.amountEtb,
-    0
-  );
+  let totalBilledEtb = 0;
+  let totalPaidEtb = 0;
+  let totalDueInstallments = 0;
+  let totalOnTimeInstallments = 0;
 
-  // For simplicity, outstanding balance = sum of monthly rents for active leases minus paid
-  const totalExpected = leases.reduce(
-    (sum, l) => sum + (l.monthlyRentEtb || 0),
-    0
-  );
+  trackedLeases.forEach((lease) => {
+    const leaseAnalysis = analyzeLeaseFinancials(
+      lease,
+      paymentsByLeaseId.get(String(lease._id)) || [],
+      now
+    );
 
-  const totalPaid = allPayments.reduce(
-    (sum, p) => sum + p.amountEtb,
-    0
-  );
+    totalBilledEtb += leaseAnalysis.totalBilledEtb;
+    totalPaidEtb += leaseAnalysis.totalPaidEtb;
+    totalDueInstallments += leaseAnalysis.dueInstallmentsCount;
+    totalOnTimeInstallments += leaseAnalysis.onTimeInstallmentsCount;
+  });
 
-  const outstandingBalance = totalExpected - totalPaid;
+  const totalRevenueYTD = verifiedPayments
+    .filter((payment) => {
+      const date = asDate(payment.transactionDate);
+      return date && date >= yearStart && date <= now;
+    })
+    .reduce((sum, payment) => sum + Number(payment.amountEtb || 0), 0);
 
-  // On-time payment rate: assume all verified payments are on-time for now
-  const onTimeRate = allPayments.length > 0 ? 92 : 0; // placeholder
+  const trendBuckets = [];
+  const trendMap = new Map();
+  for (let offset = 0; offset < 6; offset += 1) {
+    const date = new Date(now.getFullYear(), now.getMonth() - (5 - offset), 1);
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    const label = date.toLocaleString("en-US", { month: "short" });
+    trendBuckets.push({ key, month: label, revenue: 0 });
+    trendMap.set(key, trendBuckets[trendBuckets.length - 1]);
+  }
+
+  verifiedPayments.forEach((payment) => {
+    const date = asDate(payment.transactionDate);
+    if (!date || date < firstTrendMonth || date > now) return;
+
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    const bucket = trendMap.get(key);
+    if (bucket) {
+      bucket.revenue += Number(payment.amountEtb || 0);
+    }
+  });
+
+  const currentMonthRevenue = trendBuckets[trendBuckets.length - 1]?.revenue || 0;
+  const activeLeasesCount = trackedLeases.filter(
+    (lease) => lease.status === "ACTIVE"
+  ).length;
+  const avgRevenuePerOccupiedUnit =
+    activeLeasesCount > 0
+      ? Math.round(currentMonthRevenue / activeLeasesCount)
+      : 0;
 
   return {
     totalRevenueYTD,
-    outstandingBalance,
-    onTimePaymentRate: onTimeRate,
+    outstandingBalance: Math.max(totalBilledEtb - totalPaidEtb, 0),
+    onTimePaymentRate:
+      totalDueInstallments > 0
+        ? roundToSingleDecimal(
+            (totalOnTimeInstallments / totalDueInstallments) * 100
+          )
+        : 0,
+    monthlyRevenueTrend: trendBuckets.map(({ month, revenue }) => ({
+      month,
+      revenue,
+    })),
+    currentMonthRevenue,
+    monthToDateRevenue: currentMonthRevenue,
+    avgRevenuePerOccupiedUnit,
+    pendingPayments: pendingPaymentsCount,
+    verifiedPaymentsCount: verifiedPayments.length,
   };
 }
 
@@ -51,46 +268,57 @@ export async function getTenantFinancialSummary(tenantId) {
     throw new Error("No active leases found for this tenant");
   }
 
-  const leaseIds = leases.map(l => l._id);
+  const now = new Date();
+  const leaseIds = leases.map((lease) => lease._id);
 
   const verifiedPayments = await Payment.find({
     leaseId: { $in: leaseIds },
-    status: "VERIFIED",
+    status: VERIFIED_STATUS,
+  }).select("leaseId amountEtb transactionDate");
+
+  const paymentsByLeaseId = new Map();
+  verifiedPayments.forEach((payment) => {
+    const leaseId = String(payment.leaseId);
+    const existing = paymentsByLeaseId.get(leaseId) || [];
+    existing.push(payment);
+    paymentsByLeaseId.set(leaseId, existing);
   });
 
-  const totalPaidEtb = verifiedPayments.reduce(
-    (sum, p) => sum + p.amountEtb,
-    0
+  const analyses = leases.map((lease) =>
+    analyzeLeaseFinancials(
+      lease,
+      paymentsByLeaseId.get(String(lease._id)) || [],
+      now
+    )
   );
 
-  // Total billed = sum of monthly rents for all leases
-  const totalBilledEtb = leases.reduce(
-    (sum, l) => sum + (l.monthlyRentEtb || 0),
+  const totalBilledEtb = analyses.reduce(
+    (sum, analysis) => sum + analysis.totalBilledEtb,
     0
   );
+  const totalPaidEtb = analyses.reduce(
+    (sum, analysis) => sum + analysis.totalPaidEtb,
+    0
+  );
+  const outstandingBalanceEtb = Math.max(totalBilledEtb - totalPaidEtb, 0);
 
-  const outstandingBalanceEtb = totalBilledEtb - totalPaidEtb;
-
-  // Next due date: earliest end date among leases
-  const nextDueDate = leases
-    .map(l => l.endDate)
-    .filter(d => d)
+  const nextDueDateCandidate = analyses
+    .map((analysis) => asDate(analysis.nextDueDate))
+    .filter(Boolean)
     .sort((a, b) => a - b)[0];
 
-  const now = new Date();
-  let daysOverdue = 0;
-
-  if (outstandingBalanceEtb > 0 && nextDueDate && nextDueDate < now) {
-    daysOverdue = Math.floor(
-      (now.getTime() - nextDueDate.getTime()) / (1000 * 60 * 60 * 24)
-    );
-  }
+  const daysOverdue = analyses.reduce(
+    (maxOverdue, analysis) => Math.max(maxOverdue, analysis.daysOverdue || 0),
+    0
+  );
 
   return {
     totalBilledEtb,
     totalPaidEtb,
     outstandingBalanceEtb,
-    nextDueDate: nextDueDate ? nextDueDate.toISOString() : null,
+    nextDueDate: nextDueDateCandidate
+      ? nextDueDateCandidate.toISOString()
+      : null,
     daysOverdue,
   };
 }
@@ -104,40 +332,23 @@ export async function getTenantFinancialSummary(tenantId) {
  * - daysOverdue
  */
 export async function getLeaseFinancialSummary(leaseId) {
-  const lease = await Lease.findById(leaseId).populate('tenantId', 'fullName');
+  const lease = await Lease.findById(leaseId).populate("tenantId", "fullName");
   if (!lease) {
     throw new Error("Lease not found");
   }
 
   const verifiedPayments = await Payment.find({
     leaseId,
-    status: "VERIFIED",
-  });
+    status: VERIFIED_STATUS,
+  }).select("amountEtb transactionDate leaseId");
 
-  const totalPaidEtb = verifiedPayments.reduce(
-    (sum, p) => sum + p.amountEtb,
-    0
-  );
-
-  // For now, assume totalBilledEtb = monthlyRentEtb (one period)
-  const totalBilledEtb = lease.monthlyRentEtb || 0;
-  const outstandingBalanceEtb = totalBilledEtb - totalPaidEtb;
-
-  const now = new Date();
-  const nextDueDate = lease.endDate; // placeholder; later use proper due dates
-  let daysOverdue = 0;
-
-  if (outstandingBalanceEtb > 0 && nextDueDate && nextDueDate < now) {
-    daysOverdue = Math.floor(
-      (now.getTime() - nextDueDate.getTime()) / (1000 * 60 * 60 * 24)
-    );
-  }
+  const analysis = analyzeLeaseFinancials(lease, verifiedPayments, new Date());
 
   return {
-    totalBilledEtb,
-    totalPaidEtb,
-    outstandingBalanceEtb,
-    nextDueDate: nextDueDate ? nextDueDate.toISOString() : null,
-    daysOverdue,
+    totalBilledEtb: analysis.totalBilledEtb,
+    totalPaidEtb: analysis.totalPaidEtb,
+    outstandingBalanceEtb: analysis.outstandingBalanceEtb,
+    nextDueDate: analysis.nextDueDate,
+    daysOverdue: analysis.daysOverdue,
   };
 }

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { DollarSign, AlertTriangle, CheckCircle, Calendar } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import SkeletonRow from "../components/SkeletonRow";
@@ -72,6 +72,20 @@ export default function FinancePage() {
       currency: "ETB",
       maximumFractionDigits: 0,
     }).format(v || 0);
+
+  const formatCompactCurrency = (v) =>
+    new Intl.NumberFormat("en-ET", {
+      style: "currency",
+      currency: "ETB",
+      notation: "compact",
+      maximumFractionDigits: 1,
+    }).format(v || 0);
+
+  const leaseChartData = [
+    { name: "Billed", amount: summary?.totalBilledEtb || 0, fill: "var(--chart-primary)" },
+    { name: "Paid", amount: summary?.totalPaidEtb || 0, fill: "var(--chart-secondary)" },
+    { name: "Outstanding", amount: summary?.outstandingBalanceEtb || 0, fill: "var(--chart-axis)" },
+  ];
 
   return (
     <div className="space-y-6">
@@ -187,17 +201,38 @@ export default function FinancePage() {
         {!loadingSummary && summary && selectedLeaseId !== "ALL" && (
           <>
             <div className="surface-panel analytics-panel mb-4 p-4 sm:p-5">
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={[
-                  { name: 'Billed', amount: summary.totalBilledEtb },
-                  { name: 'Paid', amount: summary.totalPaidEtb },
-                  { name: 'Outstanding', amount: summary.outstandingBalanceEtb },
-                ]}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                  <XAxis dataKey="name" stroke="var(--chart-axis)" />
-                  <YAxis tickFormatter={(value) => formatCurrency(value)} stroke="var(--chart-axis)" />
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-xs font-semibold uppercase tracking-wide text-neutral-600">
+                  Billing vs Payments
+                </p>
+                <span className="text-[11px] text-neutral-500">Amount (ETB)</span>
+              </div>
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart
+                  data={leaseChartData}
+                  margin={{ top: 8, right: 12, left: 0, bottom: 4 }}
+                  barCategoryGap="28%"
+                >
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                  <XAxis
+                    dataKey="name"
+                    stroke="var(--chart-axis)"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis
+                    width={74}
+                    tickFormatter={(value) => formatCompactCurrency(value)}
+                    stroke="var(--chart-axis)"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12 }}
+                  />
                   <Tooltip
                     formatter={(value) => formatCurrency(value)}
+                    cursor={{ fill: "var(--chart-grid)", fillOpacity: 0.28 }}
+                    labelStyle={{ color: "var(--chart-axis)", fontWeight: 600 }}
                     contentStyle={{
                       backgroundColor: 'var(--chart-tooltip-bg)',
                       border: 'none',
@@ -205,7 +240,16 @@ export default function FinancePage() {
                       boxShadow: 'var(--chart-tooltip-shadow)'
                     }}
                   />
-                  <Bar dataKey="amount" fill="var(--chart-secondary)" activeBar={{ className: 'chart-active-dot' }} />
+                  <Bar
+                    dataKey="amount"
+                    radius={[8, 8, 0, 0]}
+                    maxBarSize={70}
+                    activeBar={{ className: 'chart-active-dot' }}
+                  >
+                    {leaseChartData.map((entry) => (
+                      <Cell key={entry.name} fill={entry.fill} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>

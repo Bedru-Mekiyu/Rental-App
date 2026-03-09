@@ -23,9 +23,11 @@ export default function PaymentsPage() {
   const [status, setStatus] = useState("All");
   const [method, setMethod] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [loadingLeases, setLoadingLeases] = useState(false);
   const [creating, setCreating] = useState(false);
   const [updatingId, setUpdatingId] = useState(null);
   const [page, setPage] = useState(1);
+  const [leaseOptions, setLeaseOptions] = useState([]);
 
   const [form, setForm] = useState({
     leaseId: "",
@@ -50,7 +52,7 @@ export default function PaymentsPage() {
           return;
         }
 
-        if (user.role === "PM" || user.role === "ADMIN") {
+        if (user.role === "PM" || user.role === "ADMIN" || user.role === "FS") {
           const res = await API.get("/payments");
           setPayments(res.data?.data || []);
           return;
@@ -68,6 +70,41 @@ export default function PaymentsPage() {
 
     fetchData();
   }, [user]);
+
+  useEffect(() => {
+    const fetchLeases = async () => {
+      if (!user || !canCreate) {
+        setLeaseOptions([]);
+        return;
+      }
+
+      try {
+        setLoadingLeases(true);
+        const endpoint =
+          user.role === "TENANT"
+            ? `/leases/by-tenant/${user.id}`
+            : "/leases";
+        const res = await API.get(endpoint);
+        setLeaseOptions(res.data?.data || []);
+      } catch (err) {
+        toast.error(
+          err.response?.data?.message || "Failed to load leases"
+        );
+        setLeaseOptions([]);
+      } finally {
+        setLoadingLeases(false);
+      }
+    };
+
+    fetchLeases();
+  }, [user, canCreate]);
+
+  const getLeaseLabel = (lease) => {
+    const unit = lease.unitId?.unitNumber || "Unit";
+    const tenant = lease.tenantId?.fullName || "Tenant";
+    const statusLabel = lease.status || "ACTIVE";
+    return `${unit} · ${tenant} · ${statusLabel}`;
+  };
 
   const filteredPayments = useMemo(
     () =>
@@ -159,7 +196,13 @@ export default function PaymentsPage() {
         prev.map((p) => (p._id === id ? res.data?.data : p))
       );
 
-      toast.success("Payment status updated");
+      toast.success(
+        newStatus === "VERIFIED"
+          ? "Payment verified"
+          : newStatus === "REJECTED"
+          ? "Payment rejected"
+          : "Payment status updated"
+      );
     } catch (err) {
       toast.error(
         err.response?.data?.message || "Failed to update payment status"
@@ -195,19 +238,6 @@ export default function PaymentsPage() {
         eyebrowClassName="bg-primary-100 text-primary-700"
         title="Payments"
         subtitle="Record tenant payments and verify them once confirmed."
-        actions={
-          canCreate ? (
-            <button
-              onClick={() => {
-                const el = document.getElementById("payment-create-form");
-                if (el) el.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="btn-primary text-sm font-semibold"
-            >
-              Record Payment
-            </button>
-          ) : null
-        }
       />
 
       <DashboardCard>
@@ -259,17 +289,25 @@ export default function PaymentsPage() {
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
               <div>
                 <label className="mb-1 block text-[11px] font-medium text-neutral-600">
-                  Lease ID
+                  Lease
                 </label>
-                <input
-                  type="text"
+                <select
                   name="leaseId"
                   value={form.leaseId}
                   onChange={handleChange}
                   required
+                  disabled={loadingLeases || leaseOptions.length === 0}
                   className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs outline-none focus:border-primary-500 focus:bg-white focus:ring-1 focus:ring-primary-500"
-                  placeholder="Lease ID"
-                />
+                >
+                  <option value="">
+                    {loadingLeases ? "Loading leases..." : "Select lease"}
+                  </option>
+                  {leaseOptions.map((lease) => (
+                    <option key={lease._id} value={lease._id}>
+                      {getLeaseLabel(lease)}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -416,7 +454,7 @@ export default function PaymentsPage() {
                     <td className="px-3 py-2">
                       {p.leaseId ? (
                         <Link
-                          to={`/leases/${p.leaseId}`}
+                          to={`/leases/${typeof p.leaseId === "object" ? p.leaseId._id : p.leaseId}`}
                           className="text-xs font-semibold text-primary-600 hover:text-primary-700"
                         >
                           View lease

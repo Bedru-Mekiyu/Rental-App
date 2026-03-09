@@ -98,7 +98,16 @@ function App() {
         <Route path="units/:id" element={<UnitDetailPage />} />
 
         <Route path="leases" element={<LeasesPage />} />
-        <Route path="leases/new" element={<NewLeasePage />} />
+        <Route
+          path="leases/new"
+          element={
+            user?.role === "ADMIN" || user?.role === "PM" ? (
+              <NewLeasePage />
+            ) : (
+              <Navigate to="/leases" replace />
+            )
+          }
+        />
         <Route path="leases/:id" element={<LeaseDetailPage />} />
 
         <Route path="payments" element={<PaymentsPage />} />

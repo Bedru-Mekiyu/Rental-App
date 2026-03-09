@@ -6,8 +6,10 @@ import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import { Home, User, Calendar, DollarSign, FileText, Save, ArrowLeft } from "lucide-react";
 import PageHeader from "../components/PageHeader";
+import { useAuthStore } from "../store/authStore";
 
 export default function NewLeasePage() {
+  const { user } = useAuthStore();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [units, setUnits] = useState([]);
@@ -24,9 +26,13 @@ export default function NewLeasePage() {
   });
 
   useEffect(() => {
+    if (user && !["ADMIN", "PM"].includes(user.role)) {
+      navigate("/leases", { replace: true });
+      return;
+    }
     loadUnits();
     loadTenants();
-  }, []);
+  }, [user, navigate]);
 
   const loadUnits = async () => {
     try {

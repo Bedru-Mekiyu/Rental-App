@@ -257,11 +257,60 @@ JWT_SECRET
 PORT
 
 # 🚀 Getting Started
+
 ## Run (Development)
 ```bash
-
 npm run dev
 ```
+
+## 🚀 Deploy to Railway (Separate Services)
+
+Deploy this project as two Railway services from the same repository:
+- Backend service with root directory `backend`
+- Frontend service with root directory `frontend`
+
+### 1) Backend Service (`backend`)
+
+In Railway:
+- New Project → Deploy from GitHub repo
+- Service Settings → Root Directory: `backend`
+
+Set backend environment variables:
+
+```env
+MONGODB_URI=<your-mongodb-uri>
+JWT_SECRET=<strong-secret>
+NODE_ENV=production
+CORS_ORIGINS=https://<your-frontend-service>.up.railway.app
+```
+
+Backend health endpoint:
+- `/health`
+
+### 2) Frontend Service (`frontend`)
+
+In the same Railway project:
+- Add Service → Deploy from same GitHub repo
+- Service Settings → Root Directory: `frontend`
+
+Set frontend environment variable:
+
+```env
+VITE_API_BASE_URL=https://<your-backend-service>.up.railway.app/api
+```
+
+### 3) Final CORS Update Order
+
+1. Deploy backend first.
+2. Deploy frontend and copy its Railway URL.
+3. Update backend `CORS_ORIGINS` with the frontend URL.
+4. Redeploy backend.
+
+### Notes
+
+- `backend/railway.json` and `frontend/railway.json` are included for Railway deploy settings.
+- Frontend reads API base URL from `VITE_API_BASE_URL`.
+- Backend CORS uses `CORS_ORIGINS` (comma-separated if multiple domains).
 
 
 

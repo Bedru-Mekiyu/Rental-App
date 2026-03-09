@@ -2,7 +2,7 @@
 
 import { Router } from "express";
 import { auth } from "../middleware/auth.js";
-import { getLeaseSummary, getPortfolioSummary, getTenantSummary } from "../controllers/financeController.js";
+import { getLeaseSummary, getPortfolioSummary, getReport, getTenantSummary } from "../controllers/financeController.js";
 
 const router = Router();
 
@@ -25,6 +25,12 @@ router.get(
   "/lease/:leaseId/summary",
   auth(ALLOWED_ROLES),
   getLeaseSummary
+);
+
+router.get(
+  "/reports/:reportId",
+  auth(ALLOWED_ROLES),
+  getReport
 );
 
 export default router;

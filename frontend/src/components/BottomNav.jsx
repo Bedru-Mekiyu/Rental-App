@@ -8,7 +8,7 @@ export default function BottomNav() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="nav-shell fixed bottom-0 right-0 left-0 flex justify-around p-3 text-sm sm:hidden">
+    <div className="nav-shell fixed bottom-0 right-0 left-0 z-50 flex justify-around p-3 text-sm sm:hidden">
       
       {/* Dashboard */}
       <div

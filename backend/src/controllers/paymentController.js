@@ -151,6 +151,13 @@ export async function listPayments(req, res) {
 
     const [payments, total] = await Promise.all([
       Payment.find(filter)
+        .populate({
+          path: "leaseId",
+          populate: [
+            { path: "tenantId", select: "fullName email" },
+            { path: "unitId", select: "unitNumber" },
+          ],
+        })
         .sort({ transactionDate: -1 })
         .skip(skip)
         .limit(limit),
@@ -181,6 +188,13 @@ export async function listByLease(req, res) {
 
     const [payments, total] = await Promise.all([
       Payment.find({ leaseId })
+        .populate({
+          path: "leaseId",
+          populate: [
+            { path: "tenantId", select: "fullName email" },
+            { path: "unitId", select: "unitNumber" },
+          ],
+        })
         .sort({ transactionDate: -1 })
         .skip(skip)
         .limit(limit),
@@ -231,6 +245,13 @@ export async function listByTenant(req, res) {
 
     const [payments, total] = await Promise.all([
       Payment.find({ leaseId: { $in: leaseIds } })
+        .populate({
+          path: "leaseId",
+          populate: [
+            { path: "tenantId", select: "fullName email" },
+            { path: "unitId", select: "unitNumber" },
+          ],
+        })
         .sort({ transactionDate: -1 })
         .skip(skip)
         .limit(limit),

@@ -1,60 +1,90 @@
 // src/pages/ReportDetailPage.jsx
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
 import ResponsiveSection from "../components/ResponsiveSection";
 import PageHeader from "../components/PageHeader";
 import MobileBackBar from "../components/MobileBackBar";
-
-const REPORTS = {
-  "monthly-revenue": {
-    title: "Monthly Revenue Report",
-    subtitle: "Revenue trends and collections by month.",
-    summary: "Summarizes monthly collections and compares planned vs actual revenue.",
-    metrics: [
-      { label: "Latest Month", value: "ETB 1.48M" },
-      { label: "YoY Growth", value: "+12.4%" },
-      { label: "Collection Rate", value: "94%" },
-    ],
-    highlights: [
-      "Revenue grew steadily across the last 6 months.",
-      "Vacancy reductions improved collection stability.",
-    ],
-  },
-  delinquency: {
-    title: "Delinquency Report",
-    subtitle: "Aging buckets for outstanding balances.",
-    summary: "Breakdown of past-due balances by aging bucket and tenant segment.",
-    metrics: [
-      { label: "Past Due (30d)", value: "ETB 124k" },
-      { label: "Past Due (60d)", value: "ETB 78k" },
-      { label: "Past Due (90d+)", value: "ETB 34k" },
-    ],
-    highlights: [
-      "Most delinquencies are in the 30-day bucket.",
-      "Targeted follow-ups reduced 60+ day balances.",
-    ],
-  },
-  expense: {
-    title: "Expense Report",
-    subtitle: "Maintenance and operational expenses overview.",
-    summary: "Tracks expenses by category and compares against quarterly budgets.",
-    metrics: [
-      { label: "YTD Expenses", value: "ETB 620k" },
-      { label: "Largest Category", value: "Repairs" },
-      { label: "Budget Used", value: "58%" },
-    ],
-    highlights: [
-      "Preventive maintenance reduced emergency costs.",
-      "Utilities remain below budget targets.",
-    ],
-  },
-};
+import API from "../services/api";
 
 export default function ReportDetailPage() {
   const { reportId } = useParams();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [report, setReport] = useState(null);
 
-  const report = useMemo(() => REPORTS[reportId], [reportId]);
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("en-ET", {
+      style: "currency",
+      currency: "ETB",
+      maximumFractionDigits: 0,
+    }).format(value || 0);
+
+  const formatCompactCurrency = (value) =>
+    new Intl.NumberFormat("en-ET", {
+      style: "currency",
+      currency: "ETB",
+      notation: "compact",
+      maximumFractionDigits: 1,
+    }).format(value || 0);
+
+  useEffect(() => {
+    const loadReport = async () => {
+      try {
+        setLoading(true);
+        const res = await API.get(`/finance/reports/${reportId}`);
+        setReport(res.data?.data || null);
+      } catch (err) {
+        if (err.response?.status !== 404) {
+          toast.error(
+            err.response?.data?.message || "Failed to load report"
+          );
+        }
+        setReport(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!reportId) {
+      setLoading(false);
+      setReport(null);
+      return;
+    }
+
+    loadReport();
+  }, [reportId]);
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Reports"
+          eyebrowClassName="bg-primary-100 text-primary-700"
+          title="Report Detail"
+          subtitle="Loading report data..."
+          actions={
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="btn-pill btn-outline btn-outline-neutral"
+            >
+              Back
+            </button>
+          }
+        />
+      </div>
+    );
+  }
 
   if (!report) {
     return (
@@ -77,8 +107,15 @@ export default function ReportDetailPage() {
         eyebrowClassName="bg-primary-100 text-primary-700"
         title={report.title}
         subtitle={report.subtitle}
-        backTo={-1}
-        backLabel="Back"
+        actions={
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="btn-pill btn-outline btn-outline-neutral"
+          >
+            Back
+          </button>
+        }
       />
 
       <ResponsiveSection title="Report Summary">
@@ -92,6 +129,70 @@ export default function ReportDetailPage() {
           ))}
         </div>
       </ResponsiveSection>
+
+      {reportId === "monthly-revenue" &&
+        Array.isArray(report.monthlyRevenueTrend) &&
+        report.monthlyRevenueTrend.length > 0 && (
+          <ResponsiveSection title="Revenue Trend">
+            <div className="surface-panel analytics-panel p-4 sm:p-5">
+              <ResponsiveContainer width="100%" height={260}>
+                <LineChart
+                  data={report.monthlyRevenueTrend}
+                  margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="var(--chart-grid)"
+                  />
+                  <XAxis
+                    dataKey="month"
+                    stroke="var(--chart-axis)"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis
+                    width={74}
+                    tickFormatter={(value) => formatCompactCurrency(value)}
+                    stroke="var(--chart-axis)"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <Tooltip
+                    formatter={(value) => formatCurrency(value)}
+                    cursor={{
+                      stroke: "var(--chart-grid)",
+                      strokeWidth: 2,
+                      strokeDasharray: "3 3",
+                    }}
+                    labelStyle={{ color: "var(--chart-axis)", fontWeight: 600 }}
+                    contentStyle={{
+                      backgroundColor: "var(--chart-tooltip-bg)",
+                      border: "none",
+                      borderRadius: "0.5rem",
+                      boxShadow: "var(--chart-tooltip-shadow)",
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="var(--chart-primary)"
+                    strokeWidth={3}
+                    dot={{ fill: "var(--chart-primary)", strokeWidth: 2, r: 4 }}
+                    activeDot={{
+                      r: 6,
+                      stroke: "var(--chart-primary)",
+                      strokeWidth: 2,
+                      className: "chart-active-dot",
+                    }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </ResponsiveSection>
+        )}
 
       <ResponsiveSection title="Highlights">
         <ul className="space-y-2 text-sm text-neutral-600">

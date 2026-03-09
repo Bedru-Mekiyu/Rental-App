@@ -215,9 +215,6 @@ export default function PropertyManagerDashboard() {
             >
               View Units
             </Link>
-            <span className="pill bg-primary-900 text-white">
-              {user?.fullName || user?.email}
-            </span>
           </div>
         }
       />
@@ -233,11 +230,11 @@ export default function PropertyManagerDashboard() {
           </div>
         </div>
         <div className="insight-actions">
-          <Link to="/maintenance" className="btn-pill btn-outline btn-outline-primary">
+          <Link
+            to="/maintenance"
+            className="btn-pill btn-outline btn-outline-primary"
+          >
             Review Maintenance
-          </Link>
-          <Link to="/leases/new" className="btn-pill btn-outline btn-outline-success">
-            Create Lease
           </Link>
         </div>
       </section>
@@ -258,14 +255,14 @@ export default function PropertyManagerDashboard() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Units list */}
         <section className="lg:col-span-2 surface-panel p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="panel-title">Unit Health Snapshot</h2>
               <p className="panel-subtitle">
                 Search units and jump to key portfolio views.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex w-full sm:w-auto">
               <input
                 type="text"
                 placeholder="Search by unit, floor, or status"
@@ -273,29 +270,6 @@ export default function PropertyManagerDashboard() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="form-input w-full text-sm sm:w-64"
               />
-              <Link
-                to="/units"
-                className="btn-primary inline-flex items-center space-x-2 text-xs font-semibold"
-              >
-                <Eye className="h-4 w-4" />
-                <span>Units</span>
-              </Link>
-              <Link
-                to="/users"
-                className="btn-secondary inline-flex items-center space-x-2 text-xs font-semibold"
-              >
-                <Users className="h-4 w-4" />
-                <span>Users</span>
-              </Link>
-              {user?.role === "ADMIN" || user?.role === "PM" ? (
-                <Link
-                  to="/users/new"
-                  className="inline-flex items-center space-x-2 rounded-full bg-success-600 px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5 hover:bg-success-700"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span>Create</span>
-                </Link>
-              ) : null}
             </div>
           </div>
 
@@ -327,9 +301,9 @@ export default function PropertyManagerDashboard() {
                 return (
                   <article
                     key={unit._id}
-                    className="stagger-item surface-panel flex flex-col justify-between p-4 text-xs"
+                    className="stagger-item surface-panel flex flex-col gap-3 p-4 text-xs"
                   >
-                    <div className="flex items-start justify-between">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
                       <div>
                         <h3 className="text-sm font-semibold text-neutral-900">
                           Unit {unit.unitNumber ?? "N/A"}
@@ -345,7 +319,7 @@ export default function PropertyManagerDashboard() {
                         {labelStatus}
                       </span>
                     </div>
-                    <div className="mt-2 flex items-center justify-between">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
                       <p className="text-xs font-medium text-neutral-900">
                         {unit.basePriceEtb
                           ? `${unit.basePriceEtb} ETB / month`
@@ -367,7 +341,7 @@ export default function PropertyManagerDashboard() {
 
         {/* Recent leases */}
         <section className="surface-panel p-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="panel-title">Recent Leases</h2>
               <p className="panel-subtitle mt-1">
@@ -375,12 +349,6 @@ export default function PropertyManagerDashboard() {
                 units.
               </p>
             </div>
-            <Link
-              to="/leases"
-              className="inline-flex items-center rounded-full bg-primary-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary-700"
-            >
-              Manage Leases
-            </Link>
           </div>
 
           {leases.length === 0 ? (
@@ -394,7 +362,7 @@ export default function PropertyManagerDashboard() {
               {leases.slice(0, 5).map((lease) => (
                 <li
                   key={lease._id}
-                  className="flex items-center justify-between rounded-2xl border border-neutral-100 bg-neutral-50/70 p-3"
+                  className="flex flex-col gap-2 rounded-2xl border border-neutral-100 bg-neutral-50/70 p-3 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex items-center gap-2">
                     <Avatar
@@ -409,7 +377,7 @@ export default function PropertyManagerDashboard() {
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left sm:text-right">
                     <p className="text-xs font-semibold text-neutral-900">
                       {lease.monthlyRentEtb
                         ? `${lease.monthlyRentEtb} ETB / month`

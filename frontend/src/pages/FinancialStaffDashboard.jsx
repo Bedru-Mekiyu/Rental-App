@@ -44,46 +44,50 @@ export default function FinancialStaffDashboard() {
     try {
       setLoading(true);
 
-      // TODO: replace with a real staff-wide payments endpoint: GET /payments
-      // For now, use mocked data so backend is not called with invalid ids.
-      const mocked = [
-        {
-          _id: "1",
-          tenantName: "Alice Johnson",
-          amountEtb: 15000,
-          paymentMethod: "BANK_TRANSFER",
-          status: "PENDING",
-          transactionDate: "2025-12-01T00:00:00.000Z",
-          externalTransactionId: "TXN001",
-        },
-        {
-          _id: "2",
-          tenantName: "Bob Williams",
-          amountEtb: 12000,
-          paymentMethod: "CASH",
-          status: "VERIFIED",
-          transactionDate: "2025-11-25T00:00:00.000Z",
-          externalTransactionId: "TXN002",
-        },
-      ];
+      const [paymentsRes, portfolioRes] = await Promise.all([
+        API.get("/payments"),
+        API.get("/finance/portfolio/summary"),
+      ]);
 
-      const allPayments = mocked;
-      setPayments(allPayments);
+      const allPayments = paymentsRes.data?.data || [];
+      const portfolioSummary = portfolioRes.data?.data || {};
 
-      const pending = allPayments.filter((p) => p.status === "PENDING");
+      const enrichedPayments = allPayments
+        .map((payment) => {
+          const relatedLease =
+            payment.leaseId && typeof payment.leaseId === "object"
+              ? payment.leaseId
+              : null;
+          return {
+            ...payment,
+            tenantName:
+              relatedLease?.tenantId?.fullName || payment.tenantName || "Tenant",
+          };
+        })
+        .sort(
+          (a, b) =>
+            new Date(b.transactionDate || 0).getTime() -
+            new Date(a.transactionDate || 0).getTime()
+        );
+
+      setPayments(enrichedPayments);
+
+      const pending = enrichedPayments.filter((p) => p.status === "PENDING");
       setQueue(pending);
 
-      const totalRevenue = allPayments
+      const totalRevenue = enrichedPayments
         .filter((p) => p.status === "VERIFIED")
         .reduce((sum, p) => sum + (p.amountEtb || 0), 0);
+
+      const processedPayments = enrichedPayments.filter(
+        (p) => p.status === "VERIFIED"
+      ).length;
 
       setSummary({
         totalRevenue,
         pendingPayments: pending.length,
-        overdueAmount: 7500,
-        processedPayments: allPayments.filter(
-          (p) => p.status === "VERIFIED"
-        ).length,
+        overdueAmount: Number(portfolioSummary.outstandingBalance || 0),
+        processedPayments,
       });
     } catch {
       toast.error("Failed to load financial dashboard");
@@ -193,7 +197,7 @@ export default function FinancialStaffDashboard() {
       {/* KPI row */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <DashboardCard title="Total Revenue (verified)">
-          <p className="kpi-value">
+          <p className="text-base font-semibold text-neutral-900 sm:text-lg">
             {formatCurrency(summary.totalRevenue)}
           </p>
         </DashboardCard>

@@ -55,13 +55,15 @@ export default function GeneralManagerDashboard() {
     try {
       setLoading(true);
 
-      const [unitsRes, leasesRes] = await Promise.all([
+      const [unitsRes, leasesRes, financeRes] = await Promise.all([
         API.get("/units"),
         API.get("/leases"),
+        API.get("/finance/portfolio/summary"),
       ]); // /api/units + /api/leases
 
       const units = unitsRes.data?.data || [];
       const leases = leasesRes.data?.data || [];
+      const portfolioSummary = financeRes.data?.data || {};
 
       // Distinct properties from units
       const propertyIds = new Set(
@@ -96,22 +98,23 @@ export default function GeneralManagerDashboard() {
           t.total > 0 ? Math.round((t.occupied / t.total) * 100) : 0,
       }));
 
-      // Simple revenue trend & stats (placeholder using active leases)
-      const estMonthlyRevenue = leases
-        .filter((l) => l.status === "ACTIVE")
-        .reduce((sum, l) => sum + (l.monthlyRentEtb || 0), 0);
-
-      const revenueTrendData = [
-        { month: "Jan", revenue: estMonthlyRevenue * 0.8 },
-        { month: "Feb", revenue: estMonthlyRevenue * 0.9 },
-        { month: "Mar", revenue: estMonthlyRevenue * 1.0 },
-        { month: "Apr", revenue: estMonthlyRevenue * 1.05 },
-        { month: "May", revenue: estMonthlyRevenue * 1.1 },
-      ];
+      const revenueTrendData = portfolioSummary.monthlyRevenueTrend || [];
 
       const avgPerUnit =
-        occupiedUnits > 0
-          ? Math.round(estMonthlyRevenue / occupiedUnits)
+        Number(portfolioSummary.avgRevenuePerOccupiedUnit || 0);
+
+      const recentEndedLeases = leases.filter((lease) => {
+        if (lease.status !== "ENDED") return false;
+        const leaseEndDate = new Date(lease.endDate);
+        if (Number.isNaN(leaseEndDate.getTime())) return false;
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        return leaseEndDate >= thirtyDaysAgo;
+      }).length;
+
+      const turnoverRate =
+        totalUnits > 0
+          ? Number(((recentEndedLeases / totalUnits) * 100).toFixed(1))
           : 0;
 
       setKpis({
@@ -122,12 +125,12 @@ export default function GeneralManagerDashboard() {
 
       setOccupancyStats({
         vacantUnits,
-        turnoverRate: 0, // could be computed when you track move-outs
+        turnoverRate,
       });
 
       setRevenueStats({
-        currentMonth: estMonthlyRevenue,
-        monthToDate: estMonthlyRevenue * 0.9,
+        currentMonth: Number(portfolioSummary.currentMonthRevenue || 0),
+        monthToDate: Number(portfolioSummary.monthToDateRevenue || 0),
         avgPerUnit,
       });
 
@@ -160,6 +163,14 @@ export default function GeneralManagerDashboard() {
       style: "currency",
       currency: "ETB",
       maximumFractionDigits: 0,
+    }).format(v || 0);
+
+  const formatCompactCurrency = (v) =>
+    new Intl.NumberFormat("en-ET", {
+      style: "currency",
+      currency: "ETB",
+      notation: "compact",
+      maximumFractionDigits: 1,
     }).format(v || 0);
 
   const exportPDF = () => {
@@ -293,12 +304,27 @@ export default function GeneralManagerDashboard() {
         <div className="grid gap-6 lg:grid-cols-4">
           <div className="lg:col-span-3 h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={revenueTrend}>
+              <LineChart data={revenueTrend} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
-                <XAxis dataKey="month" stroke="var(--chart-axis)" />
-                <YAxis tickFormatter={(v) => `${v / 1000}k`} stroke="var(--chart-axis)" />
+                <XAxis
+                  dataKey="month"
+                  stroke="var(--chart-axis)"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis
+                  width={74}
+                  tickFormatter={(v) => formatCompactCurrency(v)}
+                  stroke="var(--chart-axis)"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                />
                 <Tooltip
                   formatter={(v) => formatCurrency(v)}
+                  cursor={{ stroke: "var(--chart-grid)", strokeWidth: 2, strokeDasharray: "3 3" }}
+                  labelStyle={{ color: "var(--chart-axis)", fontWeight: 600 }}
                   contentStyle={{
                     backgroundColor: 'var(--chart-tooltip-bg)',
                     border: 'none',
@@ -360,12 +386,35 @@ export default function GeneralManagerDashboard() {
         <div className="grid gap-4 lg:grid-cols-4">
           <div className="lg:col-span-3 h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={occupancyByType}>
+              <BarChart data={occupancyByType} margin={{ top: 8, right: 12, left: 0, bottom: 0 }} barCategoryGap="28%">
                 <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                <XAxis dataKey="type" stroke="var(--chart-axis)" />
-                <YAxis stroke="var(--chart-axis)" />
-                <Tooltip contentStyle={{ backgroundColor: 'var(--chart-tooltip-bg)', border: 'none', borderRadius: '0.5rem', boxShadow: 'var(--chart-tooltip-shadow)' }} />
-                <Bar dataKey="occupancy" fill="var(--chart-secondary)" />
+                <XAxis
+                  dataKey="type"
+                  stroke="var(--chart-axis)"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis
+                  domain={[0, 100]}
+                  tickFormatter={(v) => `${v}%`}
+                  stroke="var(--chart-axis)"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                />
+                <Tooltip
+                  formatter={(v) => `${v}%`}
+                  cursor={{ fill: "var(--chart-grid)", fillOpacity: 0.28 }}
+                  labelStyle={{ color: "var(--chart-axis)", fontWeight: 600 }}
+                  contentStyle={{
+                    backgroundColor: 'var(--chart-tooltip-bg)',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    boxShadow: 'var(--chart-tooltip-shadow)'
+                  }}
+                />
+                <Bar dataKey="occupancy" fill="var(--chart-secondary)" radius={[8, 8, 0, 0]} maxBarSize={64} />
               </BarChart>
             </ResponsiveContainer>
           </div>

@@ -9,17 +9,21 @@ import SkeletonRow from "../components/SkeletonRow";
 import SkeletonTable from "../components/SkeletonTable";
 import SkeletonCard from "../components/SkeletonCard";
 import Pagination from "../components/Pagination";
+import { useAuthStore } from "../store/authStore";
 
 const statusFilters = ["All", "VACANT", "OCCUPIED", "UNDER_MAINTENANCE"];
 const PAGE_SIZE = 10;
 
 export default function UnitsPage() {
+  const { user } = useAuthStore();
   const [units, setUnits] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [page, setPage] = useState(1);
+
+  const canManage = user?.role === "ADMIN" || user?.role === "PM";
 
   const [form, setForm] = useState({
     unitNumber: "",
@@ -137,15 +141,17 @@ export default function UnitsPage() {
         title="Units"
         subtitle="Manage units, pricing, and availability."
         actions={
-          <button
-            onClick={() => {
-              const el = document.getElementById("create-unit-form");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="btn-primary text-sm font-semibold"
-          >
-            + New Unit
-          </button>
+          canManage ? (
+            <button
+              onClick={() => {
+                const el = document.getElementById("create-unit-form");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="btn-primary text-sm font-semibold"
+            >
+              + New Unit
+            </button>
+          ) : null
         }
       />
 
@@ -276,15 +282,16 @@ export default function UnitsPage() {
       </DashboardCard>
 
       {/* Create unit form */}
-      <DashboardCard
-        title="Create New Unit"
-        description="Quickly add a new unit to the system."
-      >
-        <form
-          id="create-unit-form"
-          onSubmit={handleCreate}
-          className="grid gap-4 md:grid-cols-4 text-sm"
+      {canManage && (
+        <DashboardCard
+          title="Create New Unit"
+          description="Quickly add a new unit to the system."
         >
+          <form
+            id="create-unit-form"
+            onSubmit={handleCreate}
+            className="grid gap-4 md:grid-cols-4 text-sm"
+          >
           <div className="space-y-1">
             <label className="text-xs font-medium text-neutral-600">
               Unit Number
@@ -390,8 +397,9 @@ export default function UnitsPage() {
               {creating ? "Creating..." : "Create Unit"}
             </button>
           </div>
-        </form>
-      </DashboardCard>
+          </form>
+        </DashboardCard>
+      )}
     </div>
   );
 }

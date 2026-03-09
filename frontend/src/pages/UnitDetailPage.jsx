@@ -9,52 +9,50 @@ import SkeletonRow from "../components/SkeletonRow";
 import SkeletonTable from "../components/SkeletonTable";
 import SkeletonCard from "../components/SkeletonCard";
 import MobileBackBar from "../components/MobileBackBar";
+import { useAuthStore } from "../store/authStore";
 
 export default function UnitDetailPage() {
   const { id: unitId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const isTenant = user?.role === "TENANT";
+  const isFinanceStaff = user?.role === "FS";
+  const backTarget = isTenant ? "/dashboard" : "/units";
+  const backLabel = isTenant ? "Back to Dashboard" : "Back to Units";
 
   const [unit, setUnit] = useState(null);
   const [leases, setLeases] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   const loadUnit = useCallback(async () => {
     try {
       setLoading(true);
-      const [unitRes, leasesRes] = await Promise.all([
-        API.get(`/units/${unitId}`),
-        API.get("/leases", { params: { unitId } }),
-      ]);
-      setUnit(unitRes.data?.data || null); // backend returns { success, data }
-      setLeases(leasesRes.data?.data || []);
+      if (isTenant) {
+        const unitRes = await API.get(`/units/${unitId}`);
+        setUnit(unitRes.data?.data || null); // backend returns { success, data }
+        setLeases([]);
+      } else {
+        const [unitRes, leasesRes] = await Promise.all([
+          API.get(`/units/${unitId}`),
+          API.get("/leases", { params: { unitId } }),
+        ]);
+        setUnit(unitRes.data?.data || null); // backend returns { success, data }
+        setLeases(leasesRes.data?.data || []);
+      }
     } catch {
       toast.error("Failed to load unit details");
     } finally {
       setLoading(false);
     }
-  }, [unitId]);
+  }, [unitId, isTenant]);
 
   useEffect(() => {
     if (!unitId || unitId === "undefined") {
-      navigate("/units");
+      navigate(backTarget);
       return;
     }
     loadUnit();
-  }, [unitId, loadUnit, navigate]);
-
-  const handleChangeStatus = async (status) => {
-    try {
-      setUpdatingStatus(true);
-      await API.put(`/units/${unitId}`, { status }); // uses updateUnit (PUT)
-      toast.success(`Unit marked as ${status}`);
-      loadUnit();
-    } catch {
-      toast.error("Failed to update unit status");
-    } finally {
-      setUpdatingStatus(false);
-    }
-  };
+  }, [unitId, loadUnit, navigate, backTarget]);
 
   const formatCurrency = (v) =>
     new Intl.NumberFormat("en-ET", {
@@ -91,10 +89,10 @@ export default function UnitDetailPage() {
       <div className="space-y-4">
         <p className="text-sm text-danger-600">Unit not found.</p>
         <button
-          onClick={() => navigate("/units")}
+          onClick={() => navigate(backTarget)}
           className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700"
         >
-          Back to units
+          {backLabel}
         </button>
       </div>
     );
@@ -121,8 +119,19 @@ export default function UnitDetailPage() {
         eyebrowClassName="bg-primary-100 text-primary-700"
         title={unit.name || "Unit Detail"}
         subtitle={`${unit.address || "No address"} · Floor ${unit.floor ?? "N/A"} · ${unit.status}`}
-        backTo="/units"
-        backLabel="Back to Units"
+        backTo={isFinanceStaff ? undefined : backTarget}
+        backLabel={backLabel}
+        actions={
+          isFinanceStaff ? (
+            <button
+              type="button"
+              onClick={() => navigate(backTarget)}
+              className="btn-pill btn-outline btn-outline-neutral"
+            >
+              {backLabel}
+            </button>
+          ) : undefined
+        }
       />
 
       {/* Unit info */}
@@ -164,121 +173,104 @@ export default function UnitDetailPage() {
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          <button
-            type="button"
-            disabled={updatingStatus}
-            onClick={() => handleChangeStatus("VACANT")}
-            className="rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-medium text-neutral-700 disabled:opacity-60"
-          >
-            Mark as VACANT
-          </button>
-          <button
-            type="button"
-            disabled={updatingStatus}
-            onClick={() => handleChangeStatus("MAINTENANCE")}
-            className="rounded-md border border-warning-300 px-3 py-1.5 text-xs font-medium text-warning-700 disabled:opacity-60"
-          >
-            Mark as MAINTENANCE
-          </button>
-        </div>
       </ResponsiveSection>
 
-      {/* Lease history */}
-      <ResponsiveSection
-        title="Lease History"
-        description="Current and past leases associated with this unit."
-      >
-        {leases.length === 0 ? (
-          <div className="space-y-3">
-            <SkeletonTable rows={3} columns={5} />
-            <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-6 py-6 text-center">
-              <div className="text-sm font-medium text-neutral-700">No leases found</div>
-              <div className="mt-1 text-xs text-neutral-500">
-                This unit has no lease history yet.
+      {!isTenant && (
+        <ResponsiveSection
+          title="Lease History"
+          description="Current and past leases associated with this unit."
+        >
+          {leases.length === 0 ? (
+            <div className="space-y-3">
+              <SkeletonTable rows={3} columns={5} />
+              <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-6 py-6 text-center">
+                <div className="text-sm font-medium text-neutral-700">No leases found</div>
+                <div className="mt-1 text-xs text-neutral-500">
+                  This unit has no lease history yet.
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="overflow-x-auto rounded-xl border border-neutral-200">
-            <table className="min-w-full divide-y divide-neutral-200 text-xs">
-              <thead className="bg-neutral-50">
-                <tr>
-                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
-                    Tenant
-                  </th>
-                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
-                    Status
-                  </th>
-                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
-                    Term
-                  </th>
-                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
-                    Rent (ETB)
-                  </th>
-                  <th className="px-4 py-2 text-left font-semibold text-neutral-500">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100 bg-white">
-                {leases.map((lease) => (
-                  <tr key={lease._id} className="hover:bg-neutral-50">
-                    <td className="px-4 py-2">
-                      {lease.tenantId?.fullName || "Tenant"}
-                    </td>
-                    <td className="px-4 py-2">
-                      <span
-                        className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${leaseStatusClass(lease.status)}`}
-                      >
-                        {lease.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2">
-                      {lease.startDate
-                        ? new Date(
-                            lease.startDate
-                          ).toLocaleDateString()
-                        : "—"}{" "}
-                      –{" "}
-                      {lease.endDate
-                        ? new Date(
-                            lease.endDate
-                          ).toLocaleDateString()
-                        : "—"}
-                    </td>
-                    <td className="px-4 py-2">
-                      {formatCurrency(lease.monthlyRentEtb || 0)}
-                    </td>
-                    <td className="px-4 py-2">
-                      <Link
-                        to={`/leases/${lease._id}`}
-                        className="text-xs font-semibold text-primary-600 hover:text-primary-700"
-                      >
-                        View lease
-                      </Link>
-                    </td>
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-neutral-200">
+              <table className="min-w-full divide-y divide-neutral-200 text-xs">
+                <thead className="bg-neutral-50">
+                  <tr>
+                    <th className="px-4 py-2 text-left font-semibold text-neutral-500">
+                      Tenant
+                    </th>
+                    <th className="px-4 py-2 text-left font-semibold text-neutral-500">
+                      Status
+                    </th>
+                    <th className="px-4 py-2 text-left font-semibold text-neutral-500">
+                      Term
+                    </th>
+                    <th className="px-4 py-2 text-left font-semibold text-neutral-500">
+                      Rent (ETB)
+                    </th>
+                    <th className="px-4 py-2 text-left font-semibold text-neutral-500">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                </thead>
+                <tbody className="divide-y divide-neutral-100 bg-white">
+                  {leases.map((lease) => (
+                    <tr key={lease._id} className="hover:bg-neutral-50">
+                      <td className="px-4 py-2">
+                        {lease.tenantId?.fullName || "Tenant"}
+                      </td>
+                      <td className="px-4 py-2">
+                        <span
+                          className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${leaseStatusClass(lease.status)}`}
+                        >
+                          {lease.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2">
+                        {lease.startDate
+                          ? new Date(
+                              lease.startDate
+                            ).toLocaleDateString()
+                          : "—"}{" "}
+                        –{" "}
+                        {lease.endDate
+                          ? new Date(
+                              lease.endDate
+                            ).toLocaleDateString()
+                          : "—"}
+                      </td>
+                      <td className="px-4 py-2">
+                        {formatCurrency(lease.monthlyRentEtb || 0)}
+                      </td>
+                      <td className="px-4 py-2">
+                        <Link
+                          to={`/leases/${lease._id}`}
+                          className="text-xs font-semibold text-primary-600 hover:text-primary-700"
+                        >
+                          View lease
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-        {activeLease && (
-          <p className="mt-3 text-xs text-neutral-500">
-            Active lease:{" "}
-            <Link
-              to={`/leases/${activeLease._id}`}
-              className="text-xs font-semibold text-primary-600 hover:text-primary-700"
-            >
-              {activeLease.tenantId?.fullName || "Tenant"}
-            </Link>
-            .
-          </p>
-        )}
-      </ResponsiveSection>
-      <MobileBackBar to="/units" label="Back to Units" />
+          {activeLease && (
+            <p className="mt-3 text-xs text-neutral-500">
+              Active lease:{" "}
+              <Link
+                to={`/leases/${activeLease._id}`}
+                className="text-xs font-semibold text-primary-600 hover:text-primary-700"
+              >
+                {activeLease.tenantId?.fullName || "Tenant"}
+              </Link>
+              .
+            </p>
+          )}
+        </ResponsiveSection>
+      )}
+      <MobileBackBar to={backTarget} label={backLabel} />
     </div>
   );
 }

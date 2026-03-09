@@ -16,9 +16,12 @@ export default function LeaseDetailPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
 
+  const isTenant = user?.role === "TENANT";
+  const isFinanceStaff = user?.role === "FS";
+  const useRightStackedBackAction = isTenant || isFinanceStaff;
   const canEndLease = user?.role === "ADMIN" || user?.role === "PM";
-  const backTarget = user?.role === "TENANT" ? "/dashboard" : "/leases";
-  const backLabel = user?.role === "TENANT" ? "Back to Dashboard" : "Back to Leases";
+  const backTarget = useRightStackedBackAction ? "/dashboard" : "/leases";
+  const backLabel = useRightStackedBackAction ? "Back to Dashboard" : "Back to Leases";
 
   const [lease, setLease] = useState(null);
   const [summary, setSummary] = useState(null);
@@ -142,10 +145,19 @@ export default function LeaseDetailPage() {
         eyebrowClassName="bg-primary-100 text-primary-700"
         title="Lease Detail"
         subtitle={`${lease.unitId?.name || "Unit"} · ${lease.tenantId?.fullName || "Tenant"}`}
-        backTo={backTarget}
+        backTo={useRightStackedBackAction ? undefined : backTarget}
         backLabel={backLabel}
         actions={
-          <div className="flex gap-2">
+          <div className={`flex gap-2 ${useRightStackedBackAction ? "flex-col items-end" : ""}`}>
+            {useRightStackedBackAction && (
+              <button
+                type="button"
+                onClick={() => navigate(backTarget)}
+                className="btn-pill btn-outline btn-outline-neutral"
+              >
+                {backLabel}
+              </button>
+            )}
             <button
               type="button"
               onClick={() =>

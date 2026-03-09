@@ -43,46 +43,28 @@ export default function Login() {
 
   return (
     <div
-      className="page-transition relative flex min-h-screen items-center justify-center px-4 py-8 sm:py-10"
-      style={{ backgroundImage: `url(${loginBg})`, backgroundSize: "cover", backgroundPosition: "center" }}
+      className="page-transition relative flex min-h-screen items-center justify-center bg-slate-100 px-3 py-6 sm:px-4 sm:py-10"
     >
       <div className="pointer-events-none absolute inset-0 bg-white/40" />
       <div className="pointer-events-none absolute inset-0 bg-primary-500/4" />
-      <div className="mx-auto grid w-full max-w-2xl overflow-hidden rounded-2xl bg-slate-900/55 shadow-lg backdrop-blur md:grid-cols-[1fr_1fr]">
-        <div className="relative flex flex-col justify-between overflow-hidden bg-gradient-to-br from-primary-50 via-white to-primary-100/60 p-8 text-neutral-900">
+      <div className="mx-auto grid w-[90vw] max-w-xs grid-cols-1 overflow-hidden rounded-xl bg-slate-900/55 shadow-lg backdrop-blur sm:w-full sm:max-w-md sm:rounded-2xl md:max-w-2xl md:grid-cols-[1fr_1fr]">
+        <div
+          className="login-showcase relative flex flex-col justify-between overflow-hidden bg-white p-0 text-neutral-900"
+          style={{ "--login-bg": `url(${loginBg})` }}
+        >
           <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-1 bg-primary-500/50 md:block" />
           <div className="pointer-events-none absolute -right-16 top-10 h-48 w-48 rounded-full bg-primary-200/40 blur-3xl" />
-          <div className="relative space-y-4">
-            <span className="pill bg-primary-600 text-white">Portfolio OS</span>
-            <h1 className="app-title text-lg sm:text-xl font-semibold leading-tight">
-              Rental Management System
-            </h1>
-            <p className="text-xs sm:text-sm text-neutral-600">
-              Track units, leases, and payments with a single, high-clarity dashboard.
-            </p>
-          </div>
-          <div className="relative space-y-4 text-xs sm:text-sm text-neutral-600">
-            <div className="flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-primary-500" />
-              Real-time occupancy and payment insights
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-primary-500" />
-              Role-based dashboards for each team
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-primary-500" />
-              Unified audit trail and finance summaries
-            </div>
+          <div className="relative z-10 px-4 pt-2 sm:px-8 sm:pt-4 md:px-10 md:pt-6">
+         
           </div>
         </div>
 
-        <div className="bg-white/90 p-6 sm:p-10">
-          <div className="mb-5 space-y-2">
-            <h2 className="app-title text-lg sm:text-xl font-semibold text-neutral-900">
+        <div className="bg-white/90 p-4 sm:p-8 md:p-10">
+          <div className="mb-4 space-y-1.5 sm:mb-5 sm:space-y-2">
+            <h2 className="app-title text-base sm:text-lg md:text-xl font-semibold text-neutral-900">
               Welcome back
             </h2>
-            <p className="text-[11px] sm:text-xs text-neutral-500">
+            <p className="text-[10px] sm:text-xs text-neutral-500">
               Sign in to continue managing your portfolio.
             </p>
           </div>
@@ -93,8 +75,8 @@ export default function Login() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+            <div className="space-y-1.5 sm:space-y-2">
               <label className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
                 Email address
               </label>
@@ -104,12 +86,12 @@ export default function Login() {
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="form-input text-xs sm:text-sm"
+                className="form-input text-[11px] sm:text-sm"
                 placeholder="admin@example.com"
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               <label className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
                 Password
               </label>
@@ -119,7 +101,7 @@ export default function Login() {
                 value={form.password}
                 onChange={handleChange}
                 required
-                className="form-input text-xs sm:text-sm"
+                className="form-input text-[11px] sm:text-sm"
                 placeholder="••••••••"
               />
             </div>
@@ -127,7 +109,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full rounded-2xl px-5 py-2.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wide text-white transition ${
+              className={`w-full rounded-xl px-4 py-2 text-[10px] sm:rounded-2xl sm:px-5 sm:py-2.5 sm:text-xs font-semibold uppercase tracking-wide text-white transition ${
                 loading
                   ? "cursor-not-allowed bg-neutral-400"
                   : "btn-primary"
@@ -137,7 +119,7 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="mt-5 text-[10px] sm:text-[11px] text-neutral-500">
+          <div className="mt-4 text-[10px] sm:mt-5 sm:text-[11px] text-neutral-500">
             First time? Contact your administrator to create an account.
           </div>
         </div>

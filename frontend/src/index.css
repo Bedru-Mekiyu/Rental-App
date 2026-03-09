@@ -43,6 +43,11 @@ body {
   font-family: "Space Grotesk", "Segoe UI", sans-serif;
   color: var(--ink-900);
   transition: background 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 body::before {
@@ -252,6 +257,13 @@ html {
   font-size: 0.8rem;
   color: #94a3b8;
   padding: 0 0.25rem;
+}
+
+.login-showcase {
+  background-image: var(--login-bg);
+  background-repeat: no-repeat;
+  background-position: center 62%;
+  background-size: cover;
 }
 
 .list-shell {
@@ -642,7 +654,9 @@ details[open] > .accordion-summary::after {
 .table-shell {
   border: 1px solid rgba(148, 163, 184, 0.25);
   border-radius: 1.25rem;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
   background: rgba(255, 255, 255, 0.9);
 }
 
@@ -814,10 +828,13 @@ details[open] > .accordion-summary::after {
 
 .app-main {
   position: relative;
+  min-width: 0;
 }
 
 .app-frame {
   position: relative;
+  max-width: 100%;
+  overflow-x: hidden;
   padding: 0.75rem;
   border-radius: 2rem;
   background: #f8fafc;

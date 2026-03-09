@@ -9,16 +9,20 @@ import SkeletonRow from "../components/SkeletonRow";
 import SkeletonTable from "../components/SkeletonTable";
 import SkeletonCard from "../components/SkeletonCard";
 import Pagination from "../components/Pagination";
+import { useAuthStore } from "../store/authStore";
 
 const STATUS_FILTERS = ["All", "ACTIVE", "ENDED"];
 const PAGE_SIZE = 20;
 
 export default function LeasesPage() {
+  const { user } = useAuthStore();
   const [leases, setLeases] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+
+  const canManage = user?.role === "ADMIN" || user?.role === "PM";
 
   useEffect(() => {
     loadLeases();
@@ -107,12 +111,14 @@ export default function LeasesPage() {
         title="Leases"
         subtitle="View and manage active and past leases."
         actions={
-          <Link
-            to="/leases/new"
-            className="btn-primary text-sm font-semibold"
-          >
-            + New Lease
-          </Link>
+          canManage ? (
+            <Link
+              to="/leases/new"
+              className="btn-primary text-sm font-semibold"
+            >
+              + New Lease
+            </Link>
+          ) : null
         }
       />
 
@@ -169,84 +175,74 @@ export default function LeasesPage() {
             </div>
           </div>
         ) : (
-          <div className="table-shell list-shell">
-            <table className="min-w-full divide-y divide-neutral-200 text-sm">
+          <div className="table-shell overflow-x-hidden">
+            <table className="w-full table-auto divide-y divide-neutral-200 text-sm whitespace-normal">
               <thead className="table-head">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider">
-                    Unit Details
+                  <th className="px-3 py-2 text-left text-[10px] font-bold text-neutral-600 uppercase tracking-wider sm:px-6">
+                    Unit
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider">
-                    Tenant Information
+                  <th className="px-3 py-2 text-left text-[10px] font-bold text-neutral-600 uppercase tracking-wider sm:px-6">
+                    Tenant
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider">
-                    Lease Term
+                  <th className="px-3 py-2 text-left text-[10px] font-bold text-neutral-600 uppercase tracking-wider sm:px-6">
+                    Term
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider">
-                    Monthly Rent
+                  <th className="px-3 py-2 text-left text-[10px] font-bold text-neutral-600 uppercase tracking-wider sm:px-6">
+                    Rent
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-[10px] font-bold text-neutral-600 uppercase tracking-wider sm:px-6">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider">
-                    Actions
+                  <th className="px-3 py-2 text-left text-[10px] font-bold text-neutral-600 uppercase tracking-wider sm:px-6">
+                    Action
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 bg-white">
                 {pagedLeases.map((l, index) => (
                   <tr key={l._id} className={`table-row stagger-item ${index % 2 === 0 ? "bg-white" : "bg-neutral-50/30"}`}>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600 text-white font-bold">
-                          {l.unitId?.unitNumber || "U"}
+                    <td className="px-3 py-3 sm:px-6">
+                      <div>
+                        <div className="text-sm font-semibold text-neutral-900 break-words">
+                          Unit {l.unitId?.unitNumber || "N/A"}
                         </div>
-                        <div>
-                          <div className="font-semibold text-neutral-900">
-                            Unit {l.unitId?.unitNumber || "N/A"}
+                        {l.unitId?.type && (
+                          <div className="mt-1 inline-block rounded-full bg-neutral-100/80 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-neutral-500 break-words">
+                            {l.unitId.type}
                           </div>
-                          {l.unitId?.type && (
-                            <div className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500 bg-neutral-100/80 rounded-full px-2 py-0.5 inline-block mt-1">
-                              {l.unitId.type}
-                            </div>
-                          )}
-                        </div>
+                        )}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-600 text-white font-bold">
-                          {(l.tenantId?.fullName || "T").charAt(0).toUpperCase()}
+                    <td className="px-3 py-3 sm:px-6">
+                      <div>
+                        <div className="text-sm font-semibold text-neutral-900 break-words">
+                          {l.tenantId?.fullName || "Tenant"}
                         </div>
-                        <div>
-                          <div className="font-semibold text-neutral-900">
-                            {l.tenantId?.fullName || "Tenant"}
+                        {l.tenantId?.email && (
+                          <div className="text-xs text-neutral-500 break-all">
+                            {l.tenantId.email}
                           </div>
-                          {l.tenantId?.email && (
-                            <div className="text-xs text-neutral-500">
-                              {l.tenantId.email}
-                            </div>
-                          )}
-                        </div>
+                        )}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 sm:px-6">
                       <div className="text-sm">
-                        <div className="font-medium text-neutral-900">
+                        <div className="font-medium text-neutral-900 break-words">
                           {formatDate(l.startDate)}
                         </div>
                         <div className="text-neutral-500">to</div>
-                        <div className="font-medium text-neutral-900">
+                        <div className="font-medium text-neutral-900 break-words">
                           {formatDate(l.endDate)}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="text-lg font-bold text-neutral-900">
+                    <td className="px-3 py-3 sm:px-6">
+                      <div className="text-base font-bold text-neutral-900">
                         {formatCurrency(l.monthlyRentEtb)}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 sm:px-6">
                       <span
                         className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[11px] font-semibold ${getLeaseStatusClass(l.status)}`}
                       >
@@ -254,26 +250,19 @@ export default function LeasesPage() {
                         {l.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-3">
+                    <td className="px-3 py-3 sm:px-6">
+                      <div className="flex flex-wrap gap-2">
                         <Link
                           to={`/leases/${l._id}`}
                           className="btn-pill btn-soft btn-soft-success"
                         >
-                          <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
-                          View
+                          Lease
                         </Link>
                         {l.unitId?._id && (
                           <Link
                             to={`/units/${l.unitId._id}`}
                             className="btn-pill btn-soft btn-soft-neutral"
                           >
-                            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
                             Unit
                           </Link>
                         )}

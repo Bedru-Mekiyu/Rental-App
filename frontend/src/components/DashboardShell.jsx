@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 
 export default function DashboardShell({ title, subtitle, children }) {
   return (
-    <div className="relative min-h-screen text-slate-900">
+    <div className="relative min-h-screen overflow-x-hidden text-slate-900">
       <Navbar />
       <div className="flex min-h-[calc(100vh-64px)]">
         <Sidebar />

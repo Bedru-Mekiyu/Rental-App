@@ -15,6 +15,13 @@ export default function PaymentDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const isTenant = user?.role === "TENANT";
+  const isFinanceStaff = user?.role === "FS";
+  const isAdmin = user?.role === "ADMIN";
+  const useDashboardBack = isTenant || isFinanceStaff;
+  const useRightStackedBackAction = useDashboardBack || isAdmin;
+  const backTarget = useDashboardBack ? "/dashboard" : "/payments";
+  const backLabel = useDashboardBack ? "Back to Dashboard" : "Back to Payments";
 
   const [payment, setPayment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -36,11 +43,11 @@ export default function PaymentDetailPage() {
 
   useEffect(() => {
     if (!id) {
-      navigate("/payments");
+      navigate(backTarget);
       return;
     }
     loadPayment();
-  }, [id, loadPayment, navigate]);
+  }, [id, loadPayment, navigate, backTarget]);
 
   const handleUpdateStatus = async (status) => {
     if (!window.confirm(`Change payment status to ${status}?`)) return;
@@ -48,7 +55,13 @@ export default function PaymentDetailPage() {
       setUpdating(true);
       const res = await API.patch(`/payments/${id}/status`, { status });
       setPayment(res.data?.data || null);
-      toast.success("Payment status updated");
+      toast.success(
+        status === "VERIFIED"
+          ? "Payment verified"
+          : status === "REJECTED"
+          ? "Payment rejected"
+          : "Payment status updated"
+      );
     } catch {
       toast.error("Failed to update payment status");
     } finally {
@@ -100,10 +113,10 @@ export default function PaymentDetailPage() {
       <div className="space-y-4">
         <p className="text-sm text-danger-600">Payment not found.</p>
         <button
-          onClick={() => navigate("/payments")}
+          onClick={() => navigate(backTarget)}
           className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700"
         >
-          Back to Payments
+          {backLabel}
         </button>
       </div>
     );
@@ -120,10 +133,19 @@ export default function PaymentDetailPage() {
         eyebrowClassName="bg-primary-100 text-primary-700"
         title="Payment Detail"
         subtitle={`${tenantName} · ${unitName}`}
-        backTo="/payments"
-        backLabel="Back to Payments"
+        backTo={useRightStackedBackAction ? undefined : backTarget}
+        backLabel={backLabel}
         actions={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className={`flex flex-wrap items-center gap-2 ${useRightStackedBackAction ? "flex-col items-end" : ""}`}>
+            {useRightStackedBackAction && (
+              <button
+                type="button"
+                onClick={() => navigate(backTarget)}
+                className="btn-pill btn-outline btn-outline-neutral"
+              >
+                {backLabel}
+              </button>
+            )}
             {canVerify && payment.status !== "VERIFIED" && (
               <button
                 type="button"
@@ -229,7 +251,7 @@ export default function PaymentDetailPage() {
           </table>
         </div>
       </ResponsiveSection>
-      <MobileBackBar to="/payments" label="Back to Payments" />
+      <MobileBackBar to={backTarget} label={backLabel} />
     </div>
   );
 }

@@ -18,7 +18,12 @@ export default function MyLeasePage() {
   const loadLease = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await API.get(`/leases/by-tenant/${user._id}`);
+      const tenantId = user?.id || user?._id;
+      if (!tenantId) {
+        setLease(null);
+        return;
+      }
+      const res = await API.get(`/leases/by-tenant/${tenantId}`);
       const leases = res.data?.data || [];
 
       if (leases.length > 0) {
@@ -38,10 +43,10 @@ export default function MyLeasePage() {
     } finally {
       setLoading(false);
     }
-  }, [user._id, navigate]);
+  }, [user?.id, user?._id, navigate]);
 
   useEffect(() => {
-    if (!user?._id) {
+    if (!user) {
       setLoading(false);
       return;
     }
