@@ -8,9 +8,9 @@ export default defineConfig({
     tailwindcss()
   ],
   server: {
-    allowedHosts: ['.up.railway.app'],
+    allowedHosts: true,
   },
   preview: {
-    allowedHosts: ['.up.railway.app'],
+    allowedHosts: true,
   },
 })
