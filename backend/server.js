@@ -46,6 +46,14 @@ app.use(express.json());
 
 // DB
 // Health
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'Rental API is running',
+    health: '/health',
+  });
+});
+
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
