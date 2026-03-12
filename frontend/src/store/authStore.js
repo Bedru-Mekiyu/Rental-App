@@ -1,9 +1,14 @@
 import { create } from "zustand";
 import axios from "axios";
 
+const PRODUCTION_API_BASE_URL =
+  "https://rental-app-production-0260.up.railway.app/api";
+
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.DEV ? "http://localhost:5000/api" : "/api");
+  (import.meta.env.DEV
+    ? "http://localhost:5000/api"
+    : PRODUCTION_API_BASE_URL);
 
 export const useAuthStore = create((set) => ({
   user: null,
