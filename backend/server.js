@@ -18,7 +18,12 @@ import { applyHelmet, rateLimiter } from './src/middleware/security.js';
 const app = express();
 app.set('trust proxy', 1);
 
-const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173,http://localhost:5174')
+const configuredOrigins = process.env.CORS_ORIGINS || process.env.CORS_ORIGIN;
+const defaultOrigins = process.env.NODE_ENV === 'production'
+  ? 'https://rentalapp2.vercel.app'
+  : 'http://localhost:5173,http://localhost:5174,https://rentalapp2.vercel.app';
+
+const allowedOrigins = (configuredOrigins || defaultOrigins)
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
