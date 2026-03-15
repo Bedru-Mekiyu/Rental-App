@@ -22,40 +22,16 @@ app.set("trust proxy", 1);
 
 
 // ----------------------
-// GLOBAL CORS FIX
+// SIMPLE PRODUCTION CORS
 // ----------------------
 
-const corsOptions = {
-  origin: (origin, callback) => {
-
-    // allow requests without origin (Postman, curl)
-    if (!origin) return callback(null, true);
-
-    // allow localhost
-    if (origin.includes("localhost")) {
-      return callback(null, true);
-    }
-
-    // allow ALL vercel deployments
-    if (origin.endsWith(".vercel.app")) {
-      return callback(null, true);
-    }
-
-    console.warn("Blocked by CORS:", origin);
-
-    // never throw error (prevents server crash)
-    return callback(null, true);
-  },
-
-  credentials: true,
-  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type","Authorization"]
-};
-
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: true,          // reflect request origin
+  credentials: true
+}));
 
 // handle preflight
-app.options("*", cors(corsOptions));
+app.options("*", cors());
 
 
 // ----------------------
@@ -71,11 +47,9 @@ app.use(express.json());
 
 app.use(applyHelmet);
 
-// skip rate limiter for preflight
+// skip rate limit for preflight
 app.use((req, res, next) => {
-  if (req.method === "OPTIONS") {
-    return next();
-  }
+  if (req.method === "OPTIONS") return next();
   rateLimiter(req, res, next);
 });
 
@@ -130,7 +104,6 @@ async function startServer() {
     await connectDB();
 
     console.log("MongoDB connected");
-    console.log("NODE_ENV:", process.env.NODE_ENV || "development");
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
