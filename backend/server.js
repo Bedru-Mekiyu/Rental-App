@@ -25,39 +25,39 @@ app.set("trust proxy", 1);
 // CORS CONFIG
 // ----------------------
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "https://rentalapp2.vercel.app"
-];
+const corsOptions = {
+  origin: (origin, callback) => {
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
+    // allow Postman / curl / server-to-server
+    if (!origin) {
+      return callback(null, true);
+    }
 
-      // allow server tools like Postman
-      if (!origin) return callback(null, true);
+    // allow localhost
+    if (origin.includes("localhost")) {
+      return callback(null, true);
+    }
 
-      // allow defined origins
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+    // allow ALL vercel deployments
+    if (origin.endsWith(".vercel.app")) {
+      return callback(null, true);
+    }
 
-      // allow ALL vercel preview deployments
-      if (origin.endsWith(".vercel.app")) {
-        return callback(null, true);
-      }
+    console.warn("Blocked by CORS:", origin);
 
-      console.warn("Blocked by CORS:", origin);
+    return callback(null, false);
+  },
 
-      return callback(null, false);
-    },
+  credentials: true,
+  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"]
+};
 
-    credentials: true,
-    methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
-    allowedHeaders: ["Content-Type","Authorization"]
-  })
-);
+// apply CORS
+app.use(cors(corsOptions));
+
+// handle preflight globally
+app.options("*", cors(corsOptions));
 
 
 // ----------------------
@@ -73,6 +73,7 @@ app.use(express.json());
 
 app.use(applyHelmet);
 
+// skip rate limit for preflight requests
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") {
     return next();
@@ -140,7 +141,6 @@ async function startServer() {
   } catch (error) {
 
     console.error("Server startup error:", error);
-
     process.exit(1);
   }
 }
