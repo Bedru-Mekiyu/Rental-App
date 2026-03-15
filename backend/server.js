@@ -1,4 +1,4 @@
-// backend/server.js
+// backend/server.js — DIAGNOSTIC + FIXED VERSION
 
 import "dotenv/config";
 import express from "express";
@@ -22,10 +22,7 @@ const app = express();
 
 app.set("trust proxy", 1);
 
-// ────────────────────────────────────────────────
-// CORS – safest production setup (reflects any origin)
-// No custom logic → no chance of throwing "Not allowed by CORS"
-// ────────────────────────────────────────────────
+// Safe CORS – reflects requesting origin (no rejection possible)
 app.use(
   cors({
     origin: true,
@@ -36,42 +33,30 @@ app.use(
   })
 );
 
-// Explicit preflight handler (extra protection)
 app.options("*", cors());
 
-// ────────────────────────────────────────────────
 // Body parser
-// ────────────────────────────────────────────────
 app.use(express.json());
 
-// ────────────────────────────────────────────────
-// Security middleware
-// ────────────────────────────────────────────────
+// Security
 app.use(applyHelmet);
 
-// Skip rate limiter on OPTIONS requests (prevents blocking preflight)
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") return next();
   rateLimiter(req, res, next);
 });
 
-// ────────────────────────────────────────────────
-// Health endpoints (explicit 200 status)
-app.get("/", (req, res) => {
-  res.status(200).json({
-    status: "ok",
-    message: "Rental API is running",
-    health: "/health",
-  });
-});
-
+// Health – explicit 200 + logging
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok" });
+  console.log("[HEALTHCHECK] /health called from", req.ip || req.headers["x-forwarded-for"]);
+  res.status(200).json({ status: "ok", uptime: process.uptime() });
 });
 
-// ────────────────────────────────────────────────
-// API routes
-// ────────────────────────────────────────────────
+app.get("/", (req, res) => {
+  res.status(200).json({ status: "ok", message: "API is running" });
+});
+
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/payments", paymentRoutes);
@@ -81,27 +66,27 @@ app.use("/api/units", unitRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/maintenance", maintenanceRoutes);
 
-// ────────────────────────────────────────────────
-// Error handler – must be last
-// ────────────────────────────────────────────────
+// Error handler last
 app.use(errorHandler);
 
-// ────────────────────────────────────────────────
-// Start server – MUST use process.env.PORT for Railway
-// ────────────────────────────────────────────────
+// Listen – MUST use process.env.PORT
 const PORT = process.env.PORT || 5000;
 
 async function startServer() {
   try {
+    console.log("Attempting MongoDB connection...");
     await connectDB();
-    console.log("MongoDB connected");
-    console.log("NODE_ENV:", process.env.NODE_ENV || "development");
+    console.log("MongoDB connected successfully");
 
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+    console.log("Starting server on port:", PORT);
+    console.log("process.env.PORT value:", process.env.PORT || "(not set – using fallback 5000)");
+
+    app.listen(PORT, "0.0.0.0", () => {  // bind to 0.0.0.0 for Railway
+      console.log(`Server is listening on http://0.0.0.0:${PORT}`);
+      console.log("Healthcheck should now respond at /health");
     });
   } catch (error) {
-    console.error("Server startup failed:", error.message || error);
+    console.error("Startup failed:", error.message || error);
     process.exit(1);
   }
 }
