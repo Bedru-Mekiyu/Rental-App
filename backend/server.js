@@ -1,3 +1,5 @@
+// server.js — FINAL SAFE VERSION (no custom origin logic that can crash)
+
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
@@ -20,61 +22,52 @@ const app = express();
 
 app.set("trust proxy", 1);
 
+// ────────────────────────────────────────────────
+// SIMPLE & SAFE CORS – this is what most production APIs use
+// ────────────────────────────────────────────────
+app.use(
+  cors({
+    origin: true,                     // ← automatically echoes whatever Origin the browser sends
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    optionsSuccessStatus: 204
+  })
+);
 
-// ----------------------
-// SIMPLE PRODUCTION CORS
-// ----------------------
-
-app.use(cors({
-  origin: true,          // reflect request origin
-  credentials: true
-}));
-
-// handle preflight
+// Explicit preflight handler (extra safety layer)
 app.options("*", cors());
 
-
-// ----------------------
+// ────────────────────────────────────────────────
 // BODY PARSER
-// ----------------------
-
+// ────────────────────────────────────────────────
 app.use(express.json());
 
-
-// ----------------------
-// SECURITY
-// ----------------------
-
+// ────────────────────────────────────────────────
+// SECURITY – after CORS
+// ────────────────────────────────────────────────
 app.use(applyHelmet);
 
-// skip rate limit for preflight
+// Bypass rate limiter for OPTIONS requests
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") return next();
   rateLimiter(req, res, next);
 });
 
-
-// ----------------------
-// HEALTH ROUTES
-// ----------------------
-
+// ────────────────────────────────────────────────
+// HEALTH CHECKS
+// ────────────────────────────────────────────────
 app.get("/", (req, res) => {
-  res.json({
-    status: "ok",
-    message: "Rental API is running",
-    health: "/health"
-  });
+  res.json({ status: "ok", message: "Rental API is running", health: "/health" });
 });
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-
-// ----------------------
-// API ROUTES
-// ----------------------
-
+// ────────────────────────────────────────────────
+// ROUTES
+// ────────────────────────────────────────────────
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/payments", paymentRoutes);
@@ -84,35 +77,27 @@ app.use("/api/units", unitRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/maintenance", maintenanceRoutes);
 
-
-// ----------------------
-// ERROR HANDLER
-// ----------------------
-
+// ────────────────────────────────────────────────
+// ERROR HANDLER – last
+// ────────────────────────────────────────────────
 app.use(errorHandler);
 
-
-// ----------------------
-// START SERVER
-// ----------------------
-
+// ────────────────────────────────────────────────
+// START
+// ────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 
 async function startServer() {
   try {
-
     await connectDB();
-
     console.log("MongoDB connected");
+    console.log("NODE_ENV:", process.env.NODE_ENV || "development");
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
-
-  } catch (error) {
-
-    console.error("Server startup error:", error);
-
+  } catch (err) {
+    console.error("Server startup failed:", err);
     process.exit(1);
   }
 }
