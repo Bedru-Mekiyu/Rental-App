@@ -72,7 +72,7 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar-shell hidden w-48 shrink-0 pl-4 pr-3 pb-6 pt-6 md:block">
-      <div className="h-full">
+      <div className="h-full bg-gradient-to-b from-slate-50 via-white to-slate-50/80 rounded-2xl border border-slate-200/60 shadow-sm">
         <div className="mb-4 flex items-center gap-2 px-2">
           <div className="h-px flex-1 bg-gradient-to-r from-emerald-500/30 to-transparent" />
           <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">

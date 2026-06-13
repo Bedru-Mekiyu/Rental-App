@@ -11,6 +11,7 @@ import SkeletonRow from "./components/SkeletonRow";
 
 // Pages (lazy loaded for code splitting)
 const Login = lazy(() => import("./pages/Login"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const PropertyManagerDashboard = lazy(() => import("./pages/PropertyManagerDashboard"));
 const GeneralManagerDashboard = lazy(() => import("./pages/GeneralManagerDashboard"));
 const FinancialStaffDashboard = lazy(() => import("./pages/FinancialStaffDashboard"));
@@ -80,6 +81,14 @@ function App() {
         element={
           <Suspense fallback={<PageLoading />}>
             <Login />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <Suspense fallback={<PageLoading />}>
+            <ForgotPassword />
           </Suspense>
         }
       />

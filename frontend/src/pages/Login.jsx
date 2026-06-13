@@ -8,7 +8,6 @@ import logoImage from "../assets/Screenshot.png";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -28,7 +27,7 @@ export default function Login() {
     e.preventDefault();
 
     if (!form.email || !form.password) {
-      setError("Please enter both email and password");
+      toast.error("Please enter both email and password");
       return;
     }
 
@@ -45,16 +44,15 @@ export default function Login() {
       return;
     }
 
-    setError(result.message || "Invalid email or password");
     toast.error(result.message || "Login failed");
   };
 
   return (
     <div className="page-transition relative flex min-h-screen w-screen items-start justify-center overflow-y-auto bg-linear-to-br from-[#d2eceb] via-[#e8eff2] to-[#cdeaf4] p-1 sm:items-center">
-      <div className="grid min-h-[calc(100vh-8px)] h-auto w-[calc(100vw-8px)] grid-rows-[auto_1fr] overflow-visible rounded-[1.9rem] border border-slate-200/80 bg-[#f4f6f7] shadow-[0_20px_55px_-35px_rgba(15,23,42,0.35)] lg:h-[calc(100vh-8px)] lg:grid-cols-2 lg:grid-rows-1 lg:overflow-hidden">
-        <section className="relative flex min-h-45 items-center justify-center p-0 sm:min-h-55 lg:min-h-0">
+      <div className="flex min-h-[calc(100vh-8px)] h-auto w-[calc(100vw-8px)] flex-col overflow-visible rounded-[1.9rem] border border-slate-200/80 bg-[#f4f6f7] shadow-[0_20px_55px_-35px_rgba(15,23,42,0.35)] lg:h-[calc(100vh-8px)] lg:grid lg:grid-cols-2 lg:overflow-hidden">
+        <section className="relative hidden lg:flex min-h-45 items-center justify-center p-0 lg:min-h-0">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.12),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.08),transparent_32%)]" />
-          <div className="relative z-10 flex h-full max-h-65 w-full items-center justify-center bg-[#f8f8f8] p-6 sm:max-h-80 sm:p-8 lg:max-h-none lg:p-12">
+          <div className="relative z-10 flex h-full max-h-65 w-full items-center justify-center bg-[#f8f8f8] p-6 lg:max-h-none lg:p-12">
             <img
               src={logoImage}
               alt="Ethiopia islamic affairs superm counsil logo"
@@ -75,12 +73,6 @@ export default function Login() {
               </h1>
               <p className="mt-1 text-sm text-slate-500">Sign in to continue</p>
             </div>
-
-            {error && (
-              <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                {error}
-              </div>
-            )}
 
             <form onSubmit={handleSubmit} className="max-w-sm space-y-5">
               <div className="space-y-2">
@@ -132,6 +124,15 @@ export default function Login() {
               >
                 {loading ? "Signing in..." : "Sign In"}
               </button>
+              <div className="mt-3 text-center">
+                <button
+                  type="button"
+                  onClick={() => navigate("/forgot-password")}
+                  className="text-xs font-medium text-emerald-600 transition-colors hover:text-emerald-700 hover:underline"
+                >
+                  Forgot password?
+                </button>
+              </div>
             </form>
 
             <div className="mt-6 max-w-sm border-t border-slate-100 pt-4 text-left">
