@@ -1,102 +1,197 @@
-// src/controllers/unitController.js (ESM)
+import Unit from "../models/Unit.js"
+import Property from "../models/Property.js"
+import { logAction } from "../utils/auditLogger.js"
 
-import Unit from "../models/Unit.js";
-import { buildPaginationMeta, getPagination } from "../utils/pagination.js";
+async function ensurePropertyAccess(userId, userRole, propertyId) {
+  if (userRole !== "PM") {
+    return true
+  }
+  const property = await Property.findOne({ _id: propertyId, isDeleted: false })
+  return property && property.managerId?.toString() === userId.toString()
+}
 
 export async function createUnit(req, res) {
   try {
-    const data = req.body;
-    const unit = await Unit.create(data);
-    res.status(201).json({ success: true, data: unit });
+    const userId = req.user._id
+    const userRole = req.user.role
+    const { propertyId, unitNumber, floor, bedrooms, bathrooms, squareMeters, monthlyRentEtb } = req.body
+
+    const allowed = await ensurePropertyAccess(userId, userRole, propertyId)
+    if (!allowed) {
+      return res.status(403).json({ status: 403, message: "Forbidden" })
+    }
+
+    const unit = await Unit.create({
+      propertyId,
+      unitNumber,
+      floor,
+      bedrooms,
+      bathrooms,
+      squareMeters,
+      monthlyRentEtb,
+    })
+
+    await Property.findByIdAndUpdate(propertyId, { $addToSet: { units: unit._id } })
+
+    await logAction({
+      userId,
+      action: "UNIT_CREATED",
+      entityType: "Unit",
+      entityId: unit._id,
+      details: { propertyId, unitNumber },
+    })
+
+    res.status(201).json({ status: 201, data: unit })
   } catch (err) {
-    res
-      .status(400)
-      .json({ success: false, message: err.message });
+    res.status(500).json({ status: 500, message: "Failed to create unit" })
   }
 }
 
-export async function getUnits(req, res) {
+export async function listUnits(req, res) {
   try {
-    const { page, limit, skip } = getPagination(req);
-    const { page: _page, limit: _limit, ...rest } = req.query;
-    const filters = {
-      isDeleted: false,
-      ...rest,
-    };
+    const { page = 1, limit = 20, propertyId } = req.query
+    const pageNumber = Number.parseInt(page, 10) || 1
+    const limitNumber = Number.parseInt(limit, 10) || 20
+    const skip = (pageNumber - 1) * limitNumber
+    const userId = req.user._id
+    const userRole = req.user.role
 
-    if (filters.floor) filters.floor = Number(filters.floor);
-    if (filters.basePriceEtb) filters.basePriceEtb = Number(filters.basePriceEtb);
+    const filter = { isDeleted: false }
+
+    if (userRole === "PM") {
+      const properties = await Property.find({ managerId: userId, isDeleted: false }, { _id: 1 }).lean()
+      const managedPropertyIds = properties.map((p) => p._id)
+
+      if (propertyId) {
+        const requestedPropertyId = propertyId.toString()
+        const hasAccess = managedPropertyIds.some((managedId) => managedId.toString() === requestedPropertyId)
+        if (!hasAccess) {
+          return res.status(403).json({ status: 403, message: "Forbidden" })
+        }
+        filter.propertyId = propertyId
+      } else {
+        filter.propertyId = { $in: managedPropertyIds }
+      }
+    } else if (propertyId) {
+      filter.propertyId = propertyId
+    }
 
     const [units, total] = await Promise.all([
-      Unit.find(filters).skip(skip).limit(limit),
-      Unit.countDocuments(filters),
-    ]);
+      Unit.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNumber).lean(),
+      Unit.countDocuments(filter),
+    ])
+
     res.json({
-      success: true,
+      status: 200,
       data: units,
-      meta: buildPaginationMeta({ page, limit, total }),
-    });
+      pagination: { page: pageNumber, limit: limitNumber, total, pages: Math.ceil(total / limitNumber) },
+    })
   } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, message: err.message });
+    res.status(500).json({ status: 500, message: "Failed to fetch units" })
   }
 }
 
 export async function getUnitById(req, res) {
   try {
-    const unit = await Unit.findOne({ _id: req.params.id, isDeleted: false });
-    if (!unit)
-      return res
-        .status(404)
-        .json({ success: false, message: "Unit not found" });
+    const { id } = req.params
+    const userId = req.user._id
+    const userRole = req.user.role
 
-    res.json({ success: true, data: unit });
+    const unit = await Unit.findOne({ _id: id, isDeleted: false })
+    if (!unit) {
+      return res.status(404).json({ status: 404, message: "Unit not found" })
+    }
+
+    const allowed = await ensurePropertyAccess(userId, userRole, unit.propertyId)
+    if (!allowed) {
+      return res.status(403).json({ status: 403, message: "Forbidden" })
+    }
+
+    res.json({ status: 200, data: unit })
   } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, message: err.message });
+    res.status(500).json({ status: 500, message: "Failed to fetch unit" })
   }
 }
 
 export async function updateUnit(req, res) {
   try {
-    const unit = await Unit.findOneAndUpdate(
-      { _id: req.params.id, isDeleted: false },
-      req.body,
-      { new: true }
-    );
+    const { id } = req.params
+    const userId = req.user._id
+    const userRole = req.user.role
 
-    if (!unit)
-      return res
-        .status(404)
-        .json({ success: false, message: "Unit not found" });
+    const unit = await Unit.findOne({ _id: id, isDeleted: false })
+    if (!unit) {
+      return res.status(404).json({ status: 404, message: "Unit not found" })
+    }
 
-    res.json({ success: true, data: unit });
+    const allowed = await ensurePropertyAccess(userId, userRole, unit.propertyId)
+    if (!allowed) {
+      return res.status(403).json({ status: 403, message: "Forbidden" })
+    }
+
+    const updates = (({ status, monthlyRentEtb, floor, bedrooms, bathrooms, squareMeters }) => ({
+      status,
+      monthlyRentEtb,
+      floor,
+      bedrooms,
+      bathrooms,
+      squareMeters,
+    }))(req.body)
+
+    Object.keys(updates).forEach((key) => updates[key] === undefined && delete updates[key])
+
+    const updated = await Unit.findByIdAndUpdate(id, updates, { new: true })
+
+    await logAction({
+      userId,
+      action: "UNIT_UPDATED",
+      entityType: "Unit",
+      entityId: id,
+      details: updates,
+    })
+
+    res.json({ status: 200, data: updated })
   } catch (err) {
-    res
-      .status(400)
-      .json({ success: false, message: err.message });
+    res.status(500).json({ status: 500, message: "Failed to update unit" })
   }
 }
 
-export async function softDeleteUnit(req, res) {
+export async function deleteUnit(req, res) {
   try {
-    const unit = await Unit.findOneAndUpdate(
-      { _id: req.params.id },
-      { isDeleted: true },
-      { new: true }
-    );
+    const { id } = req.params
+    const userId = req.user._id
+    const userRole = req.user.role
 
-    if (!unit)
-      return res
-        .status(404)
-        .json({ success: false, message: "Unit not found" });
+    const unit = await Unit.findOne({ _id: id, isDeleted: false })
+    if (!unit) {
+      return res.status(404).json({ status: 404, message: "Unit not found" })
+    }
 
-    res.json({ success: true, message: "Unit soft deleted" });
+    const allowed = await ensurePropertyAccess(userId, userRole, unit.propertyId)
+    if (!allowed) {
+      return res.status(403).json({ status: 403, message: "Forbidden" })
+    }
+
+    await Unit.findByIdAndUpdate(id, { isDeleted: true })
+    await Property.findByIdAndUpdate(unit.propertyId, { $pull: { units: unit._id } })
+
+    await logAction({
+      userId,
+      action: "UNIT_DELETED",
+      entityType: "Unit",
+      entityId: id,
+    })
+
+    res.json({ status: 200, message: "Unit deleted" })
   } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, message: err.message });
+    res.status(500).json({ status: 500, message: "Failed to delete unit" })
   }
+}
+
+export default {
+  createUnit,
+  listUnits,
+  getUnitById,
+  updateUnit,
+  deleteUnit,
 }

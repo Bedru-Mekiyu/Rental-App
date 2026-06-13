@@ -1,259 +1,149 @@
-// src/controllers/leaseController.js (ESM)
+// src/controllers/leaseController.js (ESM) - Production-ready with authorization
 
-import mongoose from "mongoose";
-import Lease from "../models/Lease.js";
-import Unit from "../models/Unit.js";
-import { logAction } from "../utils/auditLogger.js";
-import { calculateUnitPrice } from "../services/pricingService.js";
-import { buildPaginationMeta, getPagination } from "../utils/pagination.js";
+import Lease from "../models/Lease.js"
+import Property from "../models/Property.js"
+import { logAction } from "../utils/auditLogger.js"
+import { createLeaseWithTransaction, terminateLeaseWithTransaction } from "../utils/transactionWrapper.js"
+import { canManageProperty, canAccessLease } from "../middleware/authorization.js"
 
-function getDynamicMonthlyRent(lease) {
-  try {
-    if (!lease?.unitId || typeof lease.unitId !== "object") {
-      return null;
-    }
-    return calculateUnitPrice(lease.unitId);
-  } catch {
-    return null;
-  }
-}
-
-function withDynamicRent(lease) {
-  const leaseObject =
-    typeof lease?.toObject === "function" ? lease.toObject() : lease;
-
-  return {
-    ...leaseObject,
-    monthlyRentEtb: getDynamicMonthlyRent(leaseObject),
-  };
-}
-
-/**
- * POST /api/leases
- * Roles: PM, ADMIN
- * Create a lease linking unit + tenant, computing monthly rent
- */
 export async function createLease(req, res) {
   try {
-    const { unitId, tenantId, startDate, endDate, taxRate } = req.body;
+    const { unitId, tenantId, propertyId, startDate, endDate, monthlyRentEtb, securityDepositEtb } = req.body
+    const userId = req.user._id
+    const userRole = req.user.role
 
-    if (!unitId || !tenantId || !startDate || !endDate) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing required fields" });
+    if (!["PM", "ADMIN"].includes(userRole)) {
+      await logAction({
+        userId,
+        action: "LEASE_CREATE_DENIED",
+        entityType: "Lease",
+        entityId: unitId,
+        details: { reason: "Insufficient permissions" },
+      })
+      return res.status(403).json({ status: 403, message: "Only PM/ADMIN can create leases" })
     }
 
-    const unit = await Unit.findById(unitId);
-    if (!unit) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Unit not found" });
+    const canManage = await canManageProperty(userId, propertyId, userRole)
+    if (!canManage) {
+      return res.status(403).json({ status: 403, message: "You don't manage this property" })
     }
 
-    if (unit.isDeleted || unit.status !== "VACANT") {
-      return res
-        .status(400)
-        .json({ success: false, message: "Selected unit is not available for lease" });
-    }
-
-    const existingActiveLease = await Lease.exists({ unitId, status: "ACTIVE" });
-    if (existingActiveLease) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Selected unit already has an active lease" });
-    }
-
-    // use pricing engine
-    const monthlyRentEtb = calculateUnitPrice(unit);
-
-    const lease = await Lease.create({
+    // Create lease with transaction safety
+    const lease = await createLeaseWithTransaction({
       unitId,
       tenantId,
-      managerId: req.user.id, // the PM creating this lease
+      propertyId,
       startDate,
       endDate,
       monthlyRentEtb,
-      taxRate: taxRate || 0,
-      status: "ACTIVE",
-    });
-
-    // update unit status to OCCUPIED
-    unit.status = "OCCUPIED";
-    await unit.save();
+      securityDepositEtb,
+    })
 
     await logAction({
-      userId: req.user.id,
-      action: "LEASE_CREATE",
-      entityType: "LEASE",
+      userId,
+      action: "LEASE_CREATED",
+      entityType: "Lease",
       entityId: lease._id,
-      details: { unitId: lease.unitId, tenantId: lease.tenantId },
-    });
+      details: { unitId, tenantId, monthlyRentEtb },
+    })
 
-    return res.status(201).json({ success: true, data: lease });
+    res.status(201).json({
+      status: 201,
+      message: "Lease created successfully",
+      data: lease,
+    })
   } catch (err) {
-    console.error("createLease error:", err);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to create lease" });
+    console.error("Lease creation error:", err.message)
+    res.status(500).json({ status: 500, message: err.message || "Failed to create lease" })
   }
 }
 
-/**
- * GET /api/leases
- * Roles: PM, ADMIN, FS, GM
- * List all leases with optional filters
- */
-export async function listAllLeases(req, res) {
+export async function listLeases(req, res) {
   try {
-    const { page, limit, skip } = getPagination(req);
-    const { status, tenantId, managerId, unitId } = req.query;
-    const filter = {};
-    if (status) filter.status = status;
-    if (tenantId) filter.tenantId = tenantId;
-    if (managerId) filter.managerId = managerId;
-    if (unitId) filter.unitId = unitId;
+    const { page = 1, limit = 20, status } = req.query
+    const pageNumber = Number.parseInt(page, 10) || 1
+    const limitNumber = Number.parseInt(limit, 10) || 20
+    const skip = (pageNumber - 1) * limitNumber
 
-    const [leases, total] = await Promise.all([
-      Lease.find(filter)
-        .populate("unitId")
-        .populate("tenantId", "fullName email")
-        .skip(skip)
-        .limit(limit),
-      Lease.countDocuments(filter),
-    ]);
+    const filter = status ? { status } : {}
 
-    const leasesWithDynamicRent = leases.map(withDynamicRent);
+    if (req.user.role === "TENANT") {
+      filter.tenantId = req.user._id
+    } else if (req.user.role === "PM") {
+      // PM can only see leases for their properties
+      const properties = await Property.find({ managerId: req.user._id }, { _id: 1 })
+      filter.propertyId = { $in: properties.map((p) => p._id) }
+    }
+    // ADMIN sees all, GM/FS see all (data analytics roles)
 
-    return res.json({
-      success: true,
-      data: leasesWithDynamicRent,
-      meta: buildPaginationMeta({ page, limit, total }),
-    });
+    const leases = await Lease.find(filter).skip(skip).limit(limitNumber).populate("unitId tenantId propertyId")
+
+    const total = await Lease.countDocuments(filter)
+
+    res.json({
+      status: 200,
+      data: leases,
+      pagination: { page: pageNumber, limit: limitNumber, total, pages: Math.ceil(total / limitNumber) },
+    })
   } catch (err) {
-    console.error("listAllLeases error:", err);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to fetch leases" });
+    res.status(500).json({ status: 500, message: "Failed to fetch leases" })
   }
 }
 
-/**
- * GET /api/leases/:id
- * Roles: PM, ADMIN, FS, GM, TENANT
- */
 export async function getLeaseById(req, res) {
   try {
-    if (!req.params.id || req.params.id === "undefined" || !mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid lease ID" });
-    }
+    const { id } = req.params
+    const userId = req.user._id
+    const userRole = req.user.role
 
-    const lease = await Lease.findById(req.params.id)
-      .populate("unitId")
-      .populate("tenantId", "fullName email");
-
+    const lease = await Lease.findById(id).populate("unitId tenantId propertyId")
     if (!lease) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Lease not found" });
+      return res.status(404).json({ status: 404, message: "Lease not found" })
     }
 
-    // Tenant can only see own lease
-    if (
-      req.user.role === "TENANT" &&
-      String(lease.tenantId._id || lease.tenantId) !== String(req.user.id)
-    ) {
-      return res
-        .status(403)
-        .json({ success: false, message: "Forbidden" });
+    const canAccess = await canAccessLease(userId, id, userRole)
+    if (!canAccess) {
+      return res.status(403).json({ status: 403, message: "Forbidden" })
     }
 
-    return res.json({ success: true, data: withDynamicRent(lease) });
+    res.json({ status: 200, data: lease })
   } catch (err) {
-    console.error("getLeaseById error:", err);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to fetch lease" });
+    res.status(500).json({ status: 500, message: "Failed to fetch lease" })
   }
 }
 
-/**
- * GET /api/leases/by-tenant/:tenantId
- * Roles: PM, ADMIN, FS, GM, TENANT
- */
-export async function listLeasesByTenant(req, res) {
+export async function terminateLease(req, res) {
   try {
-    const { tenantId } = req.params;
-    const { page, limit, skip } = getPagination(req);
+    const { id } = req.params
+    const userId = req.user._id
+    const userRole = req.user.role
 
-    // Tenant can only list their own leases
-    if (
-      req.user.role === "TENANT" &&
-      String(tenantId) !== String(req.user.id)
-    ) {
-      return res
-        .status(403)
-        .json({ success: false, message: "Forbidden" });
+    if (!["PM", "ADMIN"].includes(userRole)) {
+      return res.status(403).json({ status: 403, message: "Only PM/ADMIN can terminate leases" })
     }
 
-    const [leases, total] = await Promise.all([
-      Lease.find({ tenantId }).populate("unitId").skip(skip).limit(limit),
-      Lease.countDocuments({ tenantId }),
-    ]);
-
-    const leasesWithDynamicRent = leases.map(withDynamicRent);
-
-    return res.json({
-      success: true,
-      data: leasesWithDynamicRent,
-      meta: buildPaginationMeta({ page, limit, total }),
-    });
-  } catch (err) {
-    console.error("listLeasesByTenant error:", err);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to fetch leases" });
-  }
-}
-
-/**
- * PATCH /api/leases/:id/end
- * Roles: PM, ADMIN
- * Mark lease as ENDED and free the unit
- */
-export async function endLease(req, res) {
-  try {
-    const lease = await Lease.findById(req.params.id);
+    const lease = await Lease.findById(id)
     if (!lease) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Lease not found" });
+      return res.status(404).json({ status: 404, message: "Lease not found" })
     }
 
-    lease.status = "ENDED";
-    await lease.save();
-
-    // set unit back to VACANT
-    const unit = await Unit.findById(lease.unitId);
-    if (unit) {
-      unit.status = "VACANT";
-      await unit.save();
+    const canAccess = await canAccessLease(userId, id, userRole)
+    if (!canAccess) {
+      return res.status(403).json({ status: 403, message: "Forbidden" })
     }
+
+    const updated = await terminateLeaseWithTransaction(id, userId, userRole)
 
     await logAction({
-      userId: req.user.id,
-      action: "LEASE_END",
-      entityType: "LEASE",
-      entityId: lease._id,
-      details: { unitId: lease.unitId, tenantId: lease.tenantId },
-    });
+      userId,
+      action: "LEASE_TERMINATED",
+      entityType: "Lease",
+      entityId: id,
+      details: { tenantId: lease.tenantId },
+    })
 
-    return res.json({ success: true, data: lease });
+    res.json({ status: 200, message: "Lease terminated", data: updated })
   } catch (err) {
-    console.error("endLease error:", err);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to end lease" });
+    res.status(500).json({ status: 500, message: err.message || "Failed to terminate lease" })
   }
 }
