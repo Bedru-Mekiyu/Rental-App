@@ -1,15 +1,48 @@
-// src/middleware/errorHandler.js (ESM)
+import { logAction } from "../utils/auditLogger.js"
+import { trackError } from "../services/errorTrackingService.js"
 
-// eslint-disable-next-line no-unused-vars
 export default function errorHandler(err, req, res, next) {
-  console.error("Unhandled error:", err);
+  if (res.headersSent) {
+    return next(err)
+  }
 
-  // You can customize status codes by checking err.name / err.statusCode
-  const status = err.statusCode || 500;
+  console.error("[ERROR]", err)
 
-  res.status(status).json({
-    success: false,
-    message: err.message || "Internal server error",
-    stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
-  });
+  const isDevelopment = process.env.NODE_ENV === "development"
+  const correlationId = req.correlationId
+  const status = err.message === "CORS origin not allowed" ? 403 : err.statusCode || 500
+  const errorCode = err.message === "CORS origin not allowed" ? "CORS_NOT_ALLOWED" : err.code
+
+  // Don't expose stack traces or sensitive info in production
+  const errorResponse = {
+    message: isDevelopment ? err.message : "An error occurred. Please try again later.",
+    errorCode: errorCode || "INTERNAL_ERROR",
+    correlationId,
+    status,
+    path: req.path,
+    method: req.method,
+    timestamp: new Date().toISOString(),
+    ...(isDevelopment && { stack: err.stack }),
+  }
+
+  // Log to audit trail
+  if (req.user?._id) {
+    logAction({
+      userId: req.user._id,
+      action: "ERROR_OCCURRED",
+      entityType: "ERROR",
+      entityId: null,
+      details: {
+        message: err.message,
+        errorCode: err.code,
+        path: req.path,
+        method: req.method,
+        correlationId,
+      },
+    }).catch((logErr) => console.error("Failed to log error:", logErr))
+  }
+
+  trackError(err, req).catch((logErr) => console.error("Failed to track error:", logErr))
+
+  res.status(status).json(errorResponse)
 }
