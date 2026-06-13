@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background-color: #e74c3c; color: white; padding: 20px; text-align: center; }
+    .content { padding: 20px; border: 1px solid #ddd; }
+    .warning { background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; }
+    .footer { text-align: center; color: #7f8c8d; font-size: 12px; padding: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Lease Expiration Notice</h1>
+    </div>
+    
+    <div class="content">
+      <p>Hello {{tenantName}},</p>
+      
+      <div class="warning">
+        <strong>Important:</strong> Your lease will expire in <strong>{{daysUntilExpiry}} days</strong>.
+      </div>
+      
+      <p>Lease Details:</p>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px;"><strong>Property Address:</strong></td>
+          <td style="padding: 8px;">{{propertyAddress}}</td>
+        </tr>
+        <tr style="background-color: #f5f5f5;">
+          <td style="padding: 8px;"><strong>Unit Number:</strong></td>
+          <td style="padding: 8px;">{{unitNumber}}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px;"><strong>Expiration Date:</strong></td>
+          <td style="padding: 8px;"><strong>{{expirationDate}}</strong></td>
+        </tr>
+        <tr style="background-color: #f5f5f5;">
+          <td style="padding: 8px;"><strong>Monthly Rent:</strong></td>
+          <td style="padding: 8px;">ETB {{monthlyRent}}</td>
+        </tr>
+      </table>
+      
+      <p style="margin-top: 20px;">
+        Please contact your property manager to discuss renewal options or make other arrangements before your lease expires.
+      </p>
+    </div>
+    
+    <div class="footer">
+      <p>&copy; 2025 Property Management System. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
