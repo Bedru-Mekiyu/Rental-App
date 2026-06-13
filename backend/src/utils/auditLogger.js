@@ -1,18 +1,34 @@
-// src/utils/auditLogger.js (ESM)
+import AuditLog from "../models/AuditLog.js"
 
-import AuditLog from "../models/AuditLog.js";
-
-export async function logAction({ userId, action, entityType, entityId, details }) {
+export async function logAction({
+  userId,
+  action,
+  entityType,
+  entityId,
+  details,
+  statusCode,
+  ipAddress,
+  userAgent,
+  correlationId,
+}) {
   try {
-    await AuditLog.create({
+    return await AuditLog.create({
       userId,
       action,
       entityType,
       entityId,
       details,
-    });
+      statusCode,
+      ipAddress,
+      userAgent,
+      correlationId,
+    })
   } catch (err) {
-    // Do not break main request if logging fails
-    console.error("Audit log error:", err.message);
+    console.error("[AUDIT] Failed to log action:", err.message)
+    return null
   }
+}
+
+export default {
+  logAction,
 }
