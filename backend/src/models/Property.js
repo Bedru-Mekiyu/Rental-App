@@ -1,31 +1,52 @@
-// src/models/Property.js (ESM)
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
 const propertySchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, "Property name is required"],
       trim: true,
+      index: true,
     },
     address: {
       type: String,
-      required: true,
+      required: [true, "Address is required"],
       trim: true,
     },
-    description: {
+    city: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+    state: {
       type: String,
       trim: true,
     },
-    isActive: {
+    country: {
+      type: String,
+      trim: true,
+      default: "Ethiopia",
+    },
+    managerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      index: true,
+    },
+    units: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Unit",
+      },
+    ],
+    isDeleted: {
       type: Boolean,
-      default: true,
+      default: false,
       index: true,
     },
   },
-  { timestamps: true }
-);
+  { timestamps: true },
+)
 
-const Property = mongoose.model("Property", propertySchema);
+propertySchema.index({ managerId: 1, isDeleted: 1 })
 
-export default Property;
+export default mongoose.model("Property", propertySchema)

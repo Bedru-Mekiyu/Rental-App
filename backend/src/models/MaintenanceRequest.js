@@ -1,48 +1,57 @@
-// src/models/MaintenanceRequest.js
-
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
 const maintenanceRequestSchema = new mongoose.Schema(
   {
-    tenantId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     unitId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Unit",
-      required: true,
+      required: [true, "Unit is required"],
+      index: true,
+    },
+    requestedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "Requester is required"],
+      index: true,
     },
     description: {
       type: String,
-      required: true,
+      required: [true, "Description is required"],
       trim: true,
-      minlength: 5,
     },
-    urgency: {
+    priority: {
       type: String,
-      enum: ["low", "medium", "high"],
-      default: "medium",
+      enum: ["LOW", "MEDIUM", "HIGH", "URGENT"],
+      default: "MEDIUM",
+      index: true,
+    },
+    estimatedCostEtb: {
+      type: Number,
+      min: [0, "Estimated cost must be non-negative"],
     },
     status: {
       type: String,
-      enum: ["open", "in_progress", "resolved", "closed"],
-      default: "open",
+      enum: ["PENDING", "IN_PROGRESS", "COMPLETED", "CANCELLED"],
+      default: "PENDING",
+      index: true,
+    },
+    completionNotes: {
+      type: String,
+      trim: true,
+    },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
     isDeleted: {
       type: Boolean,
       default: false,
+      index: true,
     },
   },
-  {
-    timestamps: true,
-  }
-);
+  { timestamps: true },
+)
 
-const MaintenanceRequest = mongoose.model(
-  "MaintenanceRequest",
-  maintenanceRequestSchema
-);
+maintenanceRequestSchema.index({ unitId: 1, status: 1 })
 
-export default MaintenanceRequest;
+export default mongoose.model("MaintenanceRequest", maintenanceRequestSchema)

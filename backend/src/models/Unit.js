@@ -1,54 +1,54 @@
-// src/models/Unit.js (ESM)
+// src/models/Unit.js (ESM) - Enhanced with status constraints
 
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
 const unitSchema = new mongoose.Schema(
   {
-    unitNumber: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     propertyId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Property",
-      // required: true, // made optional for now
+      required: [true, "Property is required"],
+      index: true,
+    },
+    unitNumber: {
+      type: String,
+      required: [true, "Unit number is required"],
     },
     floor: {
       type: Number,
-      required: true,
-      min: 0,
+      min: [0, "Floor cannot be negative"],
     },
-    type: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    areaSqm: {
+    bedrooms: {
       type: Number,
-      required: true,
-      min: 1,
+      required: [true, "Bedrooms is required"],
+      min: [0, "Bedrooms cannot be negative"],
+      max: [10, "Bedrooms seems invalid"],
     },
-    basePriceEtb: {
+    bathrooms: {
       type: Number,
-      required: true,
-      min: 0,
+      required: [true, "Bathrooms is required"],
+      min: [0, "Bathrooms cannot be negative"],
+      max: [10, "Bathrooms seems invalid"],
+    },
+    squareMeters: {
+      type: Number,
+      required: [true, "Square meters is required"],
+      min: [1, "Square meters must be positive"],
+    },
+    monthlyRentEtb: {
+      type: Number,
+      required: [true, "Rent is required"],
+      min: [1, "Rent must be positive"],
     },
     status: {
       type: String,
-      enum: ["VACANT", "OCCUPIED", "UNDER_MAINTENANCE"],
+      enum: ["VACANT", "OCCUPIED", "MAINTENANCE", "UNAVAILABLE"],
       default: "VACANT",
-      index: true,
     },
-    amenitiesConfig: {
-      type: [String],
-      default: [],
-      index: true,
-    },
-    viewAttributes: {
-      type: [String],
-      default: [],
-      index: true,
+    currentTenantId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
     isDeleted: {
       type: Boolean,
@@ -56,13 +56,12 @@ const unitSchema = new mongoose.Schema(
       index: true,
     },
   },
-  { timestamps: true }
-);
+  { timestamps: true },
+)
 
-unitSchema.index({ unitNumber: 1, propertyId: 1 }, { unique: true });
-unitSchema.index({ floor: 1 });
-unitSchema.index({ type: 1 });
+unitSchema.index(
+  { propertyId: 1, unitNumber: 1 },
+  { unique: true, sparse: true, partialFilterExpression: { isDeleted: false } },
+)
 
-const Unit = mongoose.model("Unit", unitSchema);
-
-export default Unit;
+export default mongoose.model("Unit", unitSchema)

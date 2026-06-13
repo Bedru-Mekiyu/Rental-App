@@ -1,59 +1,66 @@
-// src/models/Payment.js (ESM)
+// src/models/Payment.js (ESM) - Enhanced with verification controls
 
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
 const paymentSchema = new mongoose.Schema(
   {
     leaseId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Lease",
-      required: true,
+      required: [true, "Lease is required"],
+      index: true,
     },
-    transactionDate: {
-      type: Date,
-      required: true,
+    tenantId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "Tenant is required"],
+      index: true,
     },
     amountEtb: {
       type: Number,
-      required: true,
-      min: 0,
+      required: [true, "Amount is required"],
+      min: [0.01, "Amount must be positive"],
     },
     paymentMethod: {
-      type: String, // e.g. "MANUAL_CASH", "MANUAL_BANK", "TELEBIRR"
+      type: String,
+      enum: ["BANK_TRANSFER", "MOBILE_MONEY", "CASH", "CHECK", "CHAPA", "TELEBIRR", "BELL"],
       required: true,
     },
     status: {
       type: String,
-      enum: ["PENDING", "VERIFIED", "REJECTED"],
+      enum: ["PENDING", "VERIFIED", "REJECTED", "REFUNDED"],
       default: "PENDING",
-    },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
     },
     verifiedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      default: null,
+      validate: {
+        async validator(v) {
+          if (!v) return true // OK if not verified yet
+          const User = mongoose.model("User")
+          const user = await User.findById(v)
+          return user && ["PM", "ADMIN"].includes(user.role)
+        },
+        message: "Only PM or ADMIN can verify payments",
+      },
     },
-    verifiedAt: {
-      type: Date,
-    },
+    verifiedAt: Date,
+    rejectionReason: String,
     externalTransactionId: {
       type: String,
-      trim: true,
+      unique: true,
+      sparse: true,
     },
-    receiptUrl: {
-      type: String,
-      trim: true,
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
     },
   },
-  { timestamps: true }
-);
+  { timestamps: true },
+)
 
-// Indexes for reports and lookups
-paymentSchema.index({ leaseId: 1 });
-paymentSchema.index({ status: 1, transactionDate: -1 });
+paymentSchema.index({ leaseId: 1, createdAt: -1 })
 
-const Payment = mongoose.model("Payment", paymentSchema);
-
-export default Payment;
+export default mongoose.model("Payment", paymentSchema)
