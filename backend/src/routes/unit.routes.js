@@ -1,33 +1,19 @@
-// src/routes/unit.routes.js (ESM)
-
-import { Router } from "express";
+import { Router } from "express"
+import { auth } from "../middleware/auth-advanced.js"
 import {
-  createUnit,
-  getUnits,
-  getUnitById,
-  updateUnit,
-  softDeleteUnit,
-} from "../controllers/unitController.js";
-import { auth } from "../middleware/auth.js";
+	validateCreateUnit,
+	validateUpdateUnit,
+	validateListUnits,
+	validateObjectIdParam,
+} from "../middleware/validators.js"
+import { createUnit, listUnits, getUnitById, updateUnit, deleteUnit } from "../controllers/unitController.js"
 
-const router = Router();
+const router = Router()
 
-// Allowed roles for restricted operations
-const ADMIN_PM = ["ADMIN", "PM"];
+router.post("/", auth(["PM", "ADMIN"]), validateCreateUnit, createUnit)
+router.get("/", auth(), validateListUnits, listUnits)
+router.get("/:id", auth(), validateObjectIdParam("id", "unit ID"), getUnitById)
+router.patch("/:id", auth(["PM", "ADMIN"]), validateObjectIdParam("id", "unit ID"), validateUpdateUnit, updateUnit)
+router.delete("/:id", auth(["PM", "ADMIN"]), validateObjectIdParam("id", "unit ID"), deleteUnit)
 
-// CREATE UNIT
-router.post("/", auth(ADMIN_PM), createUnit);
-
-// GET ALL UNITS
-router.get("/", auth(), getUnits);
-
-// GET ONE UNIT
-router.get("/:id", auth(), getUnitById);
-
-// UPDATE UNIT
-router.put("/:id", auth(ADMIN_PM), updateUnit);
-
-// SOFT DELETE UNIT
-router.delete("/:id", auth(ADMIN_PM), softDeleteUnit);
-
-export default router;
+export default router

@@ -1,28 +1,26 @@
-// src/routes/auth.routes.js
-import { Router } from "express";
+import { Router } from "express"
+import { auth, loginLimiter, refreshLimiter } from "../middleware/auth-advanced.js"
 import {
-  login,
-  registerAdmin,
-  logout,
-  refreshAccessToken,
-} from "../controllers/authController.js";
+	registerAdmin,
+	login,
+	verifyTwoFactor,
+	logout,
+	refreshAccessToken,
+} from "../controllers/authController.js"
 import {
-  validateLogin,
-  validateRegisterAdmin,
-  validateRefreshToken,
-} from '../middleware/validators.js';
-// You already apply helmet + rateLimiter globally in server.js
-// import { rateLimiter, applyHelmet } from '../middleware/security.js';
+	validateLogin,
+	validateRegisterAdmin,
+	validateVerifyTwoFactor,
+	validateRefreshToken,
+} from "../middleware/validators.js"
 
-const router = Router();
+const router = Router()
 
-// If you want extra protection only on auth routes, uncomment:
-// router.use(applyHelmet);
-// router.use(rateLimiter);
+router.post("/register-admin", auth(["ADMIN"]), validateRegisterAdmin, registerAdmin)
+router.post("/login", loginLimiter, validateLogin, login)
+router.post("/verify-2fa", validateVerifyTwoFactor, verifyTwoFactor)
+router.post("/refresh", refreshLimiter, validateRefreshToken, refreshAccessToken)
+router.post("/refresh-token", refreshLimiter, validateRefreshToken, refreshAccessToken)
+router.post("/logout", auth(), logout)
 
-router.post("/register-admin", validateRegisterAdmin, registerAdmin);
-router.post("/login", validateLogin, login);
-router.post("/refresh", validateRefreshToken, refreshAccessToken);
-router.post("/logout", validateRefreshToken, logout);
-
-export default router;
+export default router

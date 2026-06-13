@@ -1,50 +1,74 @@
-// src/routes/payment.routes.js (ESM)
+// src/routes/payment.routes.js (ESM) - Production routes with PM/ADMIN verification
 
-import { Router } from "express";
-import { auth } from "../middleware/auth.js";
+import { Router } from "express"
+import multer from "multer"
+import { auth, verificationLimiter } from "../middleware/auth-advanced.js"
 import {
-  createPayment,
-  getPaymentById,
-  updatePaymentStatus,
-  listByLease,
-  listByTenant,
-  listPayments,
-} from "../controllers/paymentController.js";
-import { validateCreatePayment } from "../middleware/validators.js";
-
-const router = Router();
-
-// roles that can view payment data (read-only for GM)
-const PAYMENT_VIEW_ROLES = ["PM", "ADMIN", "FS", "GM"];
-
-// roles that can manage/verify payments
-const PAYMENT_MANAGE_ROLES = ["PM", "ADMIN", "FS"];
-
-// PM + ADMIN + FS can see all payments (verification dashboard)
-router.get("/", auth(PAYMENT_VIEW_ROLES), listPayments);
-
-// Tenants + admin can create a payment record (no FS; add "PM" if you want)
-router.post(
-  "/",
-  auth(["TENANT", "ADMIN"]),
   validateCreatePayment,
-  createPayment
-);
+  validateVerifyPayment,
+  validateRejectPayment,
+  validatePagination,
+  validateUploadPaymentProof,
+  validateVerifyPaymentWithProof,
+  validateObjectIdParam,
+  generateIdempotencyKey,
+} from "../middleware/validators.js"
+import { createPayment, verifyPayment, rejectPayment, listPayments } from "../controllers/paymentController.js"
+import {
+  uploadPaymentProof,
+  getPaymentProof,
+  verifyPaymentWithProof,
+} from "../controllers/paymentController-Enhanced.js"
 
-// Only PM and ADMIN can change status (verify/reject)
-router.patch("/:id/status", auth(PAYMENT_MANAGE_ROLES), updatePaymentStatus);
+const router = Router()
 
-// Only PM and ADMIN see payments by lease (back-office view)
-router.get("/by-lease/:leaseId", auth(PAYMENT_VIEW_ROLES), listByLease);
+const storage = multer.memoryStorage()
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (["image/jpeg", "image/png", "image/webp"].includes(file.mimetype)) {
+      cb(null, true)
+    } else {
+      cb(new Error("Invalid file type. Only JPEG, PNG, WebP allowed."))
+    }
+  },
+})
 
-// Tenants + PM + ADMIN + FS can see payments for a tenant
+// All authenticated users can create payments (idempotency protected)
+router.post("/", auth(), generateIdempotencyKey, validateCreatePayment, createPayment)
+
+// List payments (role-filtered)
+router.get("/", auth(), validatePagination, listPayments)
+
+// Only PM and ADMIN can verify payments
+router.patch("/:id/verify", auth(["PM", "ADMIN"]), verificationLimiter, validateVerifyPayment, verifyPayment)
+
+// Only PM and ADMIN can reject payments
+router.patch("/:id/reject", auth(["PM", "ADMIN"]), verificationLimiter, validateRejectPayment, rejectPayment)
+
+// Payment proof flows
+router.post(
+  "/:paymentId/proof",
+  auth(),
+  validateUploadPaymentProof,
+  upload.single("proofImage"),
+  uploadPaymentProof,
+)
+
 router.get(
-  "/by-tenant/:tenantId",
-  auth(["TENANT", ...PAYMENT_VIEW_ROLES]),
-  listByTenant
-);
+  "/:paymentId/proof",
+  auth(["PM", "ADMIN"]),
+  validateObjectIdParam("paymentId", "payment ID"),
+  getPaymentProof,
+)
 
-// Payment detail for tenant or staff
-router.get("/:id", auth(["TENANT", ...PAYMENT_VIEW_ROLES]), getPaymentById);
+router.patch(
+  "/:paymentId/verify-with-proof",
+  auth(["PM", "ADMIN"]),
+  verificationLimiter,
+  validateVerifyPaymentWithProof,
+  verifyPaymentWithProof,
+)
 
-export default router;
+export default router

@@ -1,35 +1,33 @@
-// src/routes/lease.routes.js (ESM)
+// src/routes/lease.routes.js (ESM) - Production routes with full authorization
 
-import { Router } from "express";
-import { auth } from "../middleware/auth.js";
+import { Router } from "express"
+import { auth } from "../middleware/auth-advanced.js"
 import {
-  createLease,
-  getLeaseById,
-  listLeasesByTenant,
-  endLease,
-  listAllLeases,
-} from "../controllers/leaseController.js";
-import { validateCreateLease } from "../middleware/validators.js";
+	validateCreateLease,
+	validateUpdateLease,
+	validatePagination,
+	validateObjectIdParam,
+} from "../middleware/validators.js"
+import { createLease, listLeases, getLeaseById, terminateLease } from "../controllers/leaseController.js"
 
-const router = Router();
+const router = Router()
 
-// adjust allowed roles if needed
-const MANAGE_ROLES = ["PM", "ADMIN"];
-const VIEW_ROLES = ["PM", "ADMIN", "FS", "GM", "TENANT"];
+// Only PM and ADMIN can create leases
+router.post("/", auth(["PM", "ADMIN"]), validateCreateLease, createLease)
 
-// List all leases (no TENANT here)
-router.get("/", auth(["PM", "ADMIN", "FS", "GM"]), listAllLeases);
+// All authenticated users can list (filtered by role)
+router.get("/", auth(), validatePagination, listLeases)
 
-// Create lease
-router.post("/", auth(MANAGE_ROLES), validateCreateLease, createLease);
+// All authenticated users can view (if authorized)
+router.get("/:id", auth(), validateObjectIdParam("id", "lease ID"), getLeaseById)
 
-// List leases by tenant
-router.get("/by-tenant/:tenantId", auth(VIEW_ROLES), listLeasesByTenant);
+// Only PM and ADMIN can terminate
+router.patch(
+	"/:id/terminate",
+	auth(["PM", "ADMIN"]),
+	validateObjectIdParam("id", "lease ID"),
+	validateUpdateLease,
+	terminateLease,
+)
 
-// Get lease by id
-router.get("/:id", auth(VIEW_ROLES), getLeaseById);
-
-// End lease
-router.patch("/:id/end", auth(MANAGE_ROLES), endLease);
-
-export default router;
+export default router
